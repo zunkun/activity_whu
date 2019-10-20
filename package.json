@@ -1,0 +1,70 @@
+{
+  "name": "activity_whu",
+  "version": "1.0.0",
+  "description": "武大服务端",
+  "main": "bin/www",
+  "scripts": {
+    "start": "./node_modules/.bin/cross-env NODE_ENV=production node bin/www",
+    "dev": "./node_modules/.bin/cross-env NODE_ENV=development ./node_modules/.bin/nodemon bin/www --ignore ./test/",
+    "test": "./node_modules/.bin/mocha test/",
+    "apidoc": "apidoc -i routes/ -o ./public/apidoc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zunkun/activity_whu.git"
+  },
+  "keywords": [
+    "武大服务端"
+  ],
+  "author": "zunkun",
+  "bugs": {
+    "url": "https://github.com/zunkun/activity_whu/issues"
+  },
+  "homepage": "https://github.com/zunkun/activity_whu#readme",
+  "devDependencies": {
+    "apidoc": "^0.17.7",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "cross-env": "^5.2.0",
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^5.3.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "mocha": "^6.1.4",
+    "nodemon": "^1.19.1",
+    "redoc": "^2.0.0-rc.8-1",
+    "should": "^13.2.3",
+    "supertest": "^4.0.2"
+  },
+  "dependencies": {
+    "console-stamp": "^0.2.7",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-json": "^2.0.2",
+    "koa-jwt": "^3.5.1",
+    "koa-logger": "^3.2.0",
+    "koa-multer": "^1.0.2",
+    "koa-router": "^7.4.0",
+    "koa-send": "^5.0.0",
+    "koa-session": "^5.10.1",
+    "koa-sslify": "^4.0.3",
+    "koa-static": "^5.0.0",
+    "koa2-cors": "^2.0.6",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "mysql2": "^1.7.0",
+    "node-cron": "^2.0.3",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "sequelize": "^5.8.7",
+    "xlsx": "^0.15.0"
+  },
+  "license": "MIT"
+}

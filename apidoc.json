@@ -1,0 +1,11 @@
+{
+  "name": "武大活动服务端",
+  "version": "1.0.0",
+  "description": "武大活动服务端",
+  "title": "武大活动服务端",
+  "url" : "http://119.27.170.247:3000",
+  "header": {
+    "title": "武大活动服务端",
+    "filename": "./docs/API.md"
+  }
+}
