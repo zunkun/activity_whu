@@ -10,7 +10,6 @@ Nodejs: v11.13.0
 ### 1. 直接使用node管理
 ```
 $ node bin/www api服务
-$ node bin/schedule 定时任务 同步钉钉通讯录信息
 ```
 
 ### 2. 使用PM2 管理

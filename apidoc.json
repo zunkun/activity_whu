@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "武大活动服务端",
   "title": "武大活动服务端",
-  "url" : "http://119.27.170.247:3000",
+  "url" : "http://alumnihome1893.whu.edu.cn/activity_api",
   "header": {
     "title": "武大活动服务端",
     "filename": "./docs/API.md"

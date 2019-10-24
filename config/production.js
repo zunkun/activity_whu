@@ -1,14 +1,7 @@
 module.exports = {
-	PORT: 4000,
-	mysql: {
-		host: '127.0.0.1',
-		port: 3306,
-		database: 'whu',
-		username: 'root',
-		password: '!Asbcd1234'
-	},
+	PORT: 3029,
 	postgres: {
-		host: '127.0.0.1',
+		host: '10.113.6.11',
 		port: 5432,
 		database: 'whu',
 		username: 'whu',
@@ -17,14 +10,11 @@ module.exports = {
 	secret: 'whu',
 	baseDeptId: 1,
 	dingBaseUri: 'https://oapi.dingtalk.com',
-	corpId: 'dingcbcbb63d3edd5478',
-	corpName: '上海铭悦软件有限公司',
-	agentId: '302567497',
-	appkey: 'dingi36m7pcjlcqapbci',
-	appsecret: 'rL9MrWWxdIaFquO-LtMKHsg_kAD8eMggbRAufVbCPCjtu-5iyE8RKi3C5nMln-lq',
+	corpId: 'ding2f9d4c2c3863312935c2f4657eb6378f',
+	corpName: '武汉大学校友总会',
+	agentId: '307499347',
+	appkey: 'dingeqmpgxeavkrr5dyc',
+	appsecret: 'dpK569l_-z5eKjNXc49dEu2Zyszlrqo7s6a1ceWvk0uloDRZNvC7DaRUNiMHJfSF',
 	nonceStr: 'afasdzwe',
-	deptCron: '0 0 6 * * *', // 每日6时同步部门列表
-	roleCron: '0 0 */1 * *', // 每隔1个小时同步角色列表
-	videoPath: '/apps/files/video/',
-	imagePath: '/apps/files/image/'
+	deptCron: '0 0 */1 * * *' // 每隔1时同步部门列表
 };

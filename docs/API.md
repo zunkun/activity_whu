@@ -1,17 +1,17 @@
-# 武大校友会API
-此处提供 `投票`、`在线学习` 模块 API。目前只是测试地址，等正式服务器安排妥当，地址配置会加上正式地址
+# 武大活动API
+此处提供活动模块 API。
 
 ## 基础说明
-### 1.  测试地址
-1. BaseUrl `http://119.27.170.247:3000`
+### 1.  API访问地址
+1. BaseUrl `http://alumnihome1893.whu.edu.cn/activity_api`
 
-例如: `/api/auth/login` 接口 访问时使用 使用  ` http://119.27.170.247:3000/api/auth/login`
+例如: `/api/auth/login` 接口 访问时使用 使用  `http://alumnihome1893.whu.edu.cn/activity_api/api/auth/login`
 
 ### 2. 文件服务 
-【注意】目前只是临时如此访问，切换正式服务器会更换
+
 1. 文件上传
 
-BaseUrl: ` http://119.27.170.247:4530`
+BaseUrl: ` http://alumnihome1893-1.whu.edu.cn/fs_upload`
 
 a. 图片上传  POST: `${BaseUrl}/api/files/image`, 只能上传 .jpg .png 格式图片
 
@@ -21,9 +21,8 @@ b. 上传视屏  POST: `${BaseUrl}/api/files/video`
 
 2. 文件访问
 
-BaseUrl: ` http://119.27.170.247:4534`
+BaseUrl: `http://alumnihome1893-1.whu.edu.cn/files`
 
-c. 访问图片 `http://119.27.170.247:4534/image/a.jpg`
-c. 访问视屏 `http://119.27.170.247:4534/video/b.mp4`
+c. 访问图片 `${BaseUrl}/image/a.jpg`
 
-【注意】 文件上传和访问地址 端口不一致
+c. 访问视屏 `${BaseUrl}/video/b.mp4`

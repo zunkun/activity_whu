@@ -14,13 +14,9 @@ Activities.init({
 		defaultValue: 1,
 		comment: '活动类型 1-常规活动 2-专项活动'
 	},
-	typeName: {
-		type: DataTypes.STRING,
-		comment: '活动类型名称'
-	},
 	images: {
 		type: DataTypes.ARRAY(DataTypes.STRING),
-		comment: '活动图片名称ID表，比如 [1,2,3]'
+		comment: '活动图片名称表，比如 [1,2,3]'
 	},
 	startTime: {
 		type: DataTypes.DATE,
@@ -28,7 +24,7 @@ Activities.init({
 	},
 	endTime: {
 		type: DataTypes.DATE,
-		comment: '截止时间'
+		comment: '结束时间'
 	},
 	enrollStartTime: {
 		type: DataTypes.DATE,
@@ -41,7 +37,7 @@ Activities.init({
 	personNum: {
 		type: DataTypes.INTEGER,
 		defaultValue: 1,
-		comment: '可报名人数'
+		comment: '可参与人数'
 	},
 	descImages: {
 		type: DataTypes.ARRAY(DataTypes.STRING),
@@ -71,7 +67,7 @@ Activities.init({
 		type: DataTypes.STRING,
 		comment: '活动地址'
 	},
-	isSigned: {
+	singed: {
 		type: DataTypes.BOOLEAN,
 		comment: '是否需要签到 true 需要签到 false 不需要签到',
 		defaultValue: false
@@ -81,7 +77,7 @@ Activities.init({
 		comment: '签到方式 1-扫码签到 2-位置签到'
 	},
 	distance: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.FLOAT,
 		comment: '位置签到距离，单位m'
 	},
 	top: {
@@ -121,6 +117,10 @@ Activities.init({
 		type: DataTypes.STRING,
 		comment: '审核人userName'
 	},
+	reviewerMobile: {
+		type: DataTypes.STRING,
+		comment: '审核人手机号'
+	},
 	reviewerRole: {
 		type: DataTypes.STRING,
 		comment: '审核人身份'
@@ -128,9 +128,22 @@ Activities.init({
 	reviewStatus: {
 		type: DataTypes.INTEGER,
 		defaultValue: 0,
-		comment: '审核状态 0-审核中 1-审核通过 2-拒绝'
+		comment: '审核状态 0-审核中 1-审核通过 2-拒绝 3-撤销'
+	},
+	cancel: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+		comment: '是否撤销'
+	},
+	rejectReason: {
+		type: DataTypes.STRING,
+		comment: '驳回拒绝原因'
+	},
+	timestamp: {
+		type: DataTypes.BIGINT,
+		comment: '数据流水'
 	}
-}, { sequelize: postgres, modelName: 'activities', timestamps: false, paranoid: true, comment: '活动信息表' });
+}, { sequelize: postgres, modelName: 'activities', paranoid: true, comment: '活动信息表' });
 
 Activities.sync();
 
