@@ -624,3 +624,5 @@ router.post('/updateforms', async (ctx, next) => {
 	ctx.body = ResService.success({});
 	await next();
 });
+
+module.exports = router;

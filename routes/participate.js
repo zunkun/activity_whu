@@ -514,3 +514,5 @@ router.post('/sign', async (ctx, next) => {
 	ctx.body = ResService.success(staffsign);
 	await next();
 });
+
+module.exports = reouter;
