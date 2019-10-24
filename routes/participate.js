@@ -515,4 +515,4 @@ router.post('/sign', async (ctx, next) => {
 	await next();
 });
 
-module.exports = reouter;
+module.exports = router;
