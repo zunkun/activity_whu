@@ -15,15 +15,11 @@ Roles.init({
 	}, // 姓名
 	role: {
 		type: DataTypes.INTEGER,
-		comment: '角色 1-普通校友 2-分会管理员 3-总会管理员'
+		comment: '角色 1-总会管理员 2-分会管理员 3-普通校友'
 	},
-	deptId: {
+	deptIds: {
 		type: DataTypes.INTEGER,
-		comment: '管理的部门deptId ，分会和总会有该字段'
-	},
-	deptName: {
-		type: DataTypes.STRING,
-		comment: '管理的部门名称'
+		comment: '管理的部门deptId表 ，分会和总会有该字段'
 	}
 }, { sequelize: postgres, modelName: 'roles', timestamps: false, comment: '角色' });
 
