@@ -18,7 +18,7 @@ Roles.init({
 		comment: '角色 1-总会管理员 2-分会管理员 3-普通校友'
 	},
 	deptIds: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.ARRAY(DataTypes.INTEGER),
 		comment: '管理的部门deptId表 ，分会和总会有该字段'
 	}
 }, { sequelize: postgres, modelName: 'roles', timestamps: false, comment: '角色' });

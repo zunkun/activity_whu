@@ -34,6 +34,7 @@ class RoleSchedule {
 
 		let res = await rp.get(uri);
 
+		res = JSON.parse(res);
 		if (!res.success || !res.content || !Array.isArray(res.content)) {
 			return;
 		}
@@ -53,7 +54,8 @@ class RoleSchedule {
 				deptIds: user.orgs
 			}, { where: { userId: user.dingtalkId, role: roleType } });
 		}
-		await Roles.destroy({ where: { role: roleType, userId: { [Op.ne]: userIds } } });
+		userIds.push(4508346520949170);
+		await Roles.destroy({ where: { role: roleType, userId: { [Op.in]: userIds } } });
 	}
 }
 
