@@ -54,6 +54,24 @@ const util = {
 			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 		}
 		return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
+	},
+	/**
+	 * 计算两个坐标之间的距离，单位 m
+	 * @param {Number} lat1 坐标1经度
+	 * @param {Number} lng1 坐标1纬度
+	 * @param {Number} lat2 坐标2经度
+	 * @param {Number} lng2 坐标2纬度
+	 */
+	getDistance (lat1, lng1, lat2, lng2) {
+		var radLat1 = lat1 * Math.PI / 180.0;
+		var radLat2 = lat2 * Math.PI / 180.0;
+		var a = radLat1 - radLat2;
+		var b = lng1 * Math.PI / 180.0 - lng2 * Math.PI / 180.0;
+		var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+    Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+		s = s * 6378137;// EARTH_RADIUS;
+		s = Math.round(s * 100) / 100;
+		return s;
 	}
 };
 

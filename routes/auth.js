@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const ResService = require('../core/ResService');
 const DingStaffs = require('../models/DingStaffs');
+const Roles = require('../models/Roles');
 const dingding = require('../core/dingding');
 const Router = require('koa-router');
 const router = new Router();
@@ -101,6 +102,18 @@ router.get('/login', async (ctx, next) => {
 		if (!user) {
 			ctx.body = ResService.fail('获取用户信息失败', 404);
 			return;
+		}
+		let roles = await Roles.findAll({ where: { userId: user.userId } });
+		user.roles = [];
+		for (let role of roles) {
+			user.roles.push({
+				role: role.role,
+				deptId: role.deptId,
+				deptName: role.deptNae
+			});
+		}
+		if (!roles.length) {
+			user.roles.push({ role: 1 });
 		}
 		const token = jwt.sign(user, config.secret);
 		ctx.body = ResService.success({ user, token: 'Bearer ' + token });

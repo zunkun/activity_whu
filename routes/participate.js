@@ -10,11 +10,12 @@ const { Op } = require('sequelize');
 const DingStaffs = require('../models/DingStaffs');
 const StaffSigns = require('../models/StaffSigns');
 const EnrollService = require('../services/EnrollService');
+const util = require('../core/util');
 
 router.prefix('/api/participate');
 
 /**
-* @api {get} /api/participate/enrollforms?activityId= 报名表单
+* @api {get} /api/participate/enrollforms?activityId= 获取报名表单
 * @apiName participate-enrollforms
 * @apiGroup 活动参与
 * @apiDescription 获取报名表单
@@ -52,10 +53,9 @@ router.get('/enrollforms', async (ctx, next) => {
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
 * @apiParam {Array[]} useritems 报名填写数组
-* @apiParam {Object} useritems.index 此处为数组中嵌套数组，index为数组的index，index=0表示第一个人 index=2表示第二个人 请查看请求示例
-* @apiParam {Number} useritems.index.id 报名表单填写项ID
-* @apiParam {String} [useritems.index.text] 文本填写项内容，当报名填写项是必填时，必填，如需要填写姓名是，此处填写 “张三”
-* @apiParam {String} [useritems.index.checked] 选项选择的项名称，如选项有 ["男", "女"] 则此处 填写 "男"
+* @apiParam {Number} useritems.id 报名表单填写项ID
+* @apiParam {String} [useritems.text] 文本填写项内容，当报名填写项是必填时，必填，如需要填写姓名是，此处填写 “张三”
+* @apiParam {String} [useritems.checked] 选项选择的项名称，如选项有 ["男", "女"] 则此处 填写 "男"
 * @apiSuccess {Object} data {}
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
@@ -450,19 +450,24 @@ router.get('/enrollpersons', async (ctx, next) => {
 * @apiDescription 签到
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
-* @apiParam {String} [position] 位置, 位置签到必填
-* @apiParam {Number} [distance] 签到距离，位置签到必填
+* @apiParam {Number} latitude 签到坐标经度
+* @apiParam {Number} longitude 签到坐标纬度
+* @apiParam {String} address 签到地址
 * @apiSuccess {Object} data {}
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
 router.post('/sign', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
-	const { activityId, position, distance } = ctx.request.body;
+	const { activityId, latitude, longitude, address } = ctx.request.body;
 	const currentTime = new Date();
 	const activity = await Activities.findOne({ id: activityId });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统没有当前活动');
+		return;
+	}
+	if (!longitude || !latitude || !address) {
+		ctx.body = ResService.fail('没有经纬度地址信息');
 		return;
 	}
 
@@ -502,12 +507,17 @@ router.post('/sign', async (ctx, next) => {
 		userName: user.userName,
 		signType: activity.signType
 	};
+
+	// 签到地址信息
 	if (activity.signType === 2) {
-		if (Number(distance) > activity.distance) {
+		let distance = util.getDistance(activity.latitude, activity.longitude, latitude, longitude);
+		if (distance > activity.distance) {
 			ctx.body = ResService.fail('签到无效，当前不签签到区域内');
 		}
-		signData.position = position;
-		signData.distance = Number(distance);
+		signData.latitude = latitude;
+		signData.longitude = longitude;
+		signData.address = address;
+		signData.distance = distance;
 	}
 	staffsign = await StaffSigns.create(signData);
 

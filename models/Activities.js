@@ -63,6 +63,14 @@ Activities.init({
 		type: DataTypes.ARRAY(DataTypes.JSON),
 		comment: '特殊参与人员，本人员是部门列表外人员, userId, userName'
 	},
+	latitude: {
+		type: DataTypes.FLOAT,
+		comment: '地图坐标经度'
+	},
+	longitude: {
+		type: DataTypes.FLOAT,
+		comment: '地图坐标维度'
+	},
 	address: {
 		type: DataTypes.STRING,
 		comment: '活动地址'

@@ -15,13 +15,21 @@ StaffSigns.init({
 		type: DataTypes.INTEGER,
 		comment: '签到方式 1-扫码 2-距离签到'
 	},
-	distance: {
+	latitude: {
 		type: DataTypes.FLOAT,
-		comment: '签到距离'
+		comment: '签到坐标经度'
 	},
-	position: {
+	longitude: {
+		type: DataTypes.FLOAT,
+		comment: '签到坐标纬度'
+	},
+	address: {
 		type: DataTypes.STRING,
 		comment: '签到位置'
+	},
+	distance: {
+		type: DataTypes.FLOAT,
+		comment: '签到与基点距离'
 	},
 	signTime: {
 		type: DataTypes.DATE,

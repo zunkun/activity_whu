@@ -8,8 +8,10 @@ const deptStaffService = require('../services/deptStaffService');
 const { Op } = require('sequelize');
 const DingDepts = require('../models/DingDepts');
 const DeptStaffs = require('../models/DeptStaffs');
+const Roles = require('../models/Roles');
+// const Messages = require('../models/Messages');
 
-router.prefix('/api/auth');
+router.prefix('/api/activities');
 
 /**
 * @api {post} /api/activities 创建活动
@@ -37,6 +39,8 @@ router.prefix('/api/auth');
 * @apiParam {String} enrollforms.options.title 选项标题
 * @apiParam {Number[]} [deptIds] 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
 * @apiParam {Number[]} [specialUserIds] 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
+* @apiParam {Number} latitute 地址经度
+* @apiParam {Number} longitude 地址纬度
 * @apiParam {String} address 活动地址
 * @apiParam {Boolean} [singed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到
 * @apiParam {Number} [signType] 签到方式 1-扫码签到 2-位置签到，当signed = true 时需要填写当前值
@@ -57,6 +61,8 @@ router.prefix('/api/auth');
 *  descImages: ['d.jpg', 'e.png', 'f.jpg'],
 *  deptIds: [1,2,3],
 *  specialUserIds: ['userId1', 'userId2', 'userId3'],
+*  latitude: 223.234,
+*  longitude: 113.234,
 *  address: '上海市三门路复旦软件园',
 *  singed: true,
 *  signType: 2, // 签到方式 1-扫码签到 2-位置签到
@@ -89,7 +95,7 @@ router.post('/', async (ctx, next) => {
 	let valid = true; // 传参是否正确
 
 	[ 'tite', 'type', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
-		'personNum', 'address', 'contactMobile', 'contactName' ].map(key => {
+		'personNum', 'latitude', 'longitude', 'address', 'contactMobile', 'contactName' ].map(key => {
 		if (!dataKey.has(key) || !data[key]) {
 			valid = false;
 		}
@@ -132,6 +138,8 @@ router.post('/', async (ctx, next) => {
 		enrollforms: data.enrollforms,
 		contactMobile: data.contactMobile,
 		contactName: data.contactName,
+		latitude: data.latitude,
+		longitude: data.longitude,
 		address: data.address,
 		signed: !!data.signed,
 		signType: data.signed ? Number(data.signType) : null,
@@ -177,6 +185,8 @@ router.post('/', async (ctx, next) => {
 		form.activityId = activity.id;
 		await EnrollForms.create(form);
 	}
+
+	// await Messages.create()
 
 	ctx.body = ResService.success({ id: activity.id, title: activity.title });
 	await next();
@@ -285,6 +295,8 @@ router.post('/cancel', async (ctx, next) => {
 * @apiSuccess {Object[]} data.specialUsers  特殊选择参与人员
 * @apiSuccess {String} data.specialUsers.userId  特殊选择参与人员userId
 * @apiSuccess {String} data.specialUsers.userName  特殊选择参与人员userName
+* @apiSuccess {Number} data.latitude 活动经度
+* @apiSuccess {Number} data.longitude 活动纬度
 * @apiSuccess {String} data.address 活动地址
 * @apiSuccess {Boolean} data.singed 是否需要签到 true 需要签到 false 不需要签到
 * @apiSuccess {Number} data.signType 签到方式 1-扫码签到 2-位置签到
@@ -326,7 +338,7 @@ router.get('/:id', async (ctx, next) => {
 * @api {get} /api/activities?limit=&page=&keywords=&status=&type= 活动列表
 * @apiName activities-lists
 * @apiGroup 活动管理
-* @apiDescription 活动列表，目前是PC端管理活动列表
+* @apiDescription 活动列表，目前是PC端管理活动列表,分会管理员只能看到自己创建的活动列表以及其管辖分会的活动列表，而总会管理员能够看到所有的活动列表
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} [limit] 分页条数，默认10
 * @apiParam {Number} [page] 第几页，默认1
@@ -359,6 +371,8 @@ router.get('/:id', async (ctx, next) => {
 * @apiSuccess {Object[]} data.rows.specialUsers  特殊选择参与人员
 * @apiSuccess {String} data.rows.specialUsers.userId  特殊选择参与人员userId
 * @apiSuccess {String} data.rows.specialUsers.userName  特殊选择参与人员userName
+* @apiSuccess {Number} data.rows.latitude 活动经度
+* @apiSuccess {Number} data.rows.longitude 活动纬度
 * @apiSuccess {String} data.rows.address 活动地址
 * @apiSuccess {Boolean} data.rows.singed 是否需要签到 true 需要签到 false 不需要签到
 * @apiSuccess {Number} data.rows.signType 签到方式 1-扫码签到 2-位置签到
@@ -381,6 +395,7 @@ router.get('/:id', async (ctx, next) => {
 * @apiError {Number} errmsg 错误消息
 */
 router.get('/', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
 	let query = ctx.query;
 	let page = Number(query.page) || 1;
 	let limit = Number(query.limit) || 10;
@@ -426,6 +441,34 @@ router.get('/', async (ctx, next) => {
 	default:
 		break;
 	}
+
+	const roles = await Roles.findAll({ where: { userId: user.userId } });
+	if (!roles || (roles.length === 1 && roles[0].role === 1)) {
+		ctx.body = ResService.fail('非管理员不得管理活动');
+		return;
+	}
+
+	let deptIds = []; // 个人所管理的部门表
+	for (let role of roles) {
+		if (!where[Op.or]) where[Op.or] = [];
+		if (role.role === 2) { // 分会管理员
+			deptIds.push(role.deptId);
+		}
+	}
+
+	if (deptIds.length) {
+		// 当前管理员所管理分会所有管理员发布的活动都可管理
+		let allroles = await Roles.findAll({ where: { deptId: { [Op.in]: deptIds } } });
+
+		let allUserIds = [];
+		for (let role of allroles) {
+			allUserIds.push(role.userId);
+		}
+		if (allUserIds.length) {
+			where.userId = { [Op.in]: allUserIds };
+		}
+	}
+
 	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
 	ctx.body = ResService.success(res);
 	await next();
@@ -467,6 +510,8 @@ router.get('/', async (ctx, next) => {
 * @apiSuccess {Object[]} data.rows.specialUsers  特殊选择参与人员
 * @apiSuccess {String} data.rows.specialUsers.userId  特殊选择参与人员userId
 * @apiSuccess {String} data.rows.specialUsers.userName  特殊选择参与人员userName
+* @apiSuccess {Number} data.rows.latitude 活动经度
+* @apiSuccess {Number} data.rows.longitude 活动纬度
 * @apiSuccess {String} data.rows.address 活动地址
 * @apiSuccess {Boolean} data.rows.singed 是否需要签到 true 需要签到 false 不需要签到
 * @apiSuccess {Number} data.rows.signType 签到方式 1-扫码签到 2-位置签到
