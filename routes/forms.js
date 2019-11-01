@@ -85,7 +85,7 @@ router.post('/', async (ctx, next) => {
 * @apiError {Number} errmsg 错误消息
 */
 router.get('/info', async (ctx, next) => {
-	const activityId = ctx.params.formId;
+	const activityId = ctx.params.activityId;
 	let activity = Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统中无当前活动');

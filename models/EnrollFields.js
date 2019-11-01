@@ -4,10 +4,6 @@ const { DataTypes, Model } = require('sequelize');
 // 报名表单填写条目
 class EnrollFields extends Model {}
 EnrollFields.init({
-	formId: {
-		type: DataTypes.STRING,
-		comment: '表单标识，这个和ID不同，该标识表示组件属于一个表单'
-	},
 	formSequence: {
 		type: DataTypes.INTEGER,
 		comment: '填写表单排序'
