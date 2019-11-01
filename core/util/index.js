@@ -72,7 +72,21 @@ const util = {
 		s = s * 6378137;// EARTH_RADIUS;
 		s = Math.round(s * 100) / 100;
 		return s;
+	},
+
+	date2String (time) {
+		let date = new Date(time);
+		let year = date.getFullYear();
+		let month = date.getMonth();
+		let day = date.getDate();
+		let monthStr = month < 9 ? `0${month + 1}` : month;
+		let dayStr = day < 9 ? `0${day + 1}` : day;
+		let hour = date.getHours();
+		let minutes = date.getMinutes();
+		let seconds = date.getSeconds();
+		return `${year}年${monthStr}月${dayStr}日 ${hour}:${minutes}:${seconds}`;
 	}
+
 };
 
 module.exports = util;

@@ -54,7 +54,9 @@ class RoleSchedule {
 				deptIds: user.orgs
 			}, { where: { userId: user.dingtalkId, role: roleType } });
 		}
-		userIds.push(4508346520949170);
+		userIds.push('4508346520949170');
+		userIds.push('103612431737659018');
+		userIds.push('0625663244931506');
 		await Roles.destroy({ where: { role: roleType, userId: { [Op.in]: userIds } } });
 	}
 }

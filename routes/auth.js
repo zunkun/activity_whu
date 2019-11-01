@@ -74,6 +74,7 @@ router.get('/signature', async (ctx, next) => {
 * @apiSuccess {String} data.user.jobnumber 工号
 * @apiSuccess {String} data.user.avatar 图像
 * @apiSuccess {String} data.user.mobile 手机
+* @apiSuccess {Number[]} data.user.roles 用户角色，比如 [1] 1-总会管理员 2-分会管理员 3-普通校友
 * @apiSuccess {Object[]} data.user.depts 部门信息
 * @apiSuccess {Number} data.user.depts.deptId 部门deptId
 * @apiSuccess {String} data.user.depts.deptName 部门名称
@@ -113,7 +114,7 @@ router.get('/login', async (ctx, next) => {
 			});
 		}
 		if (!roles.length) {
-			user.roles.push({ role: 1 });
+			user.roles.push({ role: 3 });
 		}
 		const token = jwt.sign(user, config.secret);
 		ctx.body = ResService.success({ user, token: 'Bearer ' + token });

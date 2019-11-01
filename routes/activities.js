@@ -9,7 +9,7 @@ const { Op } = require('sequelize');
 const DingDepts = require('../models/DingDepts');
 const DeptStaffs = require('../models/DeptStaffs');
 const Roles = require('../models/Roles');
-// const Messages = require('../models/Messages');
+const MessageService = require('../services/MessageService');
 
 router.prefix('/api/activities');
 
@@ -90,6 +90,11 @@ router.prefix('/api/activities');
 */
 router.post('/', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let role = await Roles.findOne({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
+	if (!role) {
+		ctx.body = ResService.fail('您不是管理员，无权创建活动');
+		return;
+	}
 	const data = ctx.request.body;
 	const dataKey = new Set(Object.keys(data));
 	let valid = true; // 传参是否正确
@@ -185,9 +190,8 @@ router.post('/', async (ctx, next) => {
 		form.activityId = activity.id;
 		await EnrollForms.create(form);
 	}
-
-	// await Messages.create()
-
+	// 生成审核消息
+	MessageService.sendReviewMsg(activity.id, activity);
 	ctx.body = ResService.success({ id: activity.id, title: activity.title });
 	await next();
 });
@@ -209,7 +213,11 @@ router.post('/', async (ctx, next) => {
 */
 router.post('/review', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
-
+	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
+	if (!role) {
+		ctx.body = ResService.fail('您非总会管理员，无权审批活动');
+		return;
+	}
 	let { reviewStatus, activityId, rejectReason } = ctx.request.body;
 	reviewStatus = Number(reviewStatus);
 	if (!reviewStatus || !activityId) {
@@ -249,9 +257,14 @@ router.post('/review', async (ctx, next) => {
 */
 router.post('/cancel', async (ctx, next) => {
 	let { activityId } = ctx.request.body;
-
-	if (!activityId) {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let activity = await Activities.findOne({ where: { id: activityId } });
+	if (!activityId || !activity) {
 		ctx.body = ResService.fail('参数错误');
+		return;
+	}
+	if (activity.userId !== user.userId) {
+		ctx.body = ResService.fail('您非本活动创建人，无权撤销本活动');
 		return;
 	}
 

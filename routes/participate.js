@@ -370,10 +370,10 @@ router.get('/persons', async (ctx, next) => {
 });
 
 /**
-* @api {get} /api/participate/enrollpersons?activityId=&limit=&page=&keywords= 已报名校友人员列表
-* @apiName participate-persons
+* @api {get} /api/participate/enrollpersons?activityId=&limit=&page=&keywords= PC端已报名人员列表
+* @apiName participate-enrollpersons
 * @apiGroup 活动参与
-* @apiDescription 移动端查看活动详情里，当前活动已报名校友人员列表
+* @apiDescription PC端已报名人员列表
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
 * @apiSuccess {Number} errcode 成功为0

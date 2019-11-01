@@ -5,21 +5,17 @@ const Activities = require('./Activities');
 // 报名活动用户
 class Messages extends Model {}
 Messages.init({
-	userIds: {
+	userId: {
 		type: DataTypes.ARRAY(DataTypes.STRING),
-		comment: '消息接收人userId表'
+		comment: '活动发起人userId'
 	},
-	users: {
-		type: DataTypes.ARRAY(DataTypes.JSON),
-		comment: '接收人对象表[{userId, userName}] '
+	userName: {
+		type: DataTypes.STRING,
+		comment: '活动发起人userName'
 	},
-	deptIds: {
-		type: DataTypes.ARRAY(DataTypes.INTEGER),
-		comment: '消息接收部门deptId表'
-	},
-	depts: {
-		type: DataTypes.ARRAY(DataTypes.JSON),
-		comment: '接收人对象表[{userId, userName}] '
+	activityCreateTime: {
+		type: DataTypes.DATE,
+		comment: '活动发起时间'
 	},
 	type: {
 		type: DataTypes.INTEGER,
@@ -29,18 +25,14 @@ Messages.init({
 		type: DataTypes.STRING,
 		comment: '消息内容'
 	},
-	read: {
-		type: DataTypes.BOOLEAN,
-		comment: '是否已读'
-	},
 	finish: {
 		type: DataTypes.BOOLEAN,
 		comment: '消息所指的活动是否处理完毕'
 	},
-	status: {
+	reviewStatus: {
 		type: DataTypes.INTEGER,
 		defaultValue: 1,
-		comment: '消息是否'
+		comment: '活动审核状态 '
 	}
 }, { sequelize: postgres, modelName: 'Messages', paranoid: true, comment: '消息' });
 
