@@ -165,3 +165,5 @@ router.get('/:formId', async (ctx, next) => {
 	ctx.body = ResService.success(forms);
 	await next();
 });
+
+module.exports = router;
