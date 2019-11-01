@@ -112,132 +112,6 @@
     "groupTitle": "报名表单"
   },
   {
-    "type": "post",
-    "url": "/api/forms/update",
-    "title": "修改表单",
-    "name": "forms_create",
-    "group": "报名表单",
-    "description": "<p>修改表单</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>登录token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "formId",
-            "description": "<p>表单ID</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object[]",
-            "optional": false,
-            "field": "forms",
-            "description": "<p>表单</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": true,
-            "field": "forms.id",
-            "description": "<p>组件ID,若是新建的组件则不需要传该值</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "forms.componentName",
-            "description": "<p>组件名称</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "forms.componentType",
-            "description": "<p>组件类型</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "forms.componentSet",
-            "description": "<p>组件属性设置类型</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object",
-            "optional": false,
-            "field": "forms.attribute",
-            "description": "<p>组件属性</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>成功为0</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>返回数据</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.formId",
-            "description": "<p>表单ID</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>失败不为0</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errmsg",
-            "description": "<p>错误消息</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/forms.js",
-    "groupTitle": "报名表单"
-  },
-  {
     "type": "get",
     "url": "/api/forms/:formId",
     "title": "获取表单",
@@ -335,6 +209,132 @@
             "optional": false,
             "field": "data.attribute",
             "description": "<p>组件属性</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/forms.js",
+    "groupTitle": "报名表单"
+  },
+  {
+    "type": "post",
+    "url": "/api/forms/update",
+    "title": "修改表单",
+    "name": "forms_update",
+    "group": "报名表单",
+    "description": "<p>修改表单</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "formId",
+            "description": "<p>表单ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object[]",
+            "optional": false,
+            "field": "forms",
+            "description": "<p>表单</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "forms.id",
+            "description": "<p>组件ID,若是新建的组件则不需要传该值</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "forms.componentName",
+            "description": "<p>组件名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "forms.componentType",
+            "description": "<p>组件类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "forms.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "forms.attribute",
+            "description": "<p>组件属性</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.formId",
+            "description": "<p>表单ID</p>"
           }
         ]
       }

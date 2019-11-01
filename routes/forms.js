@@ -63,7 +63,7 @@ router.post('/', async (ctx, next) => {
 
 /**
 * @api {post} /api/forms/update 修改表单
-* @apiName forms-create
+* @apiName forms-update
 * @apiGroup 报名表单
 * @apiDescription 修改表单
 * @apiHeader {String} authorization 登录token
