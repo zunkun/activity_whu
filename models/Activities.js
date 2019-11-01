@@ -135,8 +135,8 @@ Activities.init({
 	},
 	reviewStatus: {
 		type: DataTypes.INTEGER,
-		defaultValue: 0,
-		comment: '审核状态 0-审核中 1-审核通过 2-拒绝 3-撤销'
+		defaultValue: 10,
+		comment: '审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝'
 	},
 	cancel: {
 		type: DataTypes.BOOLEAN,

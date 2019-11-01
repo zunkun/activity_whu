@@ -4,10 +4,6 @@ const { DataTypes, Model } = require('sequelize');
 // 报名表单条目
 class Components extends Model {}
 Components.init({
-	formId: {
-		type: DataTypes.STRING,
-		comment: '表单标识，这个和ID不同，该标识表示组件属于一个表单'
-	},
 	sequence: {
 		type: DataTypes.INTEGER,
 		comment: '组件排序'
@@ -27,6 +23,10 @@ Components.init({
 	attribute: {
 		type: DataTypes.JSON,
 		comment: '组件属性'
+	},
+	activityId: {
+		type: DataTypes.INTEGER,
+		comment: '活动ID'
 	},
 	timestamp: {
 		type: DataTypes.BIGINT,

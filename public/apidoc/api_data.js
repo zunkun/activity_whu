@@ -2,10 +2,10 @@ define({ "api": [
   {
     "type": "post",
     "url": "/api/forms",
-    "title": "创建表单",
+    "title": "保存表单",
     "name": "forms_create",
     "group": "报名表单",
-    "description": "<p>创建表单,返回表单ID</p>",
+    "description": "<p>保存报名表单</p>",
     "header": {
       "fields": {
         "Header": [
@@ -22,6 +22,13 @@ define({ "api": [
     "parameter": {
       "fields": {
         "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "activityId",
+            "description": "<p>活动ID</p>"
+          },
           {
             "group": "Parameter",
             "type": "Object[]",
@@ -75,14 +82,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>返回数据</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.formId",
-            "description": "<p>表单ID</p>"
+            "description": "<p>{}</p>"
           }
         ]
       }
@@ -113,7 +113,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/api/forms/:formId",
+    "url": "/api/forms/info?activityId=",
     "title": "获取表单",
     "name": "forms_info",
     "group": "报名表单",
@@ -136,10 +136,10 @@ define({ "api": [
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Number",
             "optional": false,
-            "field": "formId",
-            "description": "<p>表单ID</p>"
+            "field": "activityId",
+            "description": "<p>活动ID</p>"
           },
           {
             "group": "Parameter",
@@ -163,10 +163,10 @@ define({ "api": [
           },
           {
             "group": "Success 200",
-            "type": "String",
+            "type": "Number",
             "optional": false,
-            "field": "data.formId",
-            "description": "<p>表单ID</p>"
+            "field": "data.activityId",
+            "description": "<p>活动ID</p>"
           },
           {
             "group": "Success 200",
@@ -238,135 +238,9 @@ define({ "api": [
     "groupTitle": "报名表单"
   },
   {
-    "type": "post",
-    "url": "/api/forms/update",
-    "title": "修改表单",
-    "name": "forms_update",
-    "group": "报名表单",
-    "description": "<p>修改表单</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>登录token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "formId",
-            "description": "<p>表单ID</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object[]",
-            "optional": false,
-            "field": "forms",
-            "description": "<p>表单</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": true,
-            "field": "forms.id",
-            "description": "<p>组件ID,若是新建的组件则不需要传该值</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "forms.componentName",
-            "description": "<p>组件名称</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "forms.componentType",
-            "description": "<p>组件类型</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "forms.componentSet",
-            "description": "<p>组件属性设置类型</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object",
-            "optional": false,
-            "field": "forms.attribute",
-            "description": "<p>组件属性</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>成功为0</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>返回数据</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.formId",
-            "description": "<p>表单ID</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>失败不为0</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errmsg",
-            "description": "<p>错误消息</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/forms.js",
-    "groupTitle": "报名表单"
-  },
-  {
     "type": "get",
     "url": "/api/participate/myenroll?activityId=",
-    "title": "我的报名",
+    "title": "我的报名【开发中】",
     "name": "participate_enroll_myenroll",
     "group": "活动参与",
     "description": "<p>我的报名，查看当前活动中我的报名</p>",
@@ -516,7 +390,7 @@ define({ "api": [
     "title": "报名",
     "name": "participate_enroll_post",
     "group": "活动参与",
-    "description": "<p>报名，由於不知如何写api文档，具体格式请查看示例</p>",
+    "description": "<p>报名</p>",
     "header": {
       "fields": {
         "Header": [
@@ -544,36 +418,43 @@ define({ "api": [
             "group": "Parameter",
             "type": "Array[]",
             "optional": false,
-            "field": "useritems",
-            "description": "<p>报名填写数组</p>"
+            "field": "formlists",
+            "description": "<p>表单</p>"
           },
           {
             "group": "Parameter",
-            "type": "Number",
+            "type": "String",
             "optional": false,
-            "field": "useritems.id",
-            "description": "<p>报名表单填写项ID</p>"
+            "field": "formlists.componentName",
+            "description": "<p>组件名称</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": true,
-            "field": "useritems.text",
-            "description": "<p>文本填写项内容，当报名填写项是必填时，必填，如需要填写姓名是，此处填写 “张三”</p>"
+            "optional": false,
+            "field": "formlists.componentType",
+            "description": "<p>组件类型</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": true,
-            "field": "useritems.checked",
-            "description": "<p>选项选择的项名称，如选项有 [&quot;男&quot;, &quot;女&quot;] 则此处 填写 &quot;男&quot;</p>"
+            "optional": false,
+            "field": "formlists.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "formlists.attribute",
+            "description": "<p>组件属性</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "请求body示例",
-          "content": "{\n  activityId: 1000, // 活动ID\n  useritems:  [ // 填写的第一个人 index=0\n      {id: 1, text: '张三'},\n      {id: 3, text: '15618871296'}, // 电话\n    ],\n    [ // 填写的第二个人 index=1\n      {id: 1, text: '李四'},\n      {id: 3, checked: \"男\"}, // 电话，非必填\n    ]\n  ]\n}",
+          "content": "{\n  activityId: 1000, // 活动ID\n\tformlists: [\n\t\t[ // 第一组，表示第一个人\n\t\t\t{\n\t\t\t\tcomponentName: '单行输入框', //组件名称\n\t\t\t\tcomponentType: 'singleLineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '单行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多行输入框', //组件名称\n\t\t\t\tcomponentType: 'multilineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '数字输入框', //组件名称\n\t\t\t\tcomponentType: 'numericType', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '数字输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '日期', //组件名称\n\t\t\t\tcomponentType: 'datePicker', //组件类型\n\t\t\t\tcomponentSet: 'datePickerType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '日期', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t}, {\n\t\t\t\tcomponentName: '日期区间', //组件名称\n\t\t\t\tcomponentType: 'datePickerSection', //组件类型\n\t\t\t\tcomponentSet: 'datePickerSectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValueStart: '', //字段填写的值\n\t\t\t\t\tfieldCodeStart: '', //字段编码\n\t\t\t\t\ttitleStart: '开始日期', //标题\n\t\t\t\t\tplaceholderStart: '请选择', //提示\n\t\t\t\t\tfieldValueEnd: '', //字段填写的值\n\t\t\t\t\tfieldCodeEnd: '', //字段编码\n\t\t\t\t\ttitleEnd: '结束日期', //标题\n\t\t\t\t\tplaceholderEnd: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多选框', //组件名称\n\t\t\t\tcomponentType: 'multipleSelection', //组件类型\n\t\t\t\tcomponentSet: 'multipleSelectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: \"\", //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多选框', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tmaxLength: 2,\n\t\t\t\t\toptions: [{\n\t\t\t\t\t\tlabel: '选项1',\n\t\t\t\t\t\tvalue: '选项1',\n\t\t\t\t\t\tisSelect: false,\n\t\t\t\t\t}, {\n\t\t\t\t\t\tlabel: '选项2',\n\t\t\t\t\t\tvalue: '选项2',\n\t\t\t\t\t\tisSelect: false\n\t\t\t\t\t}],\n\t\t\t\t}\n\t\t\t}\n\t\t],\n\t\t[ // 第二组，表示第二个人\n\t\t\t{...},\n\t\t\t{...}\n\t\t]\n\t]\n}",
           "type": "json"
         }
       ]
@@ -617,120 +498,8 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/api/participate/enrollforms?activityId=",
-    "title": "获取报名表单",
-    "name": "participate_enrollforms",
-    "group": "活动参与",
-    "description": "<p>获取报名表单</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>登录token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "activityId",
-            "description": "<p>活动ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Object[]",
-            "optional": false,
-            "field": "data",
-            "description": "<p>自定义报名表单项列表</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.id",
-            "description": "<p>报名表单填写项ID</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.sequence",
-            "description": "<p>报名填写项目排序, 1,2,3，例如报名需要填写 姓名和手机号 则姓名项为1 手机号为2 则姓名手机号按照sequence排列</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.title",
-            "description": "<p>标题，比如姓名、手机号</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.type",
-            "description": "<p>类型 1-单行文本 2-选择</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Bool",
-            "optional": false,
-            "field": "data.mustfill",
-            "description": "<p>是否必填，true必填 false 选填</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String[]",
-            "optional": false,
-            "field": "data.options",
-            "description": "<p>自定义表单条目选项，例如 [&quot;男&quot;, &quot;女&quot;]</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>失败不为0</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errmsg",
-            "description": "<p>错误消息</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/participate.js",
-    "groupTitle": "活动参与"
-  },
-  {
-    "type": "get",
     "url": "/api/participate/enrollpersons?activityId=&limit=&page=&keywords=",
-    "title": "PC端已报名人员列表",
+    "title": "PC端已报名人员列表【开发中】",
     "name": "participate_enrollpersons",
     "group": "活动参与",
     "description": "<p>PC端已报名人员列表</p>",
@@ -1529,13 +1298,6 @@ define({ "api": [
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "reviewStatus",
-            "description": "<p>审核结果 1-审核通过 2-拒绝</p>"
-          },
-          {
-            "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "activityId",
@@ -1690,13 +1452,6 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "formId",
-            "description": "<p>报名表单ID</p>"
-          },
-          {
-            "group": "Parameter",
             "type": "Number[]",
             "optional": true,
             "field": "deptIds",
@@ -1770,7 +1525,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求body示例",
-          "content": "{\n title: '上海一日游',\n type: 1, // 常规活动\n images: ['a.jpg', 'b.png', 'c.jpg'],\n startTime: '2019-10-23 08:00:00',\n startTime: '2019-10-23 18:00:00',\n enrollStartTime: '2019-10-01 08:00:00',\n enrollEndTime: '2019-10-20 18:00:00',\n personNum: 100,\n descText: '游览上海著名景点',\n descImages: ['d.jpg', 'e.png', 'f.jpg'],\n deptIds: [1,2,3],\n specialUserIds: ['userId1', 'userId2', 'userId3'],\n latitude: 223.234,\n longitude: 113.234,\n address: '上海市三门路复旦软件园',\n singed: true,\n signType: 2, // 签到方式 1-扫码签到 2-位置签到\n distance: 100, // signType = 2 时填写\n contactMobile: '156xxx',\n contactName: '刘遵坤',\n formId: 'adasf', // 报名表单ID\n}",
+          "content": "{\n title: '上海一日游',\n type: 1, // 常规活动\n images: ['a.jpg', 'b.png', 'c.jpg'],\n startTime: '2019-10-23 08:00:00',\n startTime: '2019-10-23 18:00:00',\n enrollStartTime: '2019-10-01 08:00:00',\n enrollEndTime: '2019-10-20 18:00:00',\n personNum: 100,\n descText: '游览上海著名景点',\n descImages: ['d.jpg', 'e.png', 'f.jpg'],\n deptIds: [1,2,3],\n specialUserIds: ['userId1', 'userId2', 'userId3'],\n latitude: 223.234,\n longitude: 113.234,\n address: '上海市三门路复旦软件园',\n singed: true,\n signType: 2, // 签到方式 1-扫码签到 2-位置签到\n distance: 100, // signType = 2 时填写\n contactMobile: '156xxx',\n contactName: '刘遵坤',\n}",
           "type": "json"
         }
       ]
@@ -1955,13 +1710,6 @@ define({ "api": [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.formId",
-            "description": "<p>报名表单ID</p>"
-          },
-          {
-            "group": "Success 200",
             "type": "Number[]",
             "optional": false,
             "field": "data.deptIds",
@@ -2140,7 +1888,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "data.reviewStatus",
-            "description": "<p>审核状态 0-审核中 1-审核通过 2-拒绝</p>"
+            "description": "<p>审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝</p>"
           },
           {
             "group": "Success 200",
@@ -2239,7 +1987,7 @@ define({ "api": [
             "type": "Number",
             "optional": true,
             "field": "status",
-            "description": "<p>活动状态，0/null-全部 10-待审核 20-审核通过  21-预热中 22-报名中 23-进行中 24-已结束 30-驳回拒绝， 默认为0 表示查询全部状态</p>"
+            "description": "<p>活动状态，0/null-全部 10-编辑中 20-待审核 30-审核通过  31-预热中 32-报名中 33-进行中 34-已结束 40-驳回拒绝， 默认为0 表示查询全部状态</p>"
           },
           {
             "group": "Parameter",
@@ -2351,13 +2099,6 @@ define({ "api": [
             "optional": false,
             "field": "data.rows.personNum",
             "description": "<p>可参与人数</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.formId",
-            "description": "<p>自定义表单ID</p>"
           },
           {
             "group": "Success 200",
@@ -2553,7 +2294,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "data.rows.reviewStatus",
-            "description": "<p>审核状态 0-审核中 1-审核通过 2-拒绝</p>"
+            "description": "<p>审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝</p>"
           },
           {
             "group": "Success 200",
@@ -2638,7 +2379,7 @@ define({ "api": [
             "type": "Number",
             "optional": true,
             "field": "status",
-            "description": "<p>活动状态， 21-预热中 22-报名中 23-进行中 24-已结束 默认为0 表示查询全部状态</p>"
+            "description": "<p>活动状态， 31-预热中 32-报名中 33-进行中 34-已结束 默认为0 表示查询全部状态</p>"
           },
           {
             "group": "Parameter",
@@ -2764,13 +2505,6 @@ define({ "api": [
             "optional": false,
             "field": "data.rows.descText",
             "description": "<p>活动详情文字</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.formId",
-            "description": "<p>自定义表单ID</p>"
           },
           {
             "group": "Success 200",
@@ -2952,7 +2686,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "data.rows.reviewStatus",
-            "description": "<p>审核状态 0-审核中 1-审核通过 2-拒绝</p>"
+            "description": "<p>审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝</p>"
           },
           {
             "group": "Success 200",
@@ -3023,7 +2757,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "reviewStatus",
-            "description": "<p>状态 1-审核通过 2-拒绝 3-撤销活动</p>"
+            "description": "<p>审核状态 30-审核通过 40-拒绝</p>"
           },
           {
             "group": "Parameter",
@@ -3038,6 +2772,90 @@ define({ "api": [
             "optional": true,
             "field": "rejectReason",
             "description": "<p>驳回拒绝原因</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>活动信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.id",
+            "description": "<p>活动ID</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
+    "type": "post",
+    "url": "/api/activities/sendreview",
+    "title": "提交审核",
+    "name": "activities_send_review",
+    "group": "活动管理",
+    "description": "<p>提交审核活动</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "activityId",
+            "description": "<p>活动ID</p>"
           }
         ]
       }

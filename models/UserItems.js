@@ -1,6 +1,5 @@
 const postgres = require('../core/db/postgres');
 const { DataTypes, Model } = require('sequelize');
-const EnrollForms = require('./EnrollForms');
 const Enrolls = require('./Enrolls');
 
 // 报名表单填写条目结果
@@ -33,7 +32,6 @@ UserItems.init({
 }, { sequelize: postgres, modelName: 'useritems', timestamps: false, paranoid: true, comment: '报名表单填写条目结果' });
 
 UserItems.belongsTo(Enrolls);
-UserItems.belongsTo(EnrollForms);
 
 UserItems.sync();
 

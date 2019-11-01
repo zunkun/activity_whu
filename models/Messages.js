@@ -6,14 +6,14 @@ const Activities = require('./Activities');
 class Messages extends Model {}
 Messages.init({
 	userId: {
-		type: DataTypes.ARRAY(DataTypes.STRING),
+		type: DataTypes.STRING,
 		comment: '活动发起人userId'
 	},
 	userName: {
 		type: DataTypes.STRING,
 		comment: '活动发起人userName'
 	},
-	activityCreateTime: {
+	createTime: {
 		type: DataTypes.DATE,
 		comment: '活动发起时间'
 	},
