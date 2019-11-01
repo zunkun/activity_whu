@@ -1,6 +1,13 @@
 var crypto = require('crypto');
+const moment = require('moment');
 
 const util = {
+	/**
+	 * 生成时间字符串
+	 */
+	genTimeString () {
+		return moment().format('YYYYMMDDHHmmssSSSS') + Math.ceil(Math.random() * 10000);
+	},
 	/**
 	 * 程序等待
 	 * @param {number} mileseconds 毫秒

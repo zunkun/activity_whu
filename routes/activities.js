@@ -29,14 +29,7 @@ router.prefix('/api/activities');
 * @apiParam {Number} personNum 可参与人数
 * @apiParam {String[]} descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiParam {String} descText 活动详情文字
-* @apiParam {Object[]} enrollforms 报名自定义表单
-* @apiParam {Number} enrollforms.sequence 报名填写项目排序, 1,2,3，例如报名需要填写 姓名和手机号 则姓名项为1 手机号为2 则姓名手机号按照sequence排列
-* @apiParam {String} enrollforms.title 标题，比如姓名、手机号
-* @apiParam {Number} enrollforms.type 类型 1-单行文本 2-选择
-* @apiParam {Bool} [enrollforms.mustfill] 是否必填，true必填 false 选填,默认false
-* @apiParam {Object[]} enrollforms.options 自定义表单条目选项
-* @apiParam {Number} enrollforms.options.sequence 选项条目序号，比如1,2,3
-* @apiParam {String} enrollforms.options.title 选项标题
+* @apiParam {String} formId 报名表单ID
 * @apiParam {Number[]} [deptIds] 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
 * @apiParam {Number[]} [specialUserIds] 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
 * @apiParam {Number} latitute 地址经度
@@ -69,18 +62,7 @@ router.prefix('/api/activities');
 *  distance: 100, // signType = 2 时填写
 *  contactMobile: '156xxx',
 *  contactName: '刘遵坤',
-*  enrollforms: [{
-*    sequence: 1,
-*    title: '姓名',
-*    type: 1,
-*    mustfill: true,
-*   }, {
-*    sequence: 2,
-*    title: '性别',
-*    type: 2,
-*    mustfill: false,
-*    options: ["男", "女"]
-*  }]
+*  formId: 'adasf', // 报名表单ID
 *}
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object} data 活动信息
@@ -110,17 +92,7 @@ router.post('/', async (ctx, next) => {
 		valid = false;
 	}
 	// 验证自定义表单form是否合法
-	if (!data.enrollforms) valid = false;
-	for (let form of data.enrollforms) {
-		if (!form.sequence || !form.title || !form.type) {
-			valid = false;
-			break;
-		}
-		if (form.type === 2 && (!form.options || !form.options.length)) {
-			valid = false;
-			break;
-		}
-	}
+	if (!data.formId) valid = false;
 
 	if (!valid) {
 		ctx.body = ResService.fail('参数不正确');
@@ -129,7 +101,6 @@ router.post('/', async (ctx, next) => {
 
 	const timestamp = Date.now();
 	const activityData = {
-		sequence: Number(data.sequence),
 		title: data.title,
 		type: data.type,
 		images: data.images || [],
@@ -140,7 +111,7 @@ router.post('/', async (ctx, next) => {
 		personNum: Number(data.personNum),
 		descImages: data.descImages,
 		descText: data.descText,
-		enrollforms: data.enrollforms,
+		formId: data.formId,
 		contactMobile: data.contactMobile,
 		contactName: data.contactName,
 		latitude: data.latitude,
@@ -184,12 +155,6 @@ router.post('/', async (ctx, next) => {
 
 	const activity = await Activities.create(activityData);
 
-	// 保存自定义列表
-	for (let form of data.enrollforms) {
-		form.timestamp = timestamp;
-		form.activityId = activity.id;
-		await EnrollForms.create(form);
-	}
 	// 生成审核消息
 	MessageService.sendReviewMsg(activity.id, activity);
 	ctx.body = ResService.success({ id: activity.id, title: activity.title });
@@ -293,13 +258,7 @@ router.post('/cancel', async (ctx, next) => {
 * @apiSuccess {Number} data.personNum 可参与人数
 * @apiSuccess {String[]} data.descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiSuccess {String} data.descText 活动详情文字
-* @apiSuccess {Object[]} data.enrollforms 自定义报名表单项列表
-* @apiSuccess {Number} data.enrollforms.id 报名项ID
-* @apiSuccess {Number} data.enrollforms.sequence 报名填写项目排序, 1,2,3，例如报名需要填写 姓名和手机号 则姓名项为1 手机号为2 则姓名手机号按照sequence排列
-* @apiSuccess {String} data.enrollforms.title 标题，比如姓名、手机号
-* @apiSuccess {Number} data.enrollforms.type 类型 1-单行文本 2-选择
-* @apiSuccess {Bool} data.enrollforms.mustfill 是否必填，true必填 false 选填
-* @apiSuccess {String[]} data.enrollforms.options 自定义表单条目选项,比如 ["男", "女"]
+* @apiSuccess {String} data.formId 报名表单ID
 * @apiSuccess {Number[]} data.deptIds 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
 * @apiSuccess {Number[]} data.specialUserIds 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
 * @apiSuccess {Object[]} data.depts  投票范围
@@ -374,6 +333,7 @@ router.get('/:id', async (ctx, next) => {
 * @apiSuccess {Date}  data.rows.enrollStartTime 报名开始时间 格式 2019-08-23 08:00:00
 * @apiSuccess {Date}  data.rows.enrollEndTime 报名截止时间 格式 2019-08-24 08:00:00
 * @apiSuccess {Number}  data.rows.personNum 可参与人数
+* @apiSuccess {String}  data.rows.formId 自定义表单ID
 * @apiSuccess {String[]}  data.rows.descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiSuccess {String}  data.rows.descText 活动详情文字
 * @apiSuccess {Number[]} data.rows.deptIds 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
@@ -515,6 +475,7 @@ router.get('/', async (ctx, next) => {
 * @apiSuccess {Number}  data.rows.personNum 可参与人数
 * @apiSuccess {String[]}  data.rows.descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiSuccess {String}  data.rows.descText 活动详情文字
+* @apiSuccess {String}  data.rows.formId 自定义表单ID
 * @apiSuccess {Number[]} data.rows.deptIds 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
 * @apiSuccess {Number[]} data.rows.specialUserIds 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
 * @apiSuccess {Object[]} data.rows.depts  投票范围
@@ -623,64 +584,6 @@ router.post('/top', async (ctx, next) => {
 			ctx.body = ResService.fail('设置失败');
 			next();
 		});
-});
-
-/**
-* @api {post} /api/activities/updateforms 修改报名表单
-* @apiName activities-modify-enrollforms
-* @apiGroup 活动管理
-* @apiDescription 修改报名表单
-* @apiHeader {String} authorization 登录token
-* @apiParam {Number} activityId 活动ID
-* @apiParam {Object[]} enrollforms 报名自定义表单
-* @apiParam {Number} enrollforms.sequence 报名填写项目排序, 1,2,3，例如报名需要填写 姓名和手机号 则姓名项为1 手机号为2 则姓名手机号按照sequence排列
-* @apiParam {String} enrollforms.title 标题，比如姓名、手机号
-* @apiParam {Number} enrollforms.type 类型 1-单行文本 2-选择
-* @apiParam {Bool} [enrollforms.mustfill] 是否必填，true必填 false 选填,默认false
-* @apiParam {String[]} enrollforms.options 自定义表单条目选项,比如 ["男", "女"]
-* @apiSuccess {Number} errcode 成功为0
-* @apiSuccess {Object} data {}
-* @apiError {Number} errcode 失败不为0
-* @apiError {Number} errmsg 错误消息
-*/
-router.post('/updateforms', async (ctx, next) => {
-	const { activityId, enrollforms } = ctx.request.body;
-
-	let activity = await Activities.findOne({ where: { id: activityId } });
-	if (!activityId || !activity) {
-		ctx.body = ResService.fail('系统无法查询到活动');
-		return;
-	}
-	const timestamp = Date.now();
-	let valid = true;
-
-	for (let form of enrollforms) {
-		if (!form.sequence || !form.title || !form.type) {
-			valid = false;
-			break;
-		}
-		if (form.type === 2 && (!form.options || !form.options.length)) {
-			valid = false;
-			break;
-		}
-	}
-
-	if (!enrollforms || !enrollforms.length || !valid) {
-		ctx.body = ResService.fail('报名表单参数错误');
-		return;
-	}
-
-	// 保存自定义列表
-	for (let form of enrollforms) {
-		form.timestamp = timestamp;
-		form.activityId = activityId;
-		await EnrollForms.create(form);
-	}
-
-	await Activities.update({ timestamp }, { where: { id: activityId } });
-	await EnrollForms.destroy({ where: { activityId, timestamp: { [Op.ne]: timestamp } } });
-	ctx.body = ResService.success({});
-	await next();
 });
 
 module.exports = router;
