@@ -162,6 +162,156 @@ router.post('/', async (ctx, next) => {
 });
 
 /**
+* @api {post} /api/activities/update 修改活动
+* @apiName activities-update
+* @apiGroup 活动管理
+* @apiDescription 修改活动
+* @apiHeader {String} authorization 登录token
+* @apiParam {Number} id 活动ID
+* @apiParam {String} title 活动标题
+* @apiParam {Number} type 活动类型 1-常规活动 2-专项活动
+* @apiParam {String[]} images 活动图片名称表，比如 [a.jpg,b.png,c.jpg]
+* @apiParam {Date} startTime 开始时间 格式 2019-08-23 08:00:00
+* @apiParam {Date} endTime 结束时间 格式 2019-08-24 08:00:00
+* @apiParam {Date} enrollStartTime 报名开始时间 格式 2019-08-23 08:00:00
+* @apiParam {Date} enrollEndTime 报名截止时间 格式 2019-08-24 08:00:00
+* @apiParam {Number} personNum 可参与人数
+* @apiParam {String[]} descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
+* @apiParam {String} descText 活动详情文字
+* @apiParam {Number[]} [deptIds] 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
+* @apiParam {Number[]} [specialUserIds] 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
+* @apiParam {Number} latitute 地址经度
+* @apiParam {Number} longitude 地址纬度
+* @apiParam {String} address 活动地址
+* @apiParam {Boolean} [singed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到
+* @apiParam {Number} [signType] 签到方式 1-扫码签到 2-位置签到，当signed = true 时需要填写当前值
+* @apiParam {Number} [distance] 位置签到距离，单位m 当signType=2位置签到时需要填写当前值
+* @apiParam {String} contactMobile 联系人手机号
+* @apiParam {String} contactName 联系人姓名
+* @apiParamExample {json} 请求body示例
+* {
+*  id: 1,
+*  title: '上海一日游',
+*  type: 1, // 常规活动
+*  images: ['a.jpg', 'b.png', 'c.jpg'],
+*  startTime: '2019-10-23 08:00:00',
+*  startTime: '2019-10-23 18:00:00',
+*  enrollStartTime: '2019-10-01 08:00:00',
+*  enrollEndTime: '2019-10-20 18:00:00',
+*  personNum: 100,
+*  descText: '游览上海著名景点',
+*  descImages: ['d.jpg', 'e.png', 'f.jpg'],
+*  deptIds: [1,2,3],
+*  specialUserIds: ['userId1', 'userId2', 'userId3'],
+*  latitude: 223.234,
+*  longitude: 113.234,
+*  address: '上海市三门路复旦软件园',
+*  singed: true,
+*  signType: 2, // 签到方式 1-扫码签到 2-位置签到
+*  distance: 100, // signType = 2 时填写
+*  contactMobile: '156xxx',
+*  contactName: '刘遵坤',
+*}
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 活动信息
+* @apiSuccess {Number} data {}
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.post('/update', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let role = await Roles.findOne({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
+	if (!role) {
+		ctx.body = ResService.fail('您不是管理员，无权创建活动');
+		return;
+	}
+	const data = ctx.request.body;
+	let activity = Activities.findOne({ where: { id: data.id } });
+	if (!data.id || !activity) {
+		ctx.body = ResService.fail('系统中无当前活动');
+		return;
+	}
+
+	const dataKey = new Set(Object.keys(data));
+	let valid = true; // 传参是否正确
+
+	[ 'tite', 'type', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
+		'personNum', 'latitude', 'longitude', 'address', 'contactMobile', 'contactName' ].map(key => {
+		if (!dataKey.has(key) || !data[key]) {
+			valid = false;
+		}
+	});
+	// 签到参数鉴别是否合法
+	if (data.signed && (!data.signType || ((data.signed === 2 && !data.distance)))) {
+		valid = false;
+	}
+
+	if (!valid) {
+		ctx.body = ResService.fail('参数不正确');
+		return;
+	}
+
+	const timestamp = Date.now();
+	const activityData = {
+		title: data.title,
+		type: data.type,
+		images: data.images || [],
+		startTime: new Date(data.startTime),
+		endTime: new Date(data.endTime),
+		enrollStartTime: new Date(data.enrollStartTime),
+		enrollEndTime: new Date(data.enrollEndTime),
+		personNum: Number(data.personNum),
+		descImages: data.descImages,
+		descText: data.descText,
+		contactMobile: data.contactMobile,
+		contactName: data.contactName,
+		latitude: data.latitude,
+		longitude: data.longitude,
+		address: data.address,
+		signed: !!data.signed,
+		signType: data.signed ? Number(data.signType) : null,
+		distance: Number(data.signType) === 2 ? Number(data.distance) : null,
+		userId: user.userId,
+		userName: user.userName,
+		mobile: user.mobile,
+		role: user.role,
+		timestamp,
+		reviewStatus: 0,
+		cancel: false
+	};
+
+	const deptIds = [];
+	const depts = [];
+	if (data.deptIds && data.deptIds.length) {
+		for (let deptId of data.deptIds) {
+			const dept = await deptStaffService.getDeptInfo(deptId);
+			depts.push({ deptId, deptName: dept.deptName });
+			deptIds.push(deptId);
+		}
+	}
+
+	const specialUserIds = [];
+	const specialUsers = [];
+	if (data.specialUserIds && data.specialUserIds.length) {
+		for (let userId of data.specialUserIds) {
+			let staff = await deptStaffService.getStaff(userId);
+			specialUsers.push({ userId, userName: staff.userName });
+			specialUserIds.push(userId);
+		}
+	}
+	activityData.deptIds = deptIds;
+	activityData.depts = depts;
+	activityData.specialUserIds = specialUserIds;
+	activityData.specialUsers = specialUsers;
+	await Activities.update(activityData, { where: { id: data.id } });
+
+	// 生成审核消息
+	MessageService.sendReviewMsg(activity.id, activity);
+	ctx.body = ResService.success({ });
+	await next();
+});
+
+/**
 * @api {post} /api/activities/review 审核活动
 * @apiName activities-review
 * @apiGroup 活动管理

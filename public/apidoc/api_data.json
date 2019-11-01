@@ -3178,6 +3178,230 @@
     "groupTitle": "活动管理"
   },
   {
+    "type": "post",
+    "url": "/api/activities/update",
+    "title": "修改活动",
+    "name": "activities_update",
+    "group": "活动管理",
+    "description": "<p>修改活动</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>活动ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "title",
+            "description": "<p>活动标题</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "type",
+            "description": "<p>活动类型 1-常规活动 2-专项活动</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String[]",
+            "optional": false,
+            "field": "images",
+            "description": "<p>活动图片名称表，比如 [a.jpg,b.png,c.jpg]</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "optional": false,
+            "field": "startTime",
+            "description": "<p>开始时间 格式 2019-08-23 08:00:00</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "optional": false,
+            "field": "endTime",
+            "description": "<p>结束时间 格式 2019-08-24 08:00:00</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "optional": false,
+            "field": "enrollStartTime",
+            "description": "<p>报名开始时间 格式 2019-08-23 08:00:00</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "optional": false,
+            "field": "enrollEndTime",
+            "description": "<p>报名截止时间 格式 2019-08-24 08:00:00</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "personNum",
+            "description": "<p>可参与人数</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String[]",
+            "optional": false,
+            "field": "descImages",
+            "description": "<p>活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "descText",
+            "description": "<p>活动详情文字</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number[]",
+            "optional": true,
+            "field": "deptIds",
+            "description": "<p>参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number[]",
+            "optional": true,
+            "field": "specialUserIds",
+            "description": "<p>特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "latitute",
+            "description": "<p>地址经度</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>地址纬度</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "address",
+            "description": "<p>活动地址</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "singed",
+            "description": "<p>是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "signType",
+            "description": "<p>签到方式 1-扫码签到 2-位置签到，当signed = true 时需要填写当前值</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "distance",
+            "description": "<p>位置签到距离，单位m 当signType=2位置签到时需要填写当前值</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "contactMobile",
+            "description": "<p>联系人手机号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "contactName",
+            "description": "<p>联系人姓名</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求body示例",
+          "content": "{\n id: 1,\n title: '上海一日游',\n type: 1, // 常规活动\n images: ['a.jpg', 'b.png', 'c.jpg'],\n startTime: '2019-10-23 08:00:00',\n startTime: '2019-10-23 18:00:00',\n enrollStartTime: '2019-10-01 08:00:00',\n enrollEndTime: '2019-10-20 18:00:00',\n personNum: 100,\n descText: '游览上海著名景点',\n descImages: ['d.jpg', 'e.png', 'f.jpg'],\n deptIds: [1,2,3],\n specialUserIds: ['userId1', 'userId2', 'userId3'],\n latitude: 223.234,\n longitude: 113.234,\n address: '上海市三门路复旦软件园',\n singed: true,\n signType: 2, // 签到方式 1-扫码签到 2-位置签到\n distance: 100, // signType = 2 时填写\n contactMobile: '156xxx',\n contactName: '刘遵坤',\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>活动信息</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
     "type": "get",
     "url": "/api/auth/jsconfig",
     "title": "系统配置",
