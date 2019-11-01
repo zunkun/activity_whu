@@ -6,7 +6,6 @@ class Roles extends Model {}
 Roles.init({
 	userId: {
 		type: DataTypes.STRING,
-		unique: true,
 		comment: '钉钉用户userId'
 	}, // 钉钉用户userId
 	userName: {
