@@ -1,4 +1,6 @@
 const should = require('should');
+let activityId;
+let activity;
 
 describe('/api/activities', () => {
 	it('创建投票问卷 单选 POST /api/activities', (done) => {
@@ -32,8 +34,98 @@ describe('/api/activities', () => {
 				console.log({ err });
 				should.not.exist(err);
 				let resData = res.body;
-				console.log(resData);
+				should.equal(resData.errcode, 0);
 
+				activityId = resData.data.id;
+				done();
+			});
+	});
+
+	it('查询activity info GET /api/activities/:id', (done) => {
+		process.request
+			.get('/api/activities/' + activityId)
+			.set('Authorization', process.token)
+			.expect(200)
+			.end((err, res) => {
+				should.not.exist(err);
+				let resData = res.body;
+				should.equal(resData.errcode, 0);
+				activity = resData.data;
+				done();
+			});
+	});
+
+	it('发送审批 POST /api/activities/sendreview', (done) => {
+		process.request
+			.post('/api/activities/sendreview')
+			.set('Authorization', process.token)
+			.send({ activityId })
+			.expect(200)
+			.end((err, res) => {
+				should.not.exist(err);
+				let resData = res.body;
+				should.equal(resData.errcode, 0);
+				console.log(resData);
+				done();
+			});
+	});
+
+	it('审批 POST /api/activities/review', (done) => {
+		process.request
+			.post('/api/activities/review')
+			.set('Authorization', process.token)
+			.send({ activityId, reviewStatus: 30 })
+			.expect(200)
+			.end((err, res) => {
+				should.not.exist(err);
+				let resData = res.body;
+				console.log(resData);
+				should.equal(resData.errcode, 0);
+				done();
+			});
+	});
+
+	it('获取活动列表PC GET /api/activities?limit=&page=&keywords=&status=&type=', (done) => {
+		process.request
+			.get('/api/activities?limit=&page=&keywords=&status=&type=')
+			.set('Authorization', process.token)
+			.expect(200)
+			.end((err, res) => {
+				should.not.exist(err);
+				let resData = res.body;
+				should.equal(resData.errcode, 0);
+				should.exist(resData.data, 'count');
+				should.exist(resData.data, 'rows');
+				done();
+			});
+	});
+
+	it('我可以参与的活动列表 GET /api/activities/lists?limit=&page=&status=&type=', (done) => {
+		process.request
+			.get('/api/activities/lists?limit=&page=&status=&type=')
+			.set('Authorization', process.token)
+			.expect(200)
+			.end((err, res) => {
+				should.not.exist(err);
+				let resData = res.body;
+				should.equal(resData.errcode, 0);
+				should.exist(resData.data, 'count');
+				should.exist(resData.data, 'rows');
+				done();
+			});
+	});
+
+	it('置顶 POST /api/activities/top', (done) => {
+		process.request
+			.post('/api/activities/top')
+			.set('Authorization', process.token)
+			.send({ top: true, activityIds: [ activityId ] })
+			.expect(200)
+			.end((err, res) => {
+				should.not.exist(err);
+				let resData = res.body;
+				console.log({ resData });
+				should.equal(resData.errcode, 0);
 				done();
 			});
 	});

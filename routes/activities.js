@@ -423,6 +423,117 @@ router.post('/cancel', async (ctx, next) => {
 });
 
 /**
+* @api {get} /api/activities/lists?limit=&page=&status=&type= 我可以参与的活动列表
+* @apiName activities-lists
+* @apiGroup 活动管理
+* @apiDescription 活动列表，目前是移动端管理活动列表
+* @apiHeader {String} authorization 登录token
+* @apiParam {Number} [limit] 分页条数，默认10
+* @apiParam {Number} [page] 第几页，默认1
+* @apiParam {Number} [status] 活动状态， 31-预热中 32-报名中 33-进行中 34-已结束 默认为0 表示查询全部状态
+* @apiParam {String} [type] 活动类型 1-常规活动 2-专项活动，默认为1
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 活动列表
+* @apiParam {Number} id 活动ID
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 返回结果
+* @apiSuccess {Number} data.count 总共活动条数
+* @apiSuccess {Object[]} data.rows 当前页活动列表
+* @apiSuccess {Number}  data.rows.id 活动ID
+* @apiSuccess {String}  data.rows.title 活动标题
+* @apiSuccess {Number}  data.rows.type 活动类型 1-常规活动 2-专项活动
+* @apiSuccess {String[]}  data.rows.images 活动图片名称表，比如 [a.jpg,b.png,c.jpg]
+* @apiSuccess {Date}  data.rows.startTime 开始时间 格式 2019-08-23 08:00:00
+* @apiSuccess {Date}  data.rows.endTime 结束时间 格式 2019-08-24 08:00:00
+* @apiSuccess {Date}  data.rows.enrollStartTime 报名开始时间 格式 2019-08-23 08:00:00
+* @apiSuccess {Date}  data.rows.enrollEndTime 报名截止时间 格式 2019-08-24 08:00:00
+* @apiSuccess {Number}  data.rows.personNum 可参与人数
+* @apiSuccess {String[]}  data.rows.descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
+* @apiSuccess {String}  data.rows.descText 活动详情文字
+* @apiSuccess {Number[]} data.rows.deptIds 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
+* @apiSuccess {Number[]} data.rows.specialUserIds 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
+* @apiSuccess {Object[]} data.rows.depts  投票范围
+* @apiSuccess {String} data.rows.depts.deptId  部门id
+* @apiSuccess {String} data.rows.depts.deptName 部门名称
+* @apiSuccess {Object[]} data.rows.specialUsers  特殊选择参与人员
+* @apiSuccess {String} data.rows.specialUsers.userId  特殊选择参与人员userId
+* @apiSuccess {String} data.rows.specialUsers.userName  特殊选择参与人员userName
+* @apiSuccess {Number} data.rows.latitude 活动经度
+* @apiSuccess {Number} data.rows.longitude 活动纬度
+* @apiSuccess {String} data.rows.address 活动地址
+* @apiSuccess {Boolean} data.rows.singed 是否需要签到 true 需要签到 false 不需要签到
+* @apiSuccess {Number} data.rows.signType 签到方式 1-扫码签到 2-位置签到
+* @apiSuccess {Number} data.rows.distance 位置签到距离，单位m 当signType=2位置签到时有此值
+* @apiSuccess {String} data.rows.contactMobile 联系人手机号
+* @apiSuccess {String} data.rows.contactName 联系人姓名
+* @apiSuccess {String} data.rows.top 是否置顶 true置顶 false不置顶
+* @apiSuccess {String} data.rows.userId 发起人userId
+* @apiSuccess {String} data.rows.userName 发起人userName
+* @apiSuccess {String} data.rows.mobile 发起人手机号
+* @apiSuccess {String} data.rows.role 发起人身份
+* @apiSuccess {String} data.rows.reviewerUserId 审核人userId
+* @apiSuccess {String} data.rows.reviewerUserName 审核人userName
+* @apiSuccess {String} data.rows.reviewerMobile 审核人手机号
+* @apiSuccess {String} data.rows.reviewerRole 审核人身份
+* @apiSuccess {String} data.rows.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
+* @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
+* @apiSuccess {String} data.rows.createdAt 创建时间
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.get('/lists', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let query = ctx.query;
+	let page = Number(query.page) || 1;
+	let limit = Number(query.limit) || 10;
+	let offset = (page - 1) * limit;
+	let currentTime = new Date();
+
+	const where = { cancel: false, type: Number(query.type) || 1 };
+
+	// 我所在部门
+	let deptIds = [];
+	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+	for (let deptStaff of deptStaffs) {
+		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
+		deptIds = deptIds.concat(dept.deptPaths);
+	}
+	deptIds = Array.from(new Set(deptIds));
+	if (!where[Op.or]) where[Op.or] = [];
+	where[Op.or].push({ deptIds: { [Op.overlap]: deptIds } });
+	where[Op.or].push({ specialUserIds: { [Op.contains]: [ user.userId ] } });
+
+	// 活动状态
+	let status = Number(query.status) || 0;
+	switch (status) {
+	case 31: // 预热中
+		where.reviewStatus = 30;
+		where.enrollStartTime = { [Op.gt]: currentTime };
+		break;
+	case 32: // 报名中
+		where.reviewStatus = 30;
+		where.enrollStartTime = { [Op.lte]: currentTime };
+		where.enrollEndTime = { [Op.gte]: currentTime };
+		break;
+	case 33: // 进行中
+		where.reviewStatus = 30;
+		where.startTime = { [Op.lte]: currentTime };
+		where.endTime = { [Op.gte]: currentTime };
+		break;
+	case 34: // 已结束
+		where.reviewStatus = 30;
+		where.endTime = { [Op.lt]: currentTime };
+		break;
+	default:
+		where.reviewStatus = 30;
+		break;
+	}
+	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
+
+	ctx.body = ResService.success(res);
+});
+
+/**
 * @api {get} /api/activities/:id 活动详情
 * @apiName activities-detail
 * @apiGroup 活动管理
@@ -626,118 +737,6 @@ router.get('/', async (ctx, next) => {
 	}
 
 	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
-	ctx.body = ResService.success(res);
-	await next();
-});
-
-/**
-* @api {get} /api/activities/lists?limit=&page=&status=&type= 我可以参与的活动列表
-* @apiName activities-lists
-* @apiGroup 活动管理
-* @apiDescription 活动列表，目前是移动端管理活动列表
-* @apiHeader {String} authorization 登录token
-* @apiParam {Number} [limit] 分页条数，默认10
-* @apiParam {Number} [page] 第几页，默认1
-* @apiParam {Number} [status] 活动状态， 31-预热中 32-报名中 33-进行中 34-已结束 默认为0 表示查询全部状态
-* @apiParam {String} [type] 活动类型 1-常规活动 2-专项活动，默认为1
-* @apiSuccess {Number} errcode 成功为0
-* @apiSuccess {Object} data 活动列表
-* @apiParam {Number} id 活动ID
-* @apiSuccess {Number} errcode 成功为0
-* @apiSuccess {Object} data 返回结果
-* @apiSuccess {Number} data.count 总共活动条数
-* @apiSuccess {Object[]} data.rows 当前页活动列表
-* @apiSuccess {Number}  data.rows.id 活动ID
-* @apiSuccess {String}  data.rows.title 活动标题
-* @apiSuccess {Number}  data.rows.type 活动类型 1-常规活动 2-专项活动
-* @apiSuccess {String[]}  data.rows.images 活动图片名称表，比如 [a.jpg,b.png,c.jpg]
-* @apiSuccess {Date}  data.rows.startTime 开始时间 格式 2019-08-23 08:00:00
-* @apiSuccess {Date}  data.rows.endTime 结束时间 格式 2019-08-24 08:00:00
-* @apiSuccess {Date}  data.rows.enrollStartTime 报名开始时间 格式 2019-08-23 08:00:00
-* @apiSuccess {Date}  data.rows.enrollEndTime 报名截止时间 格式 2019-08-24 08:00:00
-* @apiSuccess {Number}  data.rows.personNum 可参与人数
-* @apiSuccess {String[]}  data.rows.descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
-* @apiSuccess {String}  data.rows.descText 活动详情文字
-* @apiSuccess {Number[]} data.rows.deptIds 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
-* @apiSuccess {Number[]} data.rows.specialUserIds 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
-* @apiSuccess {Object[]} data.rows.depts  投票范围
-* @apiSuccess {String} data.rows.depts.deptId  部门id
-* @apiSuccess {String} data.rows.depts.deptName 部门名称
-* @apiSuccess {Object[]} data.rows.specialUsers  特殊选择参与人员
-* @apiSuccess {String} data.rows.specialUsers.userId  特殊选择参与人员userId
-* @apiSuccess {String} data.rows.specialUsers.userName  特殊选择参与人员userName
-* @apiSuccess {Number} data.rows.latitude 活动经度
-* @apiSuccess {Number} data.rows.longitude 活动纬度
-* @apiSuccess {String} data.rows.address 活动地址
-* @apiSuccess {Boolean} data.rows.singed 是否需要签到 true 需要签到 false 不需要签到
-* @apiSuccess {Number} data.rows.signType 签到方式 1-扫码签到 2-位置签到
-* @apiSuccess {Number} data.rows.distance 位置签到距离，单位m 当signType=2位置签到时有此值
-* @apiSuccess {String} data.rows.contactMobile 联系人手机号
-* @apiSuccess {String} data.rows.contactName 联系人姓名
-* @apiSuccess {String} data.rows.top 是否置顶 true置顶 false不置顶
-* @apiSuccess {String} data.rows.userId 发起人userId
-* @apiSuccess {String} data.rows.userName 发起人userName
-* @apiSuccess {String} data.rows.mobile 发起人手机号
-* @apiSuccess {String} data.rows.role 发起人身份
-* @apiSuccess {String} data.rows.reviewerUserId 审核人userId
-* @apiSuccess {String} data.rows.reviewerUserName 审核人userName
-* @apiSuccess {String} data.rows.reviewerMobile 审核人手机号
-* @apiSuccess {String} data.rows.reviewerRole 审核人身份
-* @apiSuccess {String} data.rows.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
-* @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
-* @apiSuccess {String} data.rows.createdAt 创建时间
-* @apiError {Number} errcode 失败不为0
-* @apiError {Number} errmsg 错误消息
-*/
-router.get('/lists', async (ctx, next) => {
-	let user = jwt.decode(ctx.header.authorization.substr(7));
-	let query = ctx.query;
-	let page = Number(query.page) || 1;
-	let limit = Number(query.limit) || 10;
-	let offset = (page - 1) * limit;
-	let currentTime = new Date();
-
-	const where = { cancel: false, type: Number(query.type) || 1 };
-
-	// 我所在部门
-	let deptIds = [];
-	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
-	for (let deptStaff of deptStaffs) {
-		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
-		deptIds = deptIds.concat(dept.deptPaths);
-	}
-	deptIds = Array.from(new Set(deptIds));
-	if (!where[Op.or]) where[Op.or] = [];
-	where[Op.or].push({ deptIds: { [Op.overlap]: deptIds } });
-	where[Op.or].push({ specialUserIds: { [Op.contains]: [ user.userId ] } });
-
-	// 活动状态
-	let status = Number(query.status) || 0;
-	switch (status) {
-	case 31: // 预热中
-		where.reviewStatus = 30;
-		where.enrollStartTime = { [Op.gt]: currentTime };
-		break;
-	case 32: // 报名中
-		where.reviewStatus = 30;
-		where.enrollStartTime = { [Op.lte]: currentTime };
-		where.enrollEndTime = { [Op.gte]: currentTime };
-		break;
-	case 33: // 进行中
-		where.reviewStatus = 30;
-		where.startTime = { [Op.lte]: currentTime };
-		where.endTime = { [Op.gte]: currentTime };
-		break;
-	case 34: // 已结束
-		where.reviewStatus = 30;
-		where.endTime = { [Op.lt]: currentTime };
-		break;
-	default:
-		where.reviewStatus = 30;
-		break;
-	}
-	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
-
 	ctx.body = ResService.success(res);
 	await next();
 });
