@@ -736,6 +736,8 @@ router.get('/', async (ctx, next) => {
 		}
 	}
 
+	if (where[Op.or] && !where[Op.or].length) delete where[Op.or];
+
 	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
 	ctx.body = ResService.success(res);
 	await next();
