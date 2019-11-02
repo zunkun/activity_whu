@@ -314,7 +314,7 @@ router.post('/sendreview', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	const data = ctx.request.body;
 	const { activityId } = data;
-	let activity = Activities.findOne({ where: { id: activityId } });
+	let activity = await Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统中无当前活动');
 		return;
