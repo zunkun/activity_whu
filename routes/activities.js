@@ -31,7 +31,7 @@ router.prefix('/api/activities');
 * @apiParam {String} descText 活动详情文字
 * @apiParam {Number[]} [deptIds] 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
 * @apiParam {Number[]} [specialUserIds] 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
-* @apiParam {Number} latitute 地址经度
+* @apiParam {Number} latitude 地址经度
 * @apiParam {Number} longitude 地址纬度
 * @apiParam {String} address 活动地址
 * @apiParam {Boolean} [singed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到
@@ -173,7 +173,7 @@ router.post('/', async (ctx, next) => {
 * @apiParam {String} descText 活动详情文字
 * @apiParam {Number[]} [deptIds] 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
 * @apiParam {Number[]} [specialUserIds] 特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息
-* @apiParam {Number} latitute 地址经度
+* @apiParam {Number} latitude 地址经度
 * @apiParam {Number} longitude 地址纬度
 * @apiParam {String} address 活动地址
 * @apiParam {Boolean} [singed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到

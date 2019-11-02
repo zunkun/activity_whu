@@ -1419,7 +1419,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "Number",
             "optional": false,
-            "field": "latitute",
+            "field": "latitude",
             "description": "<p>地址经度</p>"
           },
           {
@@ -3064,7 +3064,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "Number",
             "optional": false,
-            "field": "latitute",
+            "field": "latitude",
             "description": "<p>地址经度</p>"
           },
           {

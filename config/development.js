@@ -1,5 +1,5 @@
 module.exports = {
-	PORT: 3020,
+	PORT: 3029,
 	postgres: {
 		host: '10.113.6.11',
 		port: 5432,

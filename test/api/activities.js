@@ -6,26 +6,26 @@ describe('/api/activities', () => {
 			.post('/api/activities')
 			.set('Authorization', process.token)
 			.send({
-				title: '上海一日游',
-				type: 1, // 常规活动
-				images: [ 'a.jpg', 'b.png', 'c.jpg' ],
-				startTime: '2019-10-23 08:00:00',
-				endTime: '2019-10-23 18:00:00',
-				enrollStartTime: '2019-10-01 08:00:00',
-				enrollEndTime: '2019-10-20 18:00:00',
-				personNum: 100,
-				descText: '游览上海著名景点',
-				descImages: [ 'd.jpg', 'e.png', 'f.jpg' ],
-				deptIds: [ 1, 2, 3 ],
-				specialUserIds: [ 'userId1', 'userId2', 'userId3' ],
-				latitude: 223.234,
-				longitude: 113.234,
-				address: '上海市三门路复旦软件园',
-				singed: true,
-				signType: 2, // 签到方式 1-扫码签到 2-位置签到
-				distance: 100, // signType = 2 时填写
-				contactMobile: '156xxx',
-				contactName: '刘遵坤'
+				'title': '1121',
+				'type': 2,
+				'images': [ '1572679883530.jpg' ],
+				'startTime': '2019-11-01 00:00:00',
+				'endTime': '2019-11-30 23:59:59',
+				'enrollStartTime': '2019-11-13 00:00:00',
+				'enrollEndTime': '2019-11-14 23:59:59',
+				'personNum': 1,
+				'descText': '<p><span style="text-decoration-line: line-through;">ass</span></p>',
+				'descImages': [ '1572679901842.jpg' ],
+				'deptIds': [ 50227621, 118420221 ],
+				'specialUserIds': [ '103010923705510' ],
+				'latitude': 30.55346,
+				'longitude': 114.353478,
+				'address': '武汉大学中南医院',
+				'singed': true,
+				'signType': 2,
+				'distance': 30,
+				'contactName': 'as',
+				'contactMobile': '159'
 			})
 			.expect(200)
 			.end((err, res) => {
