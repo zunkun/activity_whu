@@ -4,10 +4,6 @@ const { DataTypes, Model } = require('sequelize');
 // 报名表单填写条目
 class EnrollFields extends Model {}
 EnrollFields.init({
-	formSequence: {
-		type: DataTypes.INTEGER,
-		comment: '填写表单排序'
-	},
 	sequence: {
 		type: DataTypes.INTEGER,
 		comment: '组件排序'
@@ -32,6 +28,9 @@ EnrollFields.init({
 		type: DataTypes.INTEGER,
 		comment: '组件ID'
 	},
+	activityId: { type: DataTypes.INTEGER, comment: 'activity id' },
+	enrollId: { type: DataTypes.INTEGER, comment: 'enroll id' },
+	enrollpersonId: { type: DataTypes.INTEGER, comment: 'enrollperson id' },
 	timestamp: {
 		type: DataTypes.BIGINT,
 		comment: '数据流水'

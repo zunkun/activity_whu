@@ -1,8 +1,8 @@
 const Enrolls = require('../models/Enrolls');
-const EnrollForms = require('../models/EnrollForms');
-const UserItems = require('../models/UserItems');
 const Activities = require('../models/Activities');
-const _ = require('lodash');
+const DingStaffs = require('../models/DingStaffs');
+const EnrollPersons = require('../models/EnrollPersons');
+const EnrollFields = require('../models/EnrollFields');
 
 class EnrollService {
 	/**
@@ -15,40 +15,33 @@ class EnrollService {
 	static async getMyEnrolls (activityId, userId) {
 		activityId = Number(activityId);
 		let activity = await Activities.findOne({ where: { id: activityId } });
-		let enroll = await Enrolls.findOne({ activityId, userId, status: 1 });
-		if (!activityId || !activity || !enroll) {
-			return [];
+		if (!activityId || !activity) {
+			return Promise.reject('系统无当前活动');
 		}
-		let enrollforms = await EnrollForms.findAll({ where: { activityId: activity.id, timestamp: activity.timestamp } });
-		let formMap = new Map();
-		for (let form of enrollforms) {
-			form = form.toJSON();
-			formMap.set(form.id, form);
+		let user = await DingStaffs.findOne({ where: { userId } });
+		let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
+		if (!enroll) {
+			return Promise.reject('您尚未报名该活动');
 		}
-		const userRes = [];
-		let useritems = await UserItems.findAll({ where: { activityId, enrollformId: enroll } });
-		const itemMap = {};
-		// 人员信息归类
-		for (let item of useritems) {
-			let form = formMap.get(item.enrollformId);
-			if (!itemMap[item.userSequence]) itemMap[item.userSequence] = [];
-			itemMap[item.userSequence].push({
-				id: item.enrollformId,
-				title: form.title,
-				type: form.type,
-				options: form.options,
-				mustfill: form.mustfill,
-				sequence: form.sequence,
-				text: item.text,
-				checked: item.checked
-			});
+		let persons = [];
+		let enrollpersons = await EnrollPersons.findAll({ where: { enrollId: enroll.id, timestamp: enroll.timestamp }, order: [ [ 'sequence', 'ASC' ] ] });
+
+		for (let enrollperson of enrollpersons) {
+			let person = [];
+			let enrollfields = await EnrollFields.findAll({ where: { enrollpersonId: enrollperson.id }, order: [ [ 'sequence', 'ASC' ] ] });
+			for (let field of enrollfields) {
+				person.push({
+					sequence: field.sequence,
+					componentName: field.componentName,
+					componentType: field.componentType,
+					componentSet: field.componentSet,
+					attribute: field.attribute
+				});
+			}
+
+			persons.push(person);
 		}
-		// 排序
-		for (let userSequence in itemMap) {
-			let userenroll = _.orderBy(itemMap[userSequence], [ 'sequence', 'asc' ]);
-			userRes.push(userenroll);
-		}
-		return userRes;
+		return persons;
 	}
 }
 

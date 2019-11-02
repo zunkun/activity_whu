@@ -3,12 +3,13 @@ const ResService = require('../core/ResService');
 const Router = require('koa-router');
 const router = new Router();
 const Activities = require('../models/Activities');
-const EnrollFields = require('../models/EnrollFields');
 const Enrolls = require('../models/Enrolls');
+const EnrollPersons = require('../models/EnrollPersons');
+const EnrollFields = require('../models/EnrollFields');
 const { Op } = require('sequelize');
 const DingStaffs = require('../models/DingStaffs');
 const StaffSigns = require('../models/StaffSigns');
-// const EnrollService = require('../services/EnrollService');
+const EnrollService = require('../services/EnrollService');
 const util = require('../core/util');
 
 router.prefix('/api/participate');
@@ -151,7 +152,7 @@ router.post('/enroll', async (ctx, next) => {
 		ctx.body = ResService.fail('当前活动已经取消');
 		return;
 	}
-	if (activity.reviewStatus !== 1) {
+	if (activity.reviewStatus !== 30) {
 		ctx.body = ResService.fail('当前活动未审核通过');
 		return;
 	}
@@ -172,7 +173,14 @@ router.post('/enroll', async (ctx, next) => {
 
 	// 验证报名信息是否合法
 	let valid = true;
+	if (!Array.isArray(formlists)) {
+		valid = false;
+	}
 	for (let forms of formlists) {
+		if (!Array.isArray(forms)) {
+			valid = false;
+			break;
+		}
 		for (let form of forms) {
 			[ 'componentName', 'componentType', 'componentSet', 'attribute' ].map(key => {
 				if (!form[key]) valid = false;
@@ -201,83 +209,65 @@ router.post('/enroll', async (ctx, next) => {
 		await Enrolls.update({ timestamp }, { where: { id: enroll.id } });
 	}
 
-	for (let forms of formlists) {
-		for (let i = 0, len = forms.length; i < len; i++) {
+	for (let i = 0, len = formlists.length; i < len; i++) {
+		let forms = formlists[i];
+		let enrollperson = await EnrollPersons.create({
+			activityId,
+			enrollId: enroll.id,
+			sequence: i + 1,
+			timestamp
+		});
+		for (let j = 0, len2 = forms.length; j < len2; j++) {
 			let form = forms[i];
 			await EnrollFields.create({
-				userId: user.userId,
-				userName: user.userName,
-				sequence: i + 1,
+				sequence: j + 1,
 				componentName: form.componentName,
 				componentType: form.componentType,
 				componentSet: form.componentSet,
 				attribute: form.attribute,
-				timestamp,
 				activityId,
-				enrollId: enroll.id
+				enrollId: enroll.id,
+				enrollpersonId: enrollperson.id,
+				timestamp
 			});
 		}
 	}
 
-	await EnrollFields.destroy({ enrollId: enroll.id, activityId, userId: user.userId, timestamp: { [Op.ne]: timestamp } });
+	await EnrollPersons.destroy({ where: { enrollId: enroll.id, timestamp: { [Op.ne]: timestamp } } });
+	await EnrollFields.destroy({ where: { enrollId: enroll.id, activityId, timestamp: { [Op.ne]: timestamp } } });
 
 	ctx.body = ResService.success({});
 	await next();
 });
 
 /**
-* @api {get} /api/participate/myenroll?activityId= 我的报名【开发中】
+* @api {get} /api/participate/myenroll?activityId= 我的报名信息
 * @apiName participate-enroll-myenroll
 * @apiGroup 活动参与
 * @apiDescription 我的报名，查看当前活动中我的报名
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
-* @apiSuccess {Object[]} data 报名列表
-* @apiSuccess {Number} data.id
-* @apiSuccess {Array[]} data.useritems 报名列表，即家属信息列表，此字段为二维数组
-* @apiSuccess {Number} data.useritems.sequence 填写项排序
-* @apiSuccess {Number} data.useritems.id 填写项ID
-* @apiSuccess {String} data.useritems.title 填写项名称
-* @apiSuccess {type} data.useritems.type 填写方式 1-文本 2-选择
-* @apiSuccess {String[]} data.useritems.options 选项数组
-* @apiSuccess {Boolean} data.useritems.mustfill 是否必填
-* @apiSuccess {String} data.useritems.text 文本填写内容
-* @apiSuccess {String} data.useritems.checked 选项为选择是选择内容
+* @apiSuccess {Array[]} data 报名列表，即家属信息列表，此字段为二维数组
+* @apiSuccess {Number} data.sequence 填写项排序
+* @apiSuccess {Number} data.id 填写项ID
+* @apiSuccess {String} data.componentName 组件名称
+* @apiSuccess {String} data.componentType 组件类型
+* @apiSuccess {String} data.componentSet 组件属性设置类型
+* @apiSuccess {Object} data.attribute 组件属性
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
-* @apiSuccessExample 成功信息示例
-{
-  activityId: 1000, // 活动ID
-	useritems: [
-		[ // 填写的第一个人 index=0
-      {sequence: 1, id: 1, title: '姓名', type: 1, mustfill:true, text: '张三'},
-      {sequence: 2, id: 3, title: '电话', type: 1, mustfill: false, text: '15618871296'}, // 电话
-    ],
-    [ // 填写的第二个人 index=1
-      {sequence: 1, id: 1, title: '姓名', type: 1, mustfill:true, text: '李四'},
-      {sequence: 2, id: 3, title: '性别', type: 2, options: ["男", "女"] mustfill:false, checked: "男"}, // 电话，非必填
-    ]
-  ]
-}
 */
 router.get('/myenroll', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	let { activityId } = ctx.query;
-	activityId = Number(activityId);
-	let activity = await Activities.findOne({ where: { id: activityId } });
-	if (!activityId || !activity) {
-		ctx.body = ResService.fail('系统无当前活动');
-		return;
+	try {
+		let persons = await EnrollService.getMyEnrolls(activityId, user.userId);
+		ctx.body = ResService.success(persons);
+		await next();
+	} catch (error) {
+		ctx.body = ResService.fail(error);
+		await next();
 	}
-	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
-	if (!enroll) {
-		ctx.body = ResService.fail('您尚未报名该活动');
-		return;
-	}
-	let useritems = [];
-	// await EnrollService.getMyEnrolls(activityId, user.userId);
-	ctx.body = ResService.success({ activityId, useritems });
-	await next();
 });
 
 /**
@@ -374,7 +364,7 @@ router.get('/persons', async (ctx, next) => {
 	const { activityId } = ctx.query;
 	const activity = await Activities.findOne({ id: activityId });
 	if (!activityId || !activity) {
-		ctx.body = ResService.fail('参数错误');
+		ctx.body = ResService.fail('系统无当前活动');
 		return;
 	}
 	let enrolls = await Enrolls.findAll({ activityId, status: 1 });
@@ -393,7 +383,7 @@ router.get('/persons', async (ctx, next) => {
 });
 
 /**
-* @api {get} /api/participate/enrollpersons?activityId=&limit=&page=&keywords= PC端已报名人员列表【开发中】
+* @api {get} /api/participate/enrollpersons?activityId=&limit=&page=&keywords= PC端已报名人员列表
 * @apiName participate-enrollpersons
 * @apiGroup 活动参与
 * @apiDescription PC端已报名人员列表
@@ -412,16 +402,13 @@ router.get('/persons', async (ctx, next) => {
 * @apiSuccess {String} data.signTime 签到时间
 * @apiSuccess {Number} data.signType 签到方式 1-扫码 2-位置
 * @apiSuccess {Boolean} data.hasfamilies 是否有家属
-* @apiSuccess {Array[]} data.useritems 家属信息列表，此字段为二维数组
-* @apiSuccess {Array[]} data.useritems 家属信息列表，此字段为二维数组
-* @apiSuccess {Number} data.useritems.sequence 填写项排序
-* @apiSuccess {Number} data.useritems.id 填写项ID
-* @apiSuccess {String} data.useritems.title 填写项名称
-* @apiSuccess {type} data.useritems.type 填写方式 1-文本 2-选择
-* @apiSuccess {String[]} data.useritems.options 选项数组
-* @apiSuccess {Boolean} data.useritems.mustfill 是否必填
-* @apiSuccess {String} data.useritems.text 文本填写内容
-* @apiSuccess {String} data.useritems.checked 选项为选择是选择内容
+* @apiSuccess {Array[]} data.enrollpersons 报名列表，即家属信息列表，此字段为二维数组
+* @apiSuccess {Number} data.enrollpersons.sequence 填写项排序
+* @apiSuccess {Number} data.enrollpersons.id 填写项ID
+* @apiSuccess {String} data.enrollpersons.componentName 组件名称
+* @apiSuccess {String} data.enrollpersons.componentType 组件类型
+* @apiSuccess {String} data.enrollpersons.componentSet 组件属性设置类型
+* @apiSuccess {Object} data.enrollpersons.attribute 组件属性
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -432,6 +419,11 @@ router.get('/enrollpersons', async (ctx, next) => {
 	let offset = (page - 1) * limit;
 	let activityId = Number(query.activityId);
 	let where = {};
+	const activity = await Activities.findOne({ id: activityId });
+	if (!activityId || !activity) {
+		ctx.body = ResService.fail('系统无当前活动');
+		return;
+	}
 	if (query.keywords) {
 		where.userName = { [Op.like]: `%${query.keywords}%` };
 		where.mobile = { [Op.like]: `%${query.keywords}%` };
@@ -442,8 +434,7 @@ router.get('/enrollpersons', async (ctx, next) => {
 	for (let enroll of enrollRes.rows) {
 		let staff = await DingStaffs.findOne({ where: { userId: enroll.userId } });
 		let staffsign = await StaffSigns.findOne({ where: { activityId, userId: enroll.userId } });
-		let useritems = [];
-		// await EnrollService.getMyEnrolls(activityId, enroll.userId);
+		let enrollpersons = await EnrollService.getMyEnrolls(activityId, enroll.userId);
 
 		let enrollstaff = {
 			userId: enroll.userId,
@@ -452,8 +443,8 @@ router.get('/enrollpersons', async (ctx, next) => {
 			idcard: staff.idcard,
 			enrollTime: enroll.createdAt,
 			signed: false,
-			hasfamilies: useritems.length > 0,
-			useritems
+			hasfamilies: enrollpersons.length > 0,
+			enrollpersons
 		};
 		if (staffsign) {
 			enrollstaff.signed = true;
@@ -474,9 +465,9 @@ router.get('/enrollpersons', async (ctx, next) => {
 * @apiDescription 签到
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
-* @apiParam {Number} latitude 签到坐标经度
-* @apiParam {Number} longitude 签到坐标纬度
-* @apiParam {String} address 签到地址
+* @apiParam {Number} [latitude] 签到坐标经度
+* @apiParam {Number} [longitude] 签到坐标纬度
+* @apiParam {String} [address] 签到地址
 * @apiSuccess {Object} data {}
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
@@ -490,22 +481,25 @@ router.post('/sign', async (ctx, next) => {
 		ctx.body = ResService.fail('系统没有当前活动');
 		return;
 	}
-	if (!longitude || !latitude || !address) {
-		ctx.body = ResService.fail('没有经纬度地址信息');
-		return;
-	}
 
 	if (activity.cancel) {
 		ctx.body = ResService.fail('当前活动已经取消');
 		return;
 	}
-	if (activity.reviewStatus !== 1) {
+	if (activity.reviewStatus !== 30) {
 		ctx.body = ResService.fail('当前活动未审核通过');
 		return;
 	}
 	if (activity.startTime > currentTime || activity.endTime < currentTime) {
 		ctx.body = ResService.fail('当前不在活动时间内');
 		return;
+	}
+
+	if (activity.signType === 2) {
+		if (!longitude || !latitude || !address) {
+			ctx.body = ResService.fail('没有经纬度地址信息');
+			return;
+		}
 	}
 
 	// 报名名额

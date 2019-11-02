@@ -240,7 +240,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/participate/myenroll?activityId=",
-    "title": "我的报名【开发中】",
+    "title": "我的报名信息",
     "name": "participate_enroll_myenroll",
     "group": "活动参与",
     "description": "<p>我的报名，查看当前活动中我的报名</p>",
@@ -275,90 +275,55 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "Object[]",
-            "optional": false,
-            "field": "data",
-            "description": "<p>报名列表</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.id",
-            "description": ""
-          },
-          {
-            "group": "Success 200",
             "type": "Array[]",
             "optional": false,
-            "field": "data.useritems",
+            "field": "data",
             "description": "<p>报名列表，即家属信息列表，此字段为二维数组</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.useritems.sequence",
+            "field": "data.sequence",
             "description": "<p>填写项排序</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.useritems.id",
+            "field": "data.id",
             "description": "<p>填写项ID</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.useritems.title",
-            "description": "<p>填写项名称</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "type",
-            "optional": false,
-            "field": "data.useritems.type",
-            "description": "<p>填写方式 1-文本 2-选择</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String[]",
-            "optional": false,
-            "field": "data.useritems.options",
-            "description": "<p>选项数组</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Boolean",
-            "optional": false,
-            "field": "data.useritems.mustfill",
-            "description": "<p>是否必填</p>"
+            "field": "data.componentName",
+            "description": "<p>组件名称</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.useritems.text",
-            "description": "<p>文本填写内容</p>"
+            "field": "data.componentType",
+            "description": "<p>组件类型</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.useritems.checked",
-            "description": "<p>选项为选择是选择内容</p>"
+            "field": "data.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.attribute",
+            "description": "<p>组件属性</p>"
           }
         ]
-      },
-      "examples": [
-        {
-          "title": "成功信息示例",
-          "content": "{\n  activityId: 1000, // 活动ID\n\tuseritems: [\n\t\t[ // 填写的第一个人 index=0\n      {sequence: 1, id: 1, title: '姓名', type: 1, mustfill:true, text: '张三'},\n      {sequence: 2, id: 3, title: '电话', type: 1, mustfill: false, text: '15618871296'}, // 电话\n    ],\n    [ // 填写的第二个人 index=1\n      {sequence: 1, id: 1, title: '姓名', type: 1, mustfill:true, text: '李四'},\n      {sequence: 2, id: 3, title: '性别', type: 2, options: [\"男\", \"女\"] mustfill:false, checked: \"男\"}, // 电话，非必填\n    ]\n  ]\n}",
-          "type": "json"
-        }
-      ]
+      }
     },
     "error": {
       "fields": {
@@ -499,7 +464,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/participate/enrollpersons?activityId=&limit=&page=&keywords=",
-    "title": "PC端已报名人员列表【开发中】",
+    "title": "PC端已报名人员列表",
     "name": "participate_enrollpersons",
     "group": "活动参与",
     "description": "<p>PC端已报名人员列表</p>",
@@ -627,64 +592,50 @@ define({ "api": [
             "group": "Success 200",
             "type": "Array[]",
             "optional": false,
-            "field": "data.useritems",
-            "description": "<p>家属信息列表，此字段为二维数组</p>"
+            "field": "data.enrollpersons",
+            "description": "<p>报名列表，即家属信息列表，此字段为二维数组</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.useritems.sequence",
+            "field": "data.enrollpersons.sequence",
             "description": "<p>填写项排序</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.useritems.id",
+            "field": "data.enrollpersons.id",
             "description": "<p>填写项ID</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.useritems.title",
-            "description": "<p>填写项名称</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "type",
-            "optional": false,
-            "field": "data.useritems.type",
-            "description": "<p>填写方式 1-文本 2-选择</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String[]",
-            "optional": false,
-            "field": "data.useritems.options",
-            "description": "<p>选项数组</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Boolean",
-            "optional": false,
-            "field": "data.useritems.mustfill",
-            "description": "<p>是否必填</p>"
+            "field": "data.enrollpersons.componentName",
+            "description": "<p>组件名称</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.useritems.text",
-            "description": "<p>文本填写内容</p>"
+            "field": "data.enrollpersons.componentType",
+            "description": "<p>组件类型</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.useritems.checked",
-            "description": "<p>选项为选择是选择内容</p>"
+            "field": "data.enrollpersons.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.enrollpersons.attribute",
+            "description": "<p>组件属性</p>"
           }
         ]
       }
@@ -1215,21 +1166,21 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "latitude",
             "description": "<p>签到坐标经度</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "longitude",
             "description": "<p>签到坐标纬度</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "address",
             "description": "<p>签到地址</p>"
           }
