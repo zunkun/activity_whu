@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const user = {
 	id: 31,
-	userId: '4508346521365159',
+	userId: '4508346520949170',
 	userName: '刘遵坤',
 	jobnumber: '',
 	avatar: 'https://static.dingtalk.com/media/lADPDgQ9qUPUYknNAYDNAYA_384_384.jpg',
@@ -24,8 +24,8 @@ console.log(process.token, process.user);
 
 console.log('-------------API 测试-------------');
 
-describe('测试 /api/questionnaires', () => {
-	require('./api/questionnaires');
+describe('测试 /api/activities', () => {
+	require('./api/activities');
 });
 
 // describe('测试 /api/votes', () => {
