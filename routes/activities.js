@@ -8,6 +8,7 @@ const { Op } = require('sequelize');
 const DingDepts = require('../models/DingDepts');
 const DeptStaffs = require('../models/DeptStaffs');
 const Roles = require('../models/Roles');
+const config = require('../config');
 const MessageService = require('../services/MessageService');
 
 router.prefix('/api/activities');
@@ -142,8 +143,8 @@ router.post('/', async (ctx, next) => {
 			specialUserIds.push(userId);
 		}
 	}
-	activityData.deptIds = deptIds;
-	activityData.depts = depts;
+	activityData.deptIds = deptIds.length ? deptIds : [ 1 ];
+	activityData.depts = depts || [ { deptId: 1, deptName: config.corpName } ];
 	activityData.specialUserIds = specialUserIds;
 	activityData.specialUsers = specialUsers;
 
@@ -214,7 +215,7 @@ router.post('/update', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	let role = await Roles.findOne({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
 	if (!role) {
-		ctx.body = ResService.fail('您不是管理员，无权创建活动');
+		ctx.body = ResService.fail('您不是管理员，无权管理活动');
 		return;
 	}
 	const data = ctx.request.body;
@@ -263,12 +264,7 @@ router.post('/update', async (ctx, next) => {
 		signed: !!data.signed,
 		signType: data.signed ? Number(data.signType) : null,
 		distance: Number(data.signType) === 2 ? Number(data.distance) : null,
-		userId: user.userId,
-		userName: user.userName,
-		mobile: user.mobile,
-		role: user.role,
-		timestamp,
-		cancel: false
+		timestamp
 	};
 
 	const deptIds = [];
@@ -290,14 +286,12 @@ router.post('/update', async (ctx, next) => {
 			specialUserIds.push(userId);
 		}
 	}
-	activityData.deptIds = deptIds;
-	activityData.depts = depts;
+	activityData.deptIds = deptIds.length ? deptIds : [ 1 ];
+	activityData.depts = depts || [ { deptId: 1, deptName: config.corpName } ];
 	activityData.specialUserIds = specialUserIds;
 	activityData.specialUsers = specialUsers;
 	await Activities.update(activityData, { where: { id: data.id } });
 
-	// 生成审核消息
-	MessageService.sendReviewMsg(activity.id, activity);
 	ctx.body = ResService.success({ });
 	await next();
 });
@@ -488,9 +482,6 @@ router.get('/:id', async (ctx, next) => {
 		ctx.body = ResService.fail('系统无法查询到活动信息');
 		return;
 	}
-	activity = activity.toJSON();
-	activity.enrollforms = await EnrollForms.findAll({ where: { activityId: id } });
-
 	ctx.body = ResService.success(activity);
 	await next();
 });
@@ -643,7 +634,7 @@ router.get('/', async (ctx, next) => {
 * @api {get} /api/activities/lists?limit=&page=&status=&type= 我可以参与的活动列表
 * @apiName activities-lists
 * @apiGroup 活动管理
-* @apiDescription 活动列表，目前是PC端管理活动列表
+* @apiDescription 活动列表，目前是移动端管理活动列表
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} [limit] 分页条数，默认10
 * @apiParam {Number} [page] 第几页，默认1

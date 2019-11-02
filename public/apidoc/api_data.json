@@ -2343,7 +2343,7 @@
     "title": "我可以参与的活动列表",
     "name": "activities_lists",
     "group": "活动管理",
-    "description": "<p>活动列表，目前是PC端管理活动列表</p>",
+    "description": "<p>活动列表，目前是移动端管理活动列表</p>",
     "header": {
       "fields": {
         "Header": [
