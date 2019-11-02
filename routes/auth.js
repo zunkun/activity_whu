@@ -125,4 +125,35 @@ router.get('/login', async (ctx, next) => {
 	await next();
 });
 
+router.get('/login2', async (ctx, next) => {
+	const user = {
+		id: 31,
+		userId: '4508346520949170',
+		userName: '刘遵坤',
+		jobnumber: '',
+		avatar: 'https://static.dingtalk.com/media/lADPDgQ9qUPUYknNAYDNAYA_384_384.jpg',
+		mobile: '15618871296',
+		isAdmin: true,
+		isBoss: false,
+		position: '流程管理平台研发中心高级工程师',
+		email: '',
+		role: 3
+	};
+
+	let roles = await Roles.findAll({ where: { userId: user.userId } });
+	user.roles = [];
+	for (let role of roles) {
+		user.roles.push({
+			role: role.role,
+			deptId: role.deptId,
+			deptName: role.deptNae
+		});
+	}
+	if (!roles.length) {
+		user.roles.push({ role: 3 });
+	}
+	const token = jwt.sign(user, config.secret);
+	ctx.body = ResService.success({ user, token: 'Bearer ' + token });
+});
+
 module.exports = router;
