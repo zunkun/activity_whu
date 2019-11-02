@@ -228,7 +228,7 @@ router.post('/update', async (ctx, next) => {
 	const dataKey = new Set(Object.keys(data));
 	let valid = true; // 传参是否正确
 
-	[ 'tite', 'type', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
+	[ 'title', 'type', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
 		'personNum', 'latitude', 'longitude', 'address', 'contactMobile', 'contactName' ].map(key => {
 		if (!dataKey.has(key) || !data[key]) {
 			valid = false;
