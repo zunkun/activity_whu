@@ -421,7 +421,7 @@ router.post('/cancel', async (ctx, next) => {
 		return;
 	}
 
-	await Activities.update({ cancel: true }, { where: { id: activityId } });
+	await Activities.update({ reviewStatus: 10, cancel: true }, { where: { id: activityId } });
 
 	// 更新消息状态
 	Messages.update({ finish: true }, { where: { activityId } });
@@ -439,7 +439,6 @@ router.post('/cancel', async (ctx, next) => {
 * @apiParam {Number} [page] 第几页，默认1
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object} data 活动列表
-* @apiParam {Number} id 活动ID
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object} data 返回结果
 * @apiSuccess {Number} data.count 总共消息条数

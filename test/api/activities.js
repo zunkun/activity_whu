@@ -87,48 +87,64 @@ describe('/api/activities', () => {
 			});
 	});
 
-	it('获取活动列表PC GET /api/activities?limit=&page=&keywords=&status=&type=', (done) => {
+	it('撤销活动 POST /api/activities/cancel', (done) => {
 		process.request
-			.get('/api/activities?limit=&page=&keywords=&status=&type=')
+			.post('/api/activities/cancel')
 			.set('Authorization', process.token)
+			.send({ activityId })
 			.expect(200)
 			.end((err, res) => {
+				console.log({ err });
 				should.not.exist(err);
 				let resData = res.body;
+				console.log(resData);
 				should.equal(resData.errcode, 0);
-				should.exist(resData.data, 'count');
-				should.exist(resData.data, 'rows');
 				done();
 			});
 	});
 
-	it('我可以参与的活动列表 GET /api/activities/lists?limit=&page=&status=&type=', (done) => {
-		process.request
-			.get('/api/activities/lists?limit=&page=&status=&type=2')
-			.set('Authorization', process.token)
-			.expect(200)
-			.end((err, res) => {
-				should.not.exist(err);
-				let resData = res.body;
-				should.equal(resData.errcode, 0);
-				should.exist(resData.data, 'count');
-				should.exist(resData.data, 'rows');
-				done();
-			});
-	});
+	// it('获取活动列表PC GET /api/activities?limit=&page=&keywords=&status=&type=', (done) => {
+	// 	process.request
+	// 		.get('/api/activities?limit=&page=&keywords=&status=&type=')
+	// 		.set('Authorization', process.token)
+	// 		.expect(200)
+	// 		.end((err, res) => {
+	// 			should.not.exist(err);
+	// 			let resData = res.body;
+	// 			should.equal(resData.errcode, 0);
+	// 			should.exist(resData.data, 'count');
+	// 			should.exist(resData.data, 'rows');
+	// 			done();
+	// 		});
+	// });
 
-	it('置顶 POST /api/activities/top', (done) => {
-		process.request
-			.post('/api/activities/top')
-			.set('Authorization', process.token)
-			.send({ top: true, activityIds: [ activityId ] })
-			.expect(200)
-			.end((err, res) => {
-				should.not.exist(err);
-				let resData = res.body;
-				console.log({ resData });
-				should.equal(resData.errcode, 0);
-				done();
-			});
-	});
+	// it('我可以参与的活动列表 GET /api/activities/lists?limit=&page=&status=&type=', (done) => {
+	// 	process.request
+	// 		.get('/api/activities/lists?limit=&page=&status=&type=2')
+	// 		.set('Authorization', process.token)
+	// 		.expect(200)
+	// 		.end((err, res) => {
+	// 			should.not.exist(err);
+	// 			let resData = res.body;
+	// 			should.equal(resData.errcode, 0);
+	// 			should.exist(resData.data, 'count');
+	// 			should.exist(resData.data, 'rows');
+	// 			done();
+	// 		});
+	// });
+
+	// it('置顶 POST /api/activities/top', (done) => {
+	// 	process.request
+	// 		.post('/api/activities/top')
+	// 		.set('Authorization', process.token)
+	// 		.send({ top: true, activityIds: [ activityId ] })
+	// 		.expect(200)
+	// 		.end((err, res) => {
+	// 			should.not.exist(err);
+	// 			let resData = res.body;
+	// 			console.log({ resData });
+	// 			should.equal(resData.errcode, 0);
+	// 			done();
+	// 		});
+	// });
 });

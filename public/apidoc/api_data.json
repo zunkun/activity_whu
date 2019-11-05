@@ -3491,10 +3491,31 @@
           },
           {
             "group": "Success 200",
-            "type": "Number[]",
+            "type": "Object[]",
             "optional": false,
             "field": "data.user.roles",
-            "description": "<p>用户角色，比如 [1] 1-总会管理员 2-分会管理员 3-普通校友</p>"
+            "description": "<p>用户角色表</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.user.role",
+            "description": "<p>角色 1-总会管理员 2-分会管理员 3-普通校友， 注意总会管理员可以管理所有部门</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.user.deptId",
+            "description": "<p>当前角色所管理的部门ID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.user.deptName",
+            "description": "<p>当前角色所管理部门名称</p>"
           },
           {
             "group": "Success 200",
