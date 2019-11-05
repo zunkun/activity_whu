@@ -24,10 +24,10 @@ console.log(process.token, process.user);
 
 console.log('-------------API 测试-------------');
 
-describe('测试 /api/activities', () => {
-	require('./api/activities');
-});
-
-// describe('测试 /api/votes', () => {
-// 	require('./api/votes');
+// describe('测试 /api/activities', () => {
+// 	require('./api/activities');
 // });
+
+describe('测试 /api/forms', () => {
+	require('./api/forms');
+});

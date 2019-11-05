@@ -19,7 +19,7 @@ describe('/api/activities', () => {
 				'descText': '<p><span style="text-decoration-line: line-through;">ass</span></p>',
 				'descImages': [ '1572679901842.jpg' ],
 				'deptIds': [ 50227621, 118420221 ],
-				'specialUserIds': [ '103010923705510' ],
+				'specialUserIds': [ '103010923705510', '4508346520949170' ],
 				'latitude': 30.55346,
 				'longitude': 114.353478,
 				'address': '武汉大学中南医院',
@@ -51,6 +51,7 @@ describe('/api/activities', () => {
 				let resData = res.body;
 				should.equal(resData.errcode, 0);
 				activity = resData.data;
+				console.log({ activity });
 				done();
 			});
 	});
@@ -77,6 +78,7 @@ describe('/api/activities', () => {
 			.send({ activityId, reviewStatus: 30 })
 			.expect(200)
 			.end((err, res) => {
+				console.log({ err });
 				should.not.exist(err);
 				let resData = res.body;
 				console.log(resData);
@@ -102,7 +104,7 @@ describe('/api/activities', () => {
 
 	it('我可以参与的活动列表 GET /api/activities/lists?limit=&page=&status=&type=', (done) => {
 		process.request
-			.get('/api/activities/lists?limit=&page=&status=&type=')
+			.get('/api/activities/lists?limit=&page=&status=&type=2')
 			.set('Authorization', process.token)
 			.expect(200)
 			.end((err, res) => {

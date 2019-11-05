@@ -34,7 +34,7 @@ Messages.init({
 		defaultValue: 1,
 		comment: '活动审核状态 '
 	}
-}, { sequelize: postgres, modelName: 'Messages', paranoid: true, comment: '消息' });
+}, { sequelize: postgres, modelName: 'messages', paranoid: true, comment: '消息' });
 
 Messages.belongsTo(Activities);
 
