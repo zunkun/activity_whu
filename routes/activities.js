@@ -462,7 +462,7 @@ router.get('/messages', async (ctx, next) => {
 	let limit = Number(query.limit) || 10;
 	let offset = (page - 1) * limit;
 
-	let roles = await Roles.findAll({ where: { userId: user.userId, role: [ { [Op.in]: [ 1, 2 ] } ] } });
+	let roles = await Roles.findAll({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
 	if (!roles || !roles.length) {
 		ctx.body = ResService.success([]);
 		return;
