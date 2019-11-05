@@ -1,9 +1,9 @@
 const postgres = require('../core/db/postgres');
 const { DataTypes, Model } = require('sequelize');
 
-class StaffCfg extends Model {}
+class StaffCfgs extends Model {}
 // 用户配置
-StaffCfg.init({
+StaffCfgs.init({
 	userId: {
 		type: DataTypes.STRING,
 		comment: '钉钉用户userId'
@@ -22,6 +22,6 @@ StaffCfg.init({
 	}
 }, { sequelize: postgres, modelName: 'staffcfgs', timestamps: false, comment: '用户配置' });
 
-StaffCfg.sync();
+StaffCfgs.sync();
 
-module.exports = StaffCfg;
+module.exports = StaffCfgs;
