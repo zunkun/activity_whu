@@ -16,8 +16,9 @@ class MessageService {
 			userId: activity.userId,
 			userName: activity.userName,
 			createTime: activity.createdAt,
+			title: activity.title,
 			type: 1,
-			text: `${util.date2String(activity.createdAt)} “${activity.userName}”发布了新活动--${activity.title}`,
+			text: `${util.date2String(activity.createdAt)} “${activity.userName}”发布了新活动${activity.title}`,
 			finish: false,
 			reviewStatus: 0,
 			activityId
@@ -34,16 +35,19 @@ class MessageService {
 			activity = await Activities.findOne({ id: activityId });
 		}
 
-		Messages.create({
+		await Messages.create({
 			userId: activity.userId,
 			userName: activity.userName,
 			createTime: activity.createdAt,
+			title: activity.title,
 			type: 2,
 			text: `您于${util.date2String(activity.createdAt)}申请的 “${activity.title}”活动`,
 			finish: true,
 			reviewStatus,
 			activityId
 		});
+
+		await Messages.update({ finish: true, reviewStatus }, { where: { activityId, type: 1 } });
 	}
 }
 

@@ -17,6 +17,10 @@ Messages.init({
 		type: DataTypes.DATE,
 		comment: '活动发起时间'
 	},
+	title: {
+		type: DataTypes.STRING,
+		comment: '活动标题'
+	},
 	type: {
 		type: DataTypes.INTEGER,
 		comment: '消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者'

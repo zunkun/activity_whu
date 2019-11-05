@@ -10,6 +10,7 @@ const DeptStaffs = require('../models/DeptStaffs');
 const Roles = require('../models/Roles');
 const config = require('../config');
 const MessageService = require('../services/MessageService');
+const Messages = require('../models/Messages');
 
 router.prefix('/api/activities');
 
@@ -387,6 +388,9 @@ router.post('/review', async (ctx, next) => {
 	}
 
 	await Activities.update(updateData, { where: { id: activityId, cancel: false } });
+
+	// 给活动创建者发消息
+	MessageService.sendCreatorMsg(reviewStatus, activityId);
 	ctx.body = ResService.success({});
 	await next();
 });
@@ -418,8 +422,60 @@ router.post('/cancel', async (ctx, next) => {
 	}
 
 	await Activities.update({ cancel: true }, { where: { id: activityId } });
+
+	// 更新消息状态
+	Messages.update({ finish: true }, { where: { activityId } });
 	ctx.body = ResService.success({});
 	await next();
+});
+
+/**
+* @api {get} /api/activities/messages?limit=&page= 我的消息
+* @apiName activities-message-lists
+* @apiGroup 活动管理
+* @apiDescription 我的消息列表
+* @apiHeader {String} authorization 登录token
+* @apiParam {Number} [limit] 分页条数，默认10
+* @apiParam {Number} [page] 第几页，默认1
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 活动列表
+* @apiParam {Number} id 活动ID
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 返回结果
+* @apiSuccess {Number} data.count 总共消息条数
+* @apiSuccess {Object[]} data.rows 当前页消息列表
+* @apiSuccess {Number}  data.rows.id 消息ID
+* @apiSuccess {String}  data.rows.userId 活动创建人userId
+* @apiSuccess {String}  data.rows.userName 活动创建人
+* @apiSuccess {Date}  data.rows.createTime 活动发起时间
+* @apiSuccess {Number}  data.rows.type 消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者
+* @apiSuccess {String}  data.rows.text 消息内容
+* @apiSuccess {Boolean}  data.rows.finish 消息是否处理完毕，当前字段可以忽略
+* @apiSuccess {Number}  data.rows.reviewStatus 活动审核状态 20-审核中 30-审核通过 40-拒绝
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.get('/messages', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let query = ctx.query;
+	let page = Number(query.page) || 1;
+	let limit = Number(query.limit) || 10;
+	let offset = (page - 1) * limit;
+
+	const where = { [Op.or]: [ { userId: user.userId, type: 2 } ] };
+	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
+	if (role) {
+		where[Op.or].push({ type: 1 });
+	}
+
+	let messages = await Messages.findAndCountAll({
+		where,
+		limit,
+		offset,
+		order: [ [ 'createdAt', 'DESC' ], [ 'type', 'ASC' ] ]
+	});
+
+	ctx.body = ResService.success(messages);
 });
 
 /**
