@@ -3332,6 +3332,188 @@ define({ "api": [
     "groupTitle": "活动管理"
   },
   {
+    "type": "post",
+    "url": "/api/cfgs",
+    "title": "保存导出设置",
+    "name": "cfgs_create",
+    "group": "设置管理",
+    "description": "<p>保存导出设置</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "catalog",
+            "description": "<p>设置分类，比如 activity-活动列表导出设置 enroll-报名信息列表导出设置</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "config",
+            "description": "<p>设置对象</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "cfgs.attribute",
+            "description": "<p>组件属性</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>{}</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/cfgs.js",
+    "groupTitle": "设置管理"
+  },
+  {
+    "type": "get",
+    "url": "/api/cfgs/info?catalog=",
+    "title": "获取设置",
+    "name": "cfgs_info",
+    "group": "设置管理",
+    "description": "<p>获取设置信息</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "catalog",
+            "description": "<p>设置分类，比如 activity-活动列表导出设置 enroll-报名信息列表导出设置</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>表单数据</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.catalog",
+            "description": "<p>设置分类</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.config",
+            "description": "<p>设置</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/cfgs.js",
+    "groupTitle": "设置管理"
+  },
+  {
     "type": "get",
     "url": "/api/auth/jsconfig",
     "title": "系统配置",
