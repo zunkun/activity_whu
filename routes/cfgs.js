@@ -8,14 +8,13 @@ const StaffCfgs = require('../models/StaffCfgs');
 router.prefix('/api/cfgs');
 
 /**
-* @api {post} /api/cfgs 保存导出设置
+* @api {post} /api/cfgs 保存设置
 * @apiName cfgs-create
 * @apiGroup 设置管理
 * @apiDescription 保存导出设置
 * @apiHeader {String} authorization 登录token
 * @apiParam {String} catalog 设置分类，比如 activity-活动列表导出设置 enroll-报名信息列表导出设置
 * @apiParam {Object} config 设置对象
-* @apiParam {Object} cfgs.attribute 组件属性
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object} data {}
 * @apiError {Number} errcode 失败不为0

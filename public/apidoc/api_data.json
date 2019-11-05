@@ -3334,7 +3334,7 @@
   {
     "type": "post",
     "url": "/api/cfgs",
-    "title": "保存导出设置",
+    "title": "保存设置",
     "name": "cfgs_create",
     "group": "设置管理",
     "description": "<p>保存导出设置</p>",
@@ -3367,13 +3367,6 @@
             "optional": false,
             "field": "config",
             "description": "<p>设置对象</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object",
-            "optional": false,
-            "field": "cfgs.attribute",
-            "description": "<p>组件属性</p>"
           }
         ]
       }
