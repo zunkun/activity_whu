@@ -1891,6 +1891,398 @@
   },
   {
     "type": "get",
+    "url": "/api/activities/lists?limit=&page=&status=&type=",
+    "title": "我可以参与的活动列表",
+    "name": "activities_lists",
+    "group": "活动管理",
+    "description": "<p>活动列表，目前是移动端管理活动列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "limit",
+            "description": "<p>分页条数，默认10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "page",
+            "description": "<p>第几页，默认1</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "status",
+            "description": "<p>活动状态， 31-预热中 32-报名中 33-进行中 34-已结束 默认为0 表示查询全部状态</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "type",
+            "description": "<p>活动类型 1-常规活动 2-专项活动，默认为1</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>活动ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>活动列表</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.count",
+            "description": "<p>总共活动条数</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>当前页活动列表</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.id",
+            "description": "<p>活动ID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.title",
+            "description": "<p>活动标题</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.type",
+            "description": "<p>活动类型 1-常规活动 2-专项活动</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String[]",
+            "optional": false,
+            "field": "data.rows.images",
+            "description": "<p>活动图片名称表，比如 [a.jpg,b.png,c.jpg]</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "data.rows.startTime",
+            "description": "<p>开始时间 格式 2019-08-23 08:00:00</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "data.rows.endTime",
+            "description": "<p>结束时间 格式 2019-08-24 08:00:00</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "data.rows.enrollStartTime",
+            "description": "<p>报名开始时间 格式 2019-08-23 08:00:00</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "data.rows.enrollEndTime",
+            "description": "<p>报名截止时间 格式 2019-08-24 08:00:00</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.personNum",
+            "description": "<p>可参与人数</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String[]",
+            "optional": false,
+            "field": "data.rows.descImages",
+            "description": "<p>活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.descText",
+            "description": "<p>活动详情文字</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number[]",
+            "optional": false,
+            "field": "data.rows.deptIds",
+            "description": "<p>参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number[]",
+            "optional": false,
+            "field": "data.rows.specialUserIds",
+            "description": "<p>特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.rows.depts",
+            "description": "<p>投票范围</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.depts.deptId",
+            "description": "<p>部门id</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.depts.deptName",
+            "description": "<p>部门名称</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.rows.specialUsers",
+            "description": "<p>特殊选择参与人员</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.specialUsers.userId",
+            "description": "<p>特殊选择参与人员userId</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.specialUsers.userName",
+            "description": "<p>特殊选择参与人员userName</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.latitude",
+            "description": "<p>活动经度</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.longitude",
+            "description": "<p>活动纬度</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.address",
+            "description": "<p>活动地址</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.singed",
+            "description": "<p>是否需要签到 true 需要签到 false 不需要签到</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.signType",
+            "description": "<p>签到方式 1-扫码签到 2-位置签到</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.distance",
+            "description": "<p>位置签到距离，单位m 当signType=2位置签到时有此值</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.contactMobile",
+            "description": "<p>联系人手机号</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.contactName",
+            "description": "<p>联系人姓名</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.top",
+            "description": "<p>是否置顶 true置顶 false不置顶</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.userId",
+            "description": "<p>发起人userId</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.userName",
+            "description": "<p>发起人userName</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.mobile",
+            "description": "<p>发起人手机号</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.role",
+            "description": "<p>发起人身份</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewerUserId",
+            "description": "<p>审核人userId</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewerUserName",
+            "description": "<p>审核人userName</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewerMobile",
+            "description": "<p>审核人手机号</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewerRole",
+            "description": "<p>审核人身份</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewStatus",
+            "description": "<p>审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.rejectReason",
+            "description": "<p>驳回拒绝原因</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.createdAt",
+            "description": "<p>创建时间</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
+    "type": "get",
     "url": "/api/activities?limit=&page=&keywords=&status=&type=",
     "title": "活动列表",
     "name": "activities_lists",
@@ -2290,11 +2682,11 @@
   },
   {
     "type": "get",
-    "url": "/api/activities/lists?limit=&page=&status=&type=",
-    "title": "我可以参与的活动列表",
-    "name": "activities_lists",
+    "url": "/api/activities/messages?limit=&page=",
+    "title": "我的消息",
+    "name": "activities_message_lists",
     "group": "活动管理",
-    "description": "<p>活动列表，目前是移动端管理活动列表</p>",
+    "description": "<p>我的消息列表</p>",
     "header": {
       "fields": {
         "Header": [
@@ -2328,20 +2720,6 @@
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": true,
-            "field": "status",
-            "description": "<p>活动状态， 31-预热中 32-报名中 33-进行中 34-已结束 默认为0 表示查询全部状态</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": true,
-            "field": "type",
-            "description": "<p>活动类型 1-常规活动 2-专项活动，默认为1</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
             "optional": false,
             "field": "id",
             "description": "<p>活动ID</p>"
@@ -2371,21 +2749,35 @@
             "type": "Number",
             "optional": false,
             "field": "data.count",
-            "description": "<p>总共活动条数</p>"
+            "description": "<p>总共消息条数</p>"
           },
           {
             "group": "Success 200",
             "type": "Object[]",
             "optional": false,
             "field": "data.rows",
-            "description": "<p>当前页活动列表</p>"
+            "description": "<p>当前页消息列表</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
             "field": "data.rows.id",
-            "description": "<p>活动ID</p>"
+            "description": "<p>消息ID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.userId",
+            "description": "<p>活动创建人userId</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.userName",
+            "description": "<p>活动创建人</p>"
           },
           {
             "group": "Success 200",
@@ -2396,262 +2788,38 @@
           },
           {
             "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.type",
-            "description": "<p>活动类型 1-常规活动 2-专项活动</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String[]",
-            "optional": false,
-            "field": "data.rows.images",
-            "description": "<p>活动图片名称表，比如 [a.jpg,b.png,c.jpg]</p>"
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "optional": false,
-            "field": "data.rows.startTime",
-            "description": "<p>开始时间 格式 2019-08-23 08:00:00</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "optional": false,
-            "field": "data.rows.endTime",
-            "description": "<p>结束时间 格式 2019-08-24 08:00:00</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "optional": false,
-            "field": "data.rows.enrollStartTime",
-            "description": "<p>报名开始时间 格式 2019-08-23 08:00:00</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "optional": false,
-            "field": "data.rows.enrollEndTime",
-            "description": "<p>报名截止时间 格式 2019-08-24 08:00:00</p>"
+            "field": "data.rows.createTime",
+            "description": "<p>活动发起时间</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.rows.personNum",
-            "description": "<p>可参与人数</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String[]",
-            "optional": false,
-            "field": "data.rows.descImages",
-            "description": "<p>活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]</p>"
+            "field": "data.rows.type",
+            "description": "<p>消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.rows.descText",
-            "description": "<p>活动详情文字</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number[]",
-            "optional": false,
-            "field": "data.rows.deptIds",
-            "description": "<p>参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number[]",
-            "optional": false,
-            "field": "data.rows.specialUserIds",
-            "description": "<p>特别选择参与人员userId表，例如 [1, 2, 3]，【注意】此参与人员是专指钉钉单独选择人员参与投票信息</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object[]",
-            "optional": false,
-            "field": "data.rows.depts",
-            "description": "<p>投票范围</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.depts.deptId",
-            "description": "<p>部门id</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.depts.deptName",
-            "description": "<p>部门名称</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object[]",
-            "optional": false,
-            "field": "data.rows.specialUsers",
-            "description": "<p>特殊选择参与人员</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.specialUsers.userId",
-            "description": "<p>特殊选择参与人员userId</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.specialUsers.userName",
-            "description": "<p>特殊选择参与人员userName</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.latitude",
-            "description": "<p>活动经度</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.longitude",
-            "description": "<p>活动纬度</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.address",
-            "description": "<p>活动地址</p>"
+            "field": "data.rows.text",
+            "description": "<p>消息内容</p>"
           },
           {
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "data.rows.singed",
-            "description": "<p>是否需要签到 true 需要签到 false 不需要签到</p>"
+            "field": "data.rows.finish",
+            "description": "<p>审批否处理完毕，如果审核操作结束或者撤销活动，则当前字段为true</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
-            "optional": false,
-            "field": "data.rows.signType",
-            "description": "<p>签到方式 1-扫码签到 2-位置签到</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.distance",
-            "description": "<p>位置签到距离，单位m 当signType=2位置签到时有此值</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.contactMobile",
-            "description": "<p>联系人手机号</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.contactName",
-            "description": "<p>联系人姓名</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.top",
-            "description": "<p>是否置顶 true置顶 false不置顶</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.userId",
-            "description": "<p>发起人userId</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.userName",
-            "description": "<p>发起人userName</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.mobile",
-            "description": "<p>发起人手机号</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.role",
-            "description": "<p>发起人身份</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.reviewerUserId",
-            "description": "<p>审核人userId</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.reviewerUserName",
-            "description": "<p>审核人userName</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.reviewerMobile",
-            "description": "<p>审核人手机号</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.reviewerRole",
-            "description": "<p>审核人身份</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
             "optional": false,
             "field": "data.rows.reviewStatus",
-            "description": "<p>审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.rejectReason",
-            "description": "<p>驳回拒绝原因</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.createdAt",
-            "description": "<p>创建时间</p>"
+            "description": "<p>活动审核状态 20-审核中 30-审核通过 40-拒绝</p>"
           }
         ]
       }

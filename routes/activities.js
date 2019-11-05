@@ -447,10 +447,11 @@ router.post('/cancel', async (ctx, next) => {
 * @apiSuccess {Number}  data.rows.id 消息ID
 * @apiSuccess {String}  data.rows.userId 活动创建人userId
 * @apiSuccess {String}  data.rows.userName 活动创建人
+* @apiSuccess {String}  data.rows.title 活动标题
 * @apiSuccess {Date}  data.rows.createTime 活动发起时间
 * @apiSuccess {Number}  data.rows.type 消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者
 * @apiSuccess {String}  data.rows.text 消息内容
-* @apiSuccess {Boolean}  data.rows.finish 消息是否处理完毕，当前字段可以忽略
+* @apiSuccess {Boolean}  data.rows.finish 审批否处理完毕，如果审核操作结束或者撤销活动，则当前字段为true
 * @apiSuccess {Number}  data.rows.reviewStatus 活动审核状态 20-审核中 30-审核通过 40-拒绝
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
@@ -462,10 +463,19 @@ router.get('/messages', async (ctx, next) => {
 	let limit = Number(query.limit) || 10;
 	let offset = (page - 1) * limit;
 
+	let roles = await Roles.findAll({ where: { userId: user.userId, role: [ { [Op.in]: [ 1, 2 ] } ] } });
+	if (!roles || !roles.length) {
+		ctx.body = ResService.success([]);
+		return;
+	}
+
 	const where = { [Op.or]: [ { userId: user.userId, type: 2 } ] };
 	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
 	if (role) {
-		where[Op.or].push({ type: 1 });
+		where[Op.or] = [
+			{ userId: user.userId, type: 2 },
+			{ type: 1 }
+		];
 	}
 
 	let messages = await Messages.findAndCountAll({

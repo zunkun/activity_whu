@@ -20,7 +20,7 @@ class MessageService {
 			type: 1,
 			text: `${util.date2String(activity.createdAt)} “${activity.userName}”发布了新活动${activity.title}`,
 			finish: false,
-			reviewStatus: 0,
+			reviewStatus: 20,
 			activityId
 		});
 	}
