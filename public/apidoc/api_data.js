@@ -2716,13 +2716,6 @@ define({ "api": [
             "optional": true,
             "field": "page",
             "description": "<p>第几页，默认1</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "id",
-            "description": "<p>活动ID</p>"
           }
         ]
       }
