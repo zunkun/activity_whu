@@ -75,9 +75,9 @@ router.get('/signature', async (ctx, next) => {
 * @apiSuccess {String} data.user.avatar 图像
 * @apiSuccess {String} data.user.mobile 手机
 * @apiSuccess {Object[]} data.user.roles 用户角色表
-* @apiSuccess {Number} data.user.role 角色 1-总会管理员 2-分会管理员 3-普通校友， 注意总会管理员可以管理所有部门
-* @apiSuccess {Number} data.user.deptId 当前角色所管理的部门ID
-* @apiSuccess {String} data.user.deptName 当前角色所管理部门名称
+* @apiSuccess {Number} data.user.roles.role 角色 1-总会管理员 2-分会管理员 3-普通校友， 注意总会管理员可以管理所有部门
+* @apiSuccess {Number} data.user.roles.deptId 当前角色所管理的部门ID
+* @apiSuccess {String} data.user.roles.deptName 当前角色所管理部门名称
 * @apiSuccess {Object[]} data.user.depts 部门信息
 * @apiSuccess {Number} data.user.depts.deptId 部门deptId
 * @apiSuccess {String} data.user.depts.deptName 部门名称

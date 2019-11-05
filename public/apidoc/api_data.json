@@ -3500,21 +3500,21 @@
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.user.role",
+            "field": "data.user.roles.role",
             "description": "<p>角色 1-总会管理员 2-分会管理员 3-普通校友， 注意总会管理员可以管理所有部门</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.user.deptId",
+            "field": "data.user.roles.deptId",
             "description": "<p>当前角色所管理的部门ID</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.user.deptName",
+            "field": "data.user.roles.deptName",
             "description": "<p>当前角色所管理部门名称</p>"
           },
           {
