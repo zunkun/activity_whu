@@ -33,6 +33,10 @@ Messages.init({
 		type: DataTypes.BOOLEAN,
 		comment: '消息所指的活动是否处理完毕'
 	},
+	readUserIds: {
+		type: DataTypes.ARRAY(DataTypes.STRING),
+		comment: '当前消息已读的userId表,注意当前字段在 finish 字段为 false 时有效'
+	},
 	reviewStatus: {
 		type: DataTypes.INTEGER,
 		defaultValue: 1,

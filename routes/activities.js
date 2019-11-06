@@ -444,6 +444,7 @@ router.post('/cancel', async (ctx, next) => {
 * @apiSuccess {Number} data.count 总共消息条数
 * @apiSuccess {Object[]} data.rows 当前页消息列表
 * @apiSuccess {Number}  data.rows.id 消息ID
+* @apiSuccess {String}  data.rows.isRead 当前消息是否已读
 * @apiSuccess {String}  data.rows.userId 活动创建人userId
 * @apiSuccess {String}  data.rows.userName 活动创建人
 * @apiSuccess {String}  data.rows.title 活动标题
@@ -484,7 +485,81 @@ router.get('/messages', async (ctx, next) => {
 		order: [ [ 'createdAt', 'DESC' ], [ 'type', 'ASC' ] ]
 	});
 
-	ctx.body = ResService.success(messages);
+	const res = { count: messages.count, rows: [] };
+	for (let message of messages.rows) {
+		message = message.toJSON();
+		message.isRead = (message.readUserIds || []).indexOf(user.userId) > -1;
+		delete message.readUserIds;
+		res.rows.push(message);
+	}
+
+	ctx.body = ResService.success(res);
+});
+
+/**
+* @api {post} /api/activities/readmsg 设置消息已读
+* @apiName activities-message-read
+* @apiGroup 活动管理
+* @apiDescription 设置消息已读
+* @apiHeader {String} authorization 登录token
+* @apiParam {Number} messageId 消息ID
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data {}
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.post('/readmsg', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	const { messageId } = ctx.request.body;
+
+	let message = await Messages.findOne({ id: messageId });
+	if (!message) {
+		ctx.body = ResService.fail('参数错误');
+		return;
+	}
+
+	let readUserIds = message.readUserIds || [];
+	if (readUserIds.indexOf(user.userId) === -1) {
+		readUserIds.push(user.userId);
+		await Messages.update({ readUserIds }, { where: { id: messageId } });
+	}
+	ctx.body = ResService.success({});
+	await next();
+});
+
+/**
+* @api {get} /api/activities/msgnoread 获取未读消息条数
+* @apiName activities-message-no-read
+* @apiGroup 活动管理
+* @apiDescription 获取未读消息条数
+* @apiHeader {String} authorization 登录token
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 返回结果
+* @apiSuccess {Number} data.count 当前未读消息条数
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.get('/msgnoread', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+
+	let roles = await Roles.findAll({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
+	if (!roles || !roles.length) {
+		ctx.body = ResService.success([]);
+		return;
+	}
+
+	const where = { [Op.or]: [ { userId: user.userId, type: 2 } ], readUserIds: { [Op.not]: { [Op.contains]: [ user.userId ] } } };
+	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
+	if (role) {
+		where[Op.or] = [
+			{ userId: user.userId, type: 2 },
+			{ type: 1 }
+		];
+	}
+
+	let count = await Messages.count({ where });
+	ctx.body = ResService.success({ count });
+	await next();
 });
 
 /**

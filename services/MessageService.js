@@ -21,6 +21,7 @@ class MessageService {
 			text: `${util.date2String(activity.createdAt)} “${activity.userName}”发布了新活动${activity.title}`,
 			finish: false,
 			reviewStatus: 20,
+			readUserIds: [],
 			activityId
 		});
 	}
@@ -44,6 +45,7 @@ class MessageService {
 			text: `您于${util.date2String(activity.createdAt)}申请的 “${activity.title}”活动`,
 			finish: true,
 			reviewStatus,
+			readUserIds: [],
 			activityId
 		});
 
