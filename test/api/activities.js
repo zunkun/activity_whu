@@ -103,6 +103,55 @@ describe('/api/activities', () => {
 			});
 	});
 
+	let messageId;
+
+	it('获取消息列表 GET /api/activities/messages?limit=&page=', (done) => {
+		process.request
+			.get('/api/activities/messages?limit=&page=')
+			.set('Authorization', process.token)
+			.expect(200)
+			.end((err, res) => {
+				console.log({ err });
+				should.not.exist(err);
+				let resData = res.body;
+				console.log({ resData });
+				should.equal(resData.errcode, 0);
+				should.exist(resData.data, 'count');
+				should.exist(resData.data, 'rows');
+				messageId = resData.data.rows[0].id;
+				done();
+			});
+	});
+
+	it('设置消息已读 POST /api/activities/readmsg', (done) => {
+		process.request
+			.post('/api/activities/readmsg')
+			.set('Authorization', process.token)
+			.send({ messageId })
+			.expect(200)
+			.end((err, res) => {
+				console.log({ err });
+				should.not.exist(err);
+				let resData = res.body;
+				console.log({ resData });
+				done();
+			});
+	});
+
+	it('获取未读消息条数 GET /api/activities/msgnoread', (done) => {
+		process.request
+			.get('/api/activities/msgnoread')
+			.set('Authorization', process.token)
+			.expect(200)
+			.end((err, res) => {
+				console.log({ err });
+				should.not.exist(err);
+				let resData = res.body;
+				console.log({ resData });
+				done();
+			});
+	});
+
 	// it('获取活动列表PC GET /api/activities?limit=&page=&keywords=&status=&type=', (done) => {
 	// 	process.request
 	// 		.get('/api/activities?limit=&page=&keywords=&status=&type=')

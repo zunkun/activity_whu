@@ -488,7 +488,9 @@ router.get('/messages', async (ctx, next) => {
 	const res = { count: messages.count, rows: [] };
 	for (let message of messages.rows) {
 		message = message.toJSON();
-		message.isRead = (message.readUserIds || []).indexOf(user.userId) > -1;
+
+		let readUserIds = message.readUserIds || [];
+		message.isRead = readUserIds.indexOf(user.userId) > -1;
 		delete message.readUserIds;
 		res.rows.push(message);
 	}
@@ -548,18 +550,19 @@ router.get('/msgnoread', async (ctx, next) => {
 		return;
 	}
 
-	const where = { [Op.or]: [ { userId: user.userId, type: 2 } ], readUserIds: { [Op.not]: { [Op.contains]: [ user.userId ] } } };
+	let allWhere = { [Op.or]: [ { userId: user.userId, type: 2 } ] };
 	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
 	if (role) {
-		where[Op.or] = [
+		allWhere[Op.or] = [
 			{ userId: user.userId, type: 2 },
 			{ type: 1 }
 		];
 	}
+	let readWhere = { readUserIds: { [Op.contains]: [ user.userId ] } };
 
-	let count = await Messages.count({ where });
-	ctx.body = ResService.success({ count });
-	await next();
+	let readCount = await Messages.count({ where: readWhere });
+	let allCount = await Messages.count({ where: allWhere });
+	ctx.body = ResService.success({ count: allCount - readCount });
 });
 
 /**
