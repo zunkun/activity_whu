@@ -23,7 +23,7 @@ describe('/api/activities', () => {
 				'latitude': 30.55346,
 				'longitude': 114.353478,
 				'address': '武汉大学中南医院',
-				'singed': true,
+				'signed': true,
 				'signType': 2,
 				'distance': 30,
 				'contactName': 'as',

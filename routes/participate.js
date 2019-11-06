@@ -36,7 +36,7 @@ router.prefix('/api/participate');
 		[ // 第一组，表示第一个人
 			{
 				componentName: '单行输入框', //组件名称
-				componentType: 'singleLineText', //组件类型
+				componentType: 'signleLineText', //组件类型
 				componentSet: 'textType', //组件属性设置类型
 				attribute: {
 					//   组件属性
@@ -306,7 +306,7 @@ router.get('/myenroll', async (ctx, next) => {
 * @apiSuccess {String} data.rows.specialUsers.userId  特殊选择参与人员userId
 * @apiSuccess {String} data.rows.specialUsers.userName  特殊选择参与人员userName
 * @apiSuccess {String} data.rows.address 活动地址
-* @apiSuccess {Boolean} data.rows.singed 是否需要签到 true 需要签到 false 不需要签到
+* @apiSuccess {Boolean} data.rows.signed 是否需要签到 true 需要签到 false 不需要签到
 * @apiSuccess {Number} data.rows.signType 签到方式 1-扫码签到 2-位置签到
 * @apiSuccess {Number} data.rows.distance 位置签到距离，单位m 当signType=2位置签到时有此值
 * @apiSuccess {String} data.rows.contactMobile 联系人手机号

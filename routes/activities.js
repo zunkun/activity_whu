@@ -36,7 +36,7 @@ router.prefix('/api/activities');
 * @apiParam {Number} latitude 地址经度
 * @apiParam {Number} longitude 地址纬度
 * @apiParam {String} address 活动地址
-* @apiParam {Boolean} [singed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到
+* @apiParam {Boolean} [signed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到
 * @apiParam {Number} [signType] 签到方式 1-扫码签到 2-位置签到，当signed = true 时需要填写当前值
 * @apiParam {Number} [distance] 位置签到距离，单位m 当signType=2位置签到时需要填写当前值
 * @apiParam {String} contactMobile 联系人手机号
@@ -58,7 +58,7 @@ router.prefix('/api/activities');
 *  latitude: 223.234,
 *  longitude: 113.234,
 *  address: '上海市三门路复旦软件园',
-*  singed: true,
+*  signed: true,
 *  signType: 2, // 签到方式 1-扫码签到 2-位置签到
 *  distance: 100, // signType = 2 时填写
 *  contactMobile: '156xxx',
@@ -78,6 +78,7 @@ router.post('/', async (ctx, next) => {
 		return;
 	}
 	const data = ctx.request.body;
+	console.log({ data });
 	const dataKey = new Set(Object.keys(data));
 	let valid = true; // 传参是否正确
 
@@ -178,7 +179,7 @@ router.post('/', async (ctx, next) => {
 * @apiParam {Number} latitude 地址经度
 * @apiParam {Number} longitude 地址纬度
 * @apiParam {String} address 活动地址
-* @apiParam {Boolean} [singed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到
+* @apiParam {Boolean} [signed] 是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到
 * @apiParam {Number} [signType] 签到方式 1-扫码签到 2-位置签到，当signed = true 时需要填写当前值
 * @apiParam {Number} [distance] 位置签到距离，单位m 当signType=2位置签到时需要填写当前值
 * @apiParam {String} contactMobile 联系人手机号
@@ -201,7 +202,7 @@ router.post('/', async (ctx, next) => {
 *  latitude: 223.234,
 *  longitude: 113.234,
 *  address: '上海市三门路复旦软件园',
-*  singed: true,
+*  signed: true,
 *  signType: 2, // 签到方式 1-扫码签到 2-位置签到
 *  distance: 100, // signType = 2 时填写
 *  contactMobile: '156xxx',
@@ -610,7 +611,7 @@ router.get('/msgnoread', async (ctx, next) => {
 * @apiSuccess {Number} data.rows.latitude 活动经度
 * @apiSuccess {Number} data.rows.longitude 活动纬度
 * @apiSuccess {String} data.rows.address 活动地址
-* @apiSuccess {Boolean} data.rows.singed 是否需要签到 true 需要签到 false 不需要签到
+* @apiSuccess {Boolean} data.rows.signed 是否需要签到 true 需要签到 false 不需要签到
 * @apiSuccess {Number} data.rows.signType 签到方式 1-扫码签到 2-位置签到
 * @apiSuccess {Number} data.rows.distance 位置签到距离，单位m 当signType=2位置签到时有此值
 * @apiSuccess {String} data.rows.contactMobile 联系人手机号
@@ -747,7 +748,7 @@ router.get('/lists', async (ctx, next) => {
 * @apiSuccess {Number} data.latitude 活动经度
 * @apiSuccess {Number} data.longitude 活动纬度
 * @apiSuccess {String} data.address 活动地址
-* @apiSuccess {Boolean} data.singed 是否需要签到 true 需要签到 false 不需要签到
+* @apiSuccess {Boolean} data.signed 是否需要签到 true 需要签到 false 不需要签到
 * @apiSuccess {Number} data.signType 签到方式 1-扫码签到 2-位置签到
 * @apiSuccess {Number} data.distance 位置签到距离，单位m 当signType=2位置签到时有此值
 * @apiSuccess {String} data.contactMobile 联系人手机号
@@ -849,7 +850,7 @@ router.get('/:id', async (ctx, next) => {
 * @apiSuccess {Number} data.rows.latitude 活动经度
 * @apiSuccess {Number} data.rows.longitude 活动纬度
 * @apiSuccess {String} data.rows.address 活动地址
-* @apiSuccess {Boolean} data.rows.singed 是否需要签到 true 需要签到 false 不需要签到
+* @apiSuccess {Boolean} data.rows.signed 是否需要签到 true 需要签到 false 不需要签到
 * @apiSuccess {Number} data.rows.signType 签到方式 1-扫码签到 2-位置签到
 * @apiSuccess {Number} data.rows.distance 位置签到距离，单位m 当signType=2位置签到时有此值
 * @apiSuccess {String} data.rows.contactMobile 联系人手机号

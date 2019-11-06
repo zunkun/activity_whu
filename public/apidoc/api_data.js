@@ -419,7 +419,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求body示例",
-          "content": "{\n  activityId: 1000, // 活动ID\n\tformlists: [\n\t\t[ // 第一组，表示第一个人\n\t\t\t{\n\t\t\t\tcomponentName: '单行输入框', //组件名称\n\t\t\t\tcomponentType: 'singleLineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '单行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多行输入框', //组件名称\n\t\t\t\tcomponentType: 'multilineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '数字输入框', //组件名称\n\t\t\t\tcomponentType: 'numericType', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '数字输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '日期', //组件名称\n\t\t\t\tcomponentType: 'datePicker', //组件类型\n\t\t\t\tcomponentSet: 'datePickerType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '日期', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t}, {\n\t\t\t\tcomponentName: '日期区间', //组件名称\n\t\t\t\tcomponentType: 'datePickerSection', //组件类型\n\t\t\t\tcomponentSet: 'datePickerSectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValueStart: '', //字段填写的值\n\t\t\t\t\tfieldCodeStart: '', //字段编码\n\t\t\t\t\ttitleStart: '开始日期', //标题\n\t\t\t\t\tplaceholderStart: '请选择', //提示\n\t\t\t\t\tfieldValueEnd: '', //字段填写的值\n\t\t\t\t\tfieldCodeEnd: '', //字段编码\n\t\t\t\t\ttitleEnd: '结束日期', //标题\n\t\t\t\t\tplaceholderEnd: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多选框', //组件名称\n\t\t\t\tcomponentType: 'multipleSelection', //组件类型\n\t\t\t\tcomponentSet: 'multipleSelectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: \"\", //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多选框', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tmaxLength: 2,\n\t\t\t\t\toptions: [{\n\t\t\t\t\t\tlabel: '选项1',\n\t\t\t\t\t\tvalue: '选项1',\n\t\t\t\t\t\tisSelect: false,\n\t\t\t\t\t}, {\n\t\t\t\t\t\tlabel: '选项2',\n\t\t\t\t\t\tvalue: '选项2',\n\t\t\t\t\t\tisSelect: false\n\t\t\t\t\t}],\n\t\t\t\t}\n\t\t\t}\n\t\t],\n\t\t[ // 第二组，表示第二个人\n\t\t\t{...},\n\t\t\t{...}\n\t\t]\n\t]\n}",
+          "content": "{\n  activityId: 1000, // 活动ID\n\tformlists: [\n\t\t[ // 第一组，表示第一个人\n\t\t\t{\n\t\t\t\tcomponentName: '单行输入框', //组件名称\n\t\t\t\tcomponentType: 'signleLineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '单行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多行输入框', //组件名称\n\t\t\t\tcomponentType: 'multilineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '数字输入框', //组件名称\n\t\t\t\tcomponentType: 'numericType', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '数字输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '日期', //组件名称\n\t\t\t\tcomponentType: 'datePicker', //组件类型\n\t\t\t\tcomponentSet: 'datePickerType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '日期', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t}, {\n\t\t\t\tcomponentName: '日期区间', //组件名称\n\t\t\t\tcomponentType: 'datePickerSection', //组件类型\n\t\t\t\tcomponentSet: 'datePickerSectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValueStart: '', //字段填写的值\n\t\t\t\t\tfieldCodeStart: '', //字段编码\n\t\t\t\t\ttitleStart: '开始日期', //标题\n\t\t\t\t\tplaceholderStart: '请选择', //提示\n\t\t\t\t\tfieldValueEnd: '', //字段填写的值\n\t\t\t\t\tfieldCodeEnd: '', //字段编码\n\t\t\t\t\ttitleEnd: '结束日期', //标题\n\t\t\t\t\tplaceholderEnd: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多选框', //组件名称\n\t\t\t\tcomponentType: 'multipleSelection', //组件类型\n\t\t\t\tcomponentSet: 'multipleSelectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: \"\", //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多选框', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tmaxLength: 2,\n\t\t\t\t\toptions: [{\n\t\t\t\t\t\tlabel: '选项1',\n\t\t\t\t\t\tvalue: '选项1',\n\t\t\t\t\t\tisSelect: false,\n\t\t\t\t\t}, {\n\t\t\t\t\t\tlabel: '选项2',\n\t\t\t\t\t\tvalue: '选项2',\n\t\t\t\t\t\tisSelect: false\n\t\t\t\t\t}],\n\t\t\t\t}\n\t\t\t}\n\t\t],\n\t\t[ // 第二组，表示第二个人\n\t\t\t{...},\n\t\t\t{...}\n\t\t]\n\t]\n}",
           "type": "json"
         }
       ]
@@ -893,7 +893,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "data.rows.singed",
+            "field": "data.rows.signed",
             "description": "<p>是否需要签到 true 需要签到 false 不需要签到</p>"
           },
           {
@@ -1440,7 +1440,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "Boolean",
             "optional": true,
-            "field": "singed",
+            "field": "signed",
             "description": "<p>是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到</p>"
           },
           {
@@ -1476,7 +1476,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求body示例",
-          "content": "{\n title: '上海一日游',\n type: 1, // 常规活动\n images: ['a.jpg', 'b.png', 'c.jpg'],\n startTime: '2019-10-23 08:00:00',\n startTime: '2019-10-23 18:00:00',\n enrollStartTime: '2019-10-01 08:00:00',\n enrollEndTime: '2019-10-20 18:00:00',\n personNum: 100,\n descText: '游览上海著名景点',\n descImages: ['d.jpg', 'e.png', 'f.jpg'],\n deptIds: [1,2,3],\n specialUserIds: ['userId1', 'userId2', 'userId3'],\n latitude: 223.234,\n longitude: 113.234,\n address: '上海市三门路复旦软件园',\n singed: true,\n signType: 2, // 签到方式 1-扫码签到 2-位置签到\n distance: 100, // signType = 2 时填写\n contactMobile: '156xxx',\n contactName: '刘遵坤',\n}",
+          "content": "{\n title: '上海一日游',\n type: 1, // 常规活动\n images: ['a.jpg', 'b.png', 'c.jpg'],\n startTime: '2019-10-23 08:00:00',\n startTime: '2019-10-23 18:00:00',\n enrollStartTime: '2019-10-01 08:00:00',\n enrollEndTime: '2019-10-20 18:00:00',\n personNum: 100,\n descText: '游览上海著名景点',\n descImages: ['d.jpg', 'e.png', 'f.jpg'],\n deptIds: [1,2,3],\n specialUserIds: ['userId1', 'userId2', 'userId3'],\n latitude: 223.234,\n longitude: 113.234,\n address: '上海市三门路复旦软件园',\n signed: true,\n signType: 2, // 签到方式 1-扫码签到 2-位置签到\n distance: 100, // signType = 2 时填写\n contactMobile: '156xxx',\n contactName: '刘遵坤',\n}",
           "type": "json"
         }
       ]
@@ -1740,7 +1740,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "data.singed",
+            "field": "data.signed",
             "description": "<p>是否需要签到 true 需要签到 false 不需要签到</p>"
           },
           {
@@ -2153,7 +2153,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "data.rows.singed",
+            "field": "data.rows.signed",
             "description": "<p>是否需要签到 true 需要签到 false 不需要签到</p>"
           },
           {
@@ -2882,7 +2882,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "data.rows.singed",
+            "field": "data.rows.signed",
             "description": "<p>是否需要签到 true 需要签到 false 不需要签到</p>"
           },
           {
@@ -3436,7 +3436,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "Boolean",
             "optional": true,
-            "field": "singed",
+            "field": "signed",
             "description": "<p>是否需要签到 true 需要签到 false 不需要签到，默认 false 不需要签到</p>"
           },
           {
@@ -3472,7 +3472,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求body示例",
-          "content": "{\n id: 1,\n title: '上海一日游',\n type: 1, // 常规活动\n images: ['a.jpg', 'b.png', 'c.jpg'],\n startTime: '2019-10-23 08:00:00',\n startTime: '2019-10-23 18:00:00',\n enrollStartTime: '2019-10-01 08:00:00',\n enrollEndTime: '2019-10-20 18:00:00',\n personNum: 100,\n descText: '游览上海著名景点',\n descImages: ['d.jpg', 'e.png', 'f.jpg'],\n deptIds: [1,2,3],\n specialUserIds: ['userId1', 'userId2', 'userId3'],\n latitude: 223.234,\n longitude: 113.234,\n address: '上海市三门路复旦软件园',\n singed: true,\n signType: 2, // 签到方式 1-扫码签到 2-位置签到\n distance: 100, // signType = 2 时填写\n contactMobile: '156xxx',\n contactName: '刘遵坤',\n}",
+          "content": "{\n id: 1,\n title: '上海一日游',\n type: 1, // 常规活动\n images: ['a.jpg', 'b.png', 'c.jpg'],\n startTime: '2019-10-23 08:00:00',\n startTime: '2019-10-23 18:00:00',\n enrollStartTime: '2019-10-01 08:00:00',\n enrollEndTime: '2019-10-20 18:00:00',\n personNum: 100,\n descText: '游览上海著名景点',\n descImages: ['d.jpg', 'e.png', 'f.jpg'],\n deptIds: [1,2,3],\n specialUserIds: ['userId1', 'userId2', 'userId3'],\n latitude: 223.234,\n longitude: 113.234,\n address: '上海市三门路复旦软件园',\n signed: true,\n signType: 2, // 签到方式 1-扫码签到 2-位置签到\n distance: 100, // signType = 2 时填写\n contactMobile: '156xxx',\n contactName: '刘遵坤',\n}",
           "type": "json"
         }
       ]

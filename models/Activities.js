@@ -75,7 +75,7 @@ Activities.init({
 		type: DataTypes.STRING,
 		comment: '活动地址'
 	},
-	singed: {
+	signed: {
 		type: DataTypes.BOOLEAN,
 		comment: '是否需要签到 true 需要签到 false 不需要签到',
 		defaultValue: false
