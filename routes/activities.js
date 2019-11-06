@@ -490,7 +490,11 @@ router.get('/messages', async (ctx, next) => {
 		message = message.toJSON();
 
 		let readUserIds = message.readUserIds || [];
-		message.isRead = readUserIds.indexOf(user.userId) > -1;
+		if (readUserIds.indexOf(user.userId) === -1) {
+			readUserIds.push(user.userId);
+			Messages.update({ readUserIds }, { where: { id: message.id } });
+		}
+		message.isRead = true;
 		delete message.readUserIds;
 		res.rows.push(message);
 	}
@@ -499,7 +503,7 @@ router.get('/messages', async (ctx, next) => {
 });
 
 /**
-* @api {post} /api/activities/readmsg 设置消息已读
+* @api {post} /api/activities/readmsg 设置消息已读【废弃】
 * @apiName activities-message-read
 * @apiGroup 活动管理
 * @apiDescription 设置消息已读
