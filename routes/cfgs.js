@@ -52,7 +52,7 @@ router.post('/', async (ctx, next) => {
 */
 router.get('/info', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
-	const { catalog } = ctx.request.body;
+	const { catalog } = ctx.query;
 	if (!catalog) {
 		ctx.body = ResService.fail('参数不正确');
 		return;
