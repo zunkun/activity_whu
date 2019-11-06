@@ -2046,6 +2046,13 @@ define({ "api": [
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.enrollNum",
+            "description": "<p>已报名人数</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "String[]",
             "optional": false,
             "field": "data.rows.descImages",
@@ -2758,6 +2765,13 @@ define({ "api": [
             "optional": false,
             "field": "data.rows.personNum",
             "description": "<p>可参与人数</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.enrollNum",
+            "description": "<p>已报名人数</p>"
           },
           {
             "group": "Success 200",

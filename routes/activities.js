@@ -11,6 +11,7 @@ const Roles = require('../models/Roles');
 const config = require('../config');
 const MessageService = require('../services/MessageService');
 const Messages = require('../models/Messages');
+const Enrolls = require('../models/Enrolls');
 
 router.prefix('/api/activities');
 
@@ -595,6 +596,7 @@ router.get('/msgnoread', async (ctx, next) => {
 * @apiSuccess {Date}  data.rows.enrollStartTime 报名开始时间 格式 2019-08-23 08:00:00
 * @apiSuccess {Date}  data.rows.enrollEndTime 报名截止时间 格式 2019-08-24 08:00:00
 * @apiSuccess {Number}  data.rows.personNum 可参与人数
+* @apiSuccess {Number}  data.rows.enrollNum 已报名人数
 * @apiSuccess {String[]}  data.rows.descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiSuccess {String}  data.rows.descText 活动详情文字
 * @apiSuccess {Number[]} data.rows.deptIds 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
@@ -675,7 +677,14 @@ router.get('/lists', async (ctx, next) => {
 		where.reviewStatus = 30;
 		break;
 	}
-	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
+	const activities = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
+	const res = { count: activities.count, rows: [] };
+	for (let activity of activities.rows) {
+		activity = activity.toJSON();
+		activity.enrollNum = await Enrolls.count({ where: { activityId: activity.id, status: 1 } });
+
+		res.rows.push(activity);
+	}
 
 	ctx.body = ResService.success(res);
 });
@@ -771,6 +780,7 @@ router.get('/:id', async (ctx, next) => {
 * @apiSuccess {Date}  data.rows.enrollStartTime 报名开始时间 格式 2019-08-23 08:00:00
 * @apiSuccess {Date}  data.rows.enrollEndTime 报名截止时间 格式 2019-08-24 08:00:00
 * @apiSuccess {Number}  data.rows.personNum 可参与人数
+* @apiSuccess {Number}  data.rows.enrollNum 已报名人数
 * @apiSuccess {String[]}  data.rows.descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiSuccess {String}  data.rows.descText 活动详情文字
 * @apiSuccess {Number[]} data.rows.deptIds 参与人范围所在部门ID列表，例如[1,2,3], 不传该值则为所有部门人员都可以参与
@@ -885,7 +895,14 @@ router.get('/', async (ctx, next) => {
 
 	if (where[Op.or] && !where[Op.or].length) delete where[Op.or];
 
-	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
+	const activities = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
+	const res = { count: activities.count, rows: [] };
+	for (let activity of activities.rows) {
+		activity = activity.toJSON();
+		activity.enrollNum = await Enrolls.count({ where: { activityId: activity.id, status: 1 } });
+
+		res.rows.push(activity);
+	}
 	ctx.body = ResService.success(res);
 	await next();
 });
