@@ -59,7 +59,7 @@ router.get('/info', async (ctx, next) => {
 	}
 	let staffcfg = await StaffCfgs.findOne({ where: { userId: user.userId, catalog } });
 	if (!staffcfg) {
-		ctx.body = ResService.fail('系统中没有当前用户的设置');
+		ctx.body = ResService.success({ catalog, config: {} });
 		return;
 	}
 	ctx.body = ResService.success({ catalog, config: staffcfg.config });
