@@ -22,7 +22,7 @@ router.prefix('/api/activities');
 * @apiDescription 创建活动
 * @apiHeader {String} authorization 登录token
 * @apiParam {String} title 活动标题
-* @apiParam {Number} type 活动类型 1-常规活动 2-专项活动
+* @apiParam {Number} [type] 活动类型 1-常规活动 2-专项活动 默认1 常规活动 分会可以不用传此字段
 * @apiParam {String[]} images 活动图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiParam {Date} startTime 开始时间 格式 2019-08-23 08:00:00
 * @apiParam {Date} endTime 结束时间 格式 2019-08-24 08:00:00
@@ -73,16 +73,16 @@ router.prefix('/api/activities');
 router.post('/', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	let role = await Roles.findOne({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
+	let highRole = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
 	if (!role) {
 		ctx.body = ResService.fail('您不是管理员，无权创建活动');
 		return;
 	}
 	const data = ctx.request.body;
-	console.log({ data });
 	const dataKey = new Set(Object.keys(data));
 	let valid = true; // 传参是否正确
 
-	[ 'title', 'type', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
+	[ 'title', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
 		'personNum', 'latitude', 'longitude', 'address', 'contactMobile', 'contactName' ].map(key => {
 		if (!dataKey.has(key) || !data[key]) {
 			valid = false;
@@ -101,7 +101,7 @@ router.post('/', async (ctx, next) => {
 	const timestamp = Date.now();
 	const activityData = {
 		title: data.title,
-		type: data.type,
+		type: data.type || 1,
 		images: data.images || [],
 		startTime: new Date(data.startTime),
 		endTime: new Date(data.endTime),
@@ -123,7 +123,7 @@ router.post('/', async (ctx, next) => {
 		mobile: user.mobile,
 		role: user.role,
 		timestamp,
-		reviewStatus: 10,
+		reviewStatus: highRole ? 30 : 10,
 		cancel: false
 	};
 
@@ -161,16 +161,16 @@ router.post('/', async (ctx, next) => {
 * @api {post} /api/activities/update 修改活动
 * @apiName activities-update
 * @apiGroup 活动管理
-* @apiDescription 修改活动
+* @apiDescription 修改活动,活動开始之后，不可再修改活动时间和报名时间
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} id 活动ID
 * @apiParam {String} title 活动标题
 * @apiParam {Number} type 活动类型 1-常规活动 2-专项活动
 * @apiParam {String[]} images 活动图片名称表，比如 [a.jpg,b.png,c.jpg]
-* @apiParam {Date} startTime 开始时间 格式 2019-08-23 08:00:00
-* @apiParam {Date} endTime 结束时间 格式 2019-08-24 08:00:00
-* @apiParam {Date} enrollStartTime 报名开始时间 格式 2019-08-23 08:00:00
-* @apiParam {Date} enrollEndTime 报名截止时间 格式 2019-08-24 08:00:00
+* @apiParam {Date} [startTime] 开始时间 格式 2019-08-23 08:00:00
+* @apiParam {Date} [endTime] 结束时间 格式 2019-08-24 08:00:00
+* @apiParam {Date} [enrollStartTime] 报名开始时间 格式 2019-08-23 08:00:00
+* @apiParam {Date} [enrollEndTime] 报名截止时间 格式 2019-08-24 08:00:00
 * @apiParam {Number} personNum 可参与人数
 * @apiParam {String[]} descImages 活动详情图片名称表，比如 [a.jpg,b.png,c.jpg]
 * @apiParam {String} descText 活动详情文字
@@ -269,6 +269,13 @@ router.post('/update', async (ctx, next) => {
 		distance: Number(data.signType) === 2 ? Number(data.distance) : null,
 		timestamp
 	};
+	let currentTime = new Date();
+	if (activity.startTime <= currentTime) {
+		delete activityData.startTime;
+		delete activityData.endTime;
+		delete activityData.enrollStartTime;
+		delete activityData.enrollEndTime;
+	}
 
 	const deptIds = [];
 	const depts = [];
@@ -392,7 +399,7 @@ router.post('/review', async (ctx, next) => {
 	await Activities.update(updateData, { where: { id: activityId, cancel: false } });
 
 	// 给活动创建者发消息
-	MessageService.sendCreatorMsg(reviewStatus, activityId);
+	MessageService.sendCreatorMsg(reviewStatus, activityId, rejectReason);
 	ctx.body = ResService.success({});
 	await next();
 });
@@ -763,7 +770,7 @@ router.get('/lists', async (ctx, next) => {
 * @apiSuccess {String} data.reviewerMobile 审核人手机号
 * @apiSuccess {String} data.reviewerRole 审核人身份
 * @apiSuccess {String} data.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
-* @apiSuccess {Number} data.rows.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
+* @apiSuccess {Number} data.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rejectReason 驳回拒绝原因
 * @apiSuccess {String} data.createdAt 创建时间
 * @apiSuccess {Boolean} data.cancel 是否撤销 true-撤销

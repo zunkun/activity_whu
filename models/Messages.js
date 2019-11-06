@@ -41,6 +41,10 @@ Messages.init({
 		type: DataTypes.INTEGER,
 		defaultValue: 1,
 		comment: '活动审核状态 '
+	},
+	rejectReason: {
+		type: DataTypes.STRING,
+		comment: '审核被拒绝后的拒绝原因'
 	}
 }, { sequelize: postgres, modelName: 'messages', paranoid: true, comment: '消息' });
 

@@ -30,11 +30,10 @@ class MessageService {
    * 审核后给创建者发送消息
    * @param {Number} activityId 活动ID
    * @param {Object} activity 活动信息
+	 * @param {String} rejectReason 拒绝原因
    */
-	static async sendCreatorMsg (reviewStatus, activityId, activity) {
-		if (!activity) {
-			activity = await Activities.findOne({ id: activityId });
-		}
+	static async sendCreatorMsg (reviewStatus, activityId, rejectReason) {
+		let activity = await Activities.findOne({ id: activityId });
 
 		await Messages.create({
 			userId: activity.userId,
@@ -45,6 +44,7 @@ class MessageService {
 			text: `您于${util.date2String(activity.createdAt)}申请的 “${activity.title}”活动`,
 			finish: true,
 			reviewStatus,
+			rejectReason: reviewStatus === 40 ? rejectReason : '',
 			readUserIds: [],
 			activityId
 		});
