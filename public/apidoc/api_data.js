@@ -3535,13 +3535,6 @@ define({ "api": [
             "optional": false,
             "field": "errcode",
             "description": "<p>成功为0</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>{}</p>"
           }
         ]
       }
@@ -3599,13 +3592,6 @@ define({ "api": [
             "optional": false,
             "field": "catalog",
             "description": "<p>设置分类，比如 activity-活动列表导出设置 enroll-报名信息列表导出设置</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>表单数据</p>"
           }
         ]
       }
@@ -3619,6 +3605,13 @@ define({ "api": [
             "optional": false,
             "field": "errcode",
             "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>表单数据</p>"
           },
           {
             "group": "Success 200",

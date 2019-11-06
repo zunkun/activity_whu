@@ -16,7 +16,6 @@ router.prefix('/api/cfgs');
 * @apiParam {String} catalog 设置分类，比如 activity-活动列表导出设置 enroll-报名信息列表导出设置
 * @apiParam {Object} config 设置对象
 * @apiSuccess {Number} errcode 成功为0
-* @apiSuccess {Object} data {}
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -45,7 +44,7 @@ router.post('/', async (ctx, next) => {
 * @apiHeader {String} authorization 登录token
 * @apiParam {String} catalog 设置分类，比如 activity-活动列表导出设置 enroll-报名信息列表导出设置
 * @apiSuccess {Number} errcode 成功为0
-* @apiParam {Object} data 表单数据
+* @apiSuccess {Object} data 表单数据
 * @apiSuccess {Number} data.catalog 设置分类
 * @apiSuccess {String} data.config 设置
 * @apiError {Number} errcode 失败不为0
