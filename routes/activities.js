@@ -746,7 +746,7 @@ router.get('/:id', async (ctx, next) => {
 
 /**
 * @api {get} /api/activities?limit=&page=&keywords=&status=&type= 活动列表
-* @apiName activities-lists
+* @apiName activities-pc-lists
 * @apiGroup 活动管理
 * @apiDescription 活动列表，目前是PC端管理活动列表,分会管理员只能看到自己创建的活动列表以及其管辖分会的活动列表，而总会管理员能够看到所有的活动列表
 * @apiHeader {String} authorization 登录token

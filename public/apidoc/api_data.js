@@ -2283,9 +2283,325 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/activities/messages?limit=&page=",
+    "title": "我的消息",
+    "name": "activities_message_lists",
+    "group": "活动管理",
+    "description": "<p>我的消息列表</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "limit",
+            "description": "<p>分页条数，默认10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "page",
+            "description": "<p>第几页，默认1</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>活动列表</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.count",
+            "description": "<p>总共消息条数</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>当前页消息列表</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.id",
+            "description": "<p>消息ID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.isRead",
+            "description": "<p>当前消息是否已读</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.userId",
+            "description": "<p>活动创建人userId</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.userName",
+            "description": "<p>活动创建人</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.title",
+            "description": "<p>活动标题</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "data.rows.createTime",
+            "description": "<p>活动发起时间</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.type",
+            "description": "<p>消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.text",
+            "description": "<p>消息内容</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.finish",
+            "description": "<p>审批否处理完毕，如果审核操作结束或者撤销活动，则当前字段为true</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.reviewStatus",
+            "description": "<p>活动审核状态 20-审核中 30-审核通过 40-拒绝</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
+    "type": "get",
+    "url": "/api/activities/msgnoread",
+    "title": "获取未读消息条数",
+    "name": "activities_message_no_read",
+    "group": "活动管理",
+    "description": "<p>获取未读消息条数</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回结果</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.count",
+            "description": "<p>当前未读消息条数</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
+    "type": "post",
+    "url": "/api/activities/readmsg",
+    "title": "设置消息已读【废弃】",
+    "name": "activities_message_read",
+    "group": "活动管理",
+    "description": "<p>设置消息已读</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "messageId",
+            "description": "<p>消息ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>{}</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
+    "type": "get",
     "url": "/api/activities?limit=&page=&keywords=&status=&type=",
     "title": "活动列表",
-    "name": "activities_lists",
+    "name": "activities_pc_lists",
     "group": "活动管理",
     "description": "<p>活动列表，目前是PC端管理活动列表,分会管理员只能看到自己创建的活动列表以及其管辖分会的活动列表，而总会管理员能够看到所有的活动列表</p>",
     "header": {
@@ -2652,322 +2968,6 @@ define({ "api": [
             "optional": false,
             "field": "data.rows.createdAt",
             "description": "<p>创建时间</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>失败不为0</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errmsg",
-            "description": "<p>错误消息</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/activities.js",
-    "groupTitle": "活动管理"
-  },
-  {
-    "type": "get",
-    "url": "/api/activities/messages?limit=&page=",
-    "title": "我的消息",
-    "name": "activities_message_lists",
-    "group": "活动管理",
-    "description": "<p>我的消息列表</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>登录token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": true,
-            "field": "limit",
-            "description": "<p>分页条数，默认10</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": true,
-            "field": "page",
-            "description": "<p>第几页，默认1</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>成功为0</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>活动列表</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.count",
-            "description": "<p>总共消息条数</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object[]",
-            "optional": false,
-            "field": "data.rows",
-            "description": "<p>当前页消息列表</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.id",
-            "description": "<p>消息ID</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.isRead",
-            "description": "<p>当前消息是否已读</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.userId",
-            "description": "<p>活动创建人userId</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.userName",
-            "description": "<p>活动创建人</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.title",
-            "description": "<p>活动标题</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "optional": false,
-            "field": "data.rows.createTime",
-            "description": "<p>活动发起时间</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.type",
-            "description": "<p>消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "data.rows.text",
-            "description": "<p>消息内容</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Boolean",
-            "optional": false,
-            "field": "data.rows.finish",
-            "description": "<p>审批否处理完毕，如果审核操作结束或者撤销活动，则当前字段为true</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.reviewStatus",
-            "description": "<p>活动审核状态 20-审核中 30-审核通过 40-拒绝</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>失败不为0</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errmsg",
-            "description": "<p>错误消息</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/activities.js",
-    "groupTitle": "活动管理"
-  },
-  {
-    "type": "get",
-    "url": "/api/activities/msgnoread",
-    "title": "获取未读消息条数",
-    "name": "activities_message_no_read",
-    "group": "活动管理",
-    "description": "<p>获取未读消息条数</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>登录token</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>成功为0</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>返回结果</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.count",
-            "description": "<p>当前未读消息条数</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>失败不为0</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errmsg",
-            "description": "<p>错误消息</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/activities.js",
-    "groupTitle": "活动管理"
-  },
-  {
-    "type": "post",
-    "url": "/api/activities/readmsg",
-    "title": "设置消息已读",
-    "name": "activities_message_read",
-    "group": "活动管理",
-    "description": "<p>设置消息已读</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>登录token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "messageId",
-            "description": "<p>消息ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>成功为0</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>{}</p>"
           }
         ]
       }
