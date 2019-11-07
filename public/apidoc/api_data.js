@@ -1341,9 +1341,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Number",
-            "optional": false,
+            "optional": true,
             "field": "type",
-            "description": "<p>活动类型 1-常规活动 2-专项活动</p>"
+            "description": "<p>活动类型 1-常规活动 2-专项活动 默认1 常规活动 分会可以不用传此字段</p>"
           },
           {
             "group": "Parameter",
@@ -1845,7 +1845,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.rows.status",
+            "field": "data.status",
             "description": "<p>活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝</p>"
           },
           {
@@ -3033,6 +3033,90 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/api/activities/publish",
+    "title": "活动发布",
+    "name": "activities_publish",
+    "group": "活动管理",
+    "description": "<p>活动发布，发布活动范围未超出，则有此操作</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "activityId",
+            "description": "<p>活动ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>活动信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.id",
+            "description": "<p>活动ID</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
+    "type": "post",
     "url": "/api/activities/review",
     "title": "审核活动",
     "name": "activities_review",
@@ -3303,7 +3387,7 @@ define({ "api": [
     "title": "修改活动",
     "name": "activities_update",
     "group": "活动管理",
-    "description": "<p>修改活动</p>",
+    "description": "<p>修改活动,活動开始之后，不可再修改活动时间和报名时间</p>",
     "header": {
       "fields": {
         "Header": [
@@ -3351,28 +3435,28 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Date",
-            "optional": false,
+            "optional": true,
             "field": "startTime",
             "description": "<p>开始时间 格式 2019-08-23 08:00:00</p>"
           },
           {
             "group": "Parameter",
             "type": "Date",
-            "optional": false,
+            "optional": true,
             "field": "endTime",
             "description": "<p>结束时间 格式 2019-08-24 08:00:00</p>"
           },
           {
             "group": "Parameter",
             "type": "Date",
-            "optional": false,
+            "optional": true,
             "field": "enrollStartTime",
             "description": "<p>报名开始时间 格式 2019-08-23 08:00:00</p>"
           },
           {
             "group": "Parameter",
             "type": "Date",
-            "optional": false,
+            "optional": true,
             "field": "enrollEndTime",
             "description": "<p>报名截止时间 格式 2019-08-24 08:00:00</p>"
           },
@@ -3859,7 +3943,7 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "data.user.roles.role",
-            "description": "<p>角色 1-总会管理员 2-分会管理员 3-普通校友， 注意总会管理员可以管理所有部门</p>"
+            "description": "<p>角色 1-总会管理员 2-分会管理员 3-普通校友</p>"
           },
           {
             "group": "Success 200",
