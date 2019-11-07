@@ -333,7 +333,7 @@ router.get('/myactivities', async (ctx, next) => {
 	let limit = Number(query.limit) || 10;
 	let offset = (page - 1) * limit;
 
-	const where = { cancel: false, type: Number(query.type) || 1, reviewStatus: 1 };
+	const where = { cancel: false, type: Number(query.type) || 1, reviewStatus: 30 };
 	const activityIds = [];
 	const enrolls = await Enrolls.findAll({ where: { userId: user.userId } });
 	for (let enroll of enrolls) {
