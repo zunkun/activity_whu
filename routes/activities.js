@@ -370,8 +370,7 @@ router.post('/update', async (ctx, next) => {
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
 * @apiSuccess {Number} errcode 成功为0
-* @apiSuccess {Object} data 活动信息
-* @apiSuccess {Number} data.id 活动ID
+* @apiSuccess {Object} data {}
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */

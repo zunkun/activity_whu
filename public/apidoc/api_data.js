@@ -1504,6 +1504,13 @@ define({ "api": [
             "optional": false,
             "field": "data.id",
             "description": "<p>活动ID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.needReview",
+            "description": "<p>是否需要提交审核</p>"
           }
         ]
       }
@@ -1840,6 +1847,13 @@ define({ "api": [
             "optional": false,
             "field": "data.reviewStatus",
             "description": "<p>审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.published",
+            "description": "<p>活动是否发布</p>"
           },
           {
             "group": "Success 200",
@@ -2260,6 +2274,13 @@ define({ "api": [
             "optional": false,
             "field": "data.rows.rejectReason",
             "description": "<p>驳回拒绝原因</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.published",
+            "description": "<p>活动是否发布</p>"
           },
           {
             "group": "Success 200",
@@ -2985,6 +3006,13 @@ define({ "api": [
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.published",
+            "description": "<p>活动是否发布</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "Number",
             "optional": false,
             "field": "data.rows.status",
@@ -3079,14 +3107,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>活动信息</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.id",
-            "description": "<p>活动ID</p>"
+            "description": "<p>{}</p>"
           }
         ]
       }
