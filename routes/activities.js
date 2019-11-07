@@ -551,6 +551,7 @@ router.post('/cancel', async (ctx, next) => {
 * @apiSuccess {String}  data.rows.text 消息内容
 * @apiSuccess {Boolean}  data.rows.finish 审批否处理完毕，如果审核操作结束或者撤销活动，则当前字段为true
 * @apiSuccess {Number}  data.rows.reviewStatus 活动审核状态 20-审核中 30-审核通过 40-拒绝
+* @apiSuccess {String}  data.rows.rejectReason 拒绝原因
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */

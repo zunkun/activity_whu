@@ -2463,6 +2463,13 @@
             "optional": false,
             "field": "data.rows.reviewStatus",
             "description": "<p>活动审核状态 20-审核中 30-审核通过 40-拒绝</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.rejectReason",
+            "description": "<p>拒绝原因</p>"
           }
         ]
       }
