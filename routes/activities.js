@@ -68,6 +68,7 @@ router.prefix('/api/activities');
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object} data 活动信息
 * @apiSuccess {Number} data.id 活动ID
+* @apiSuccess {Boolean} data.needReview 是否需要提交审核
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -723,6 +724,7 @@ router.get('/msgnoread', async (ctx, next) => {
 * @apiSuccess {String} data.rows.reviewerRole 审核人身份
 * @apiSuccess {String} data.rows.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
 * @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
+* @apiSuccess {Boolean} data.rows.published 活动是否发布
 * @apiSuccess {Number} data.rows.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rows.createdAt 创建时间
 * @apiError {Number} errcode 失败不为0
@@ -859,6 +861,7 @@ router.get('/lists', async (ctx, next) => {
 * @apiSuccess {String} data.reviewerMobile 审核人手机号
 * @apiSuccess {String} data.reviewerRole 审核人身份
 * @apiSuccess {String} data.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
+* @apiSuccess {Boolean} data.published 活动是否发布
 * @apiSuccess {Number} data.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rejectReason 驳回拒绝原因
 * @apiSuccess {String} data.createdAt 创建时间
@@ -874,6 +877,7 @@ router.get('/:id', async (ctx, next) => {
 		ctx.body = ResService.fail('系统无法查询到活动信息');
 		return;
 	}
+	activity = activity.toJSON();
 	let currentTime = new Date();
 	let reviewStatus = activity.reviewStatus;
 	let enrollStartTime = activity.enrollStartTime;
@@ -961,6 +965,7 @@ router.get('/:id', async (ctx, next) => {
 * @apiSuccess {String} data.rows.reviewerMobile 审核人手机号
 * @apiSuccess {String} data.rows.reviewerRole 审核人身份
 * @apiSuccess {Number} data.rows.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
+* @apiSuccess {Boolean} data.rows.published 活动是否发布
 * @apiSuccess {Number} data.rows.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
 * @apiSuccess {String} data.rows.createdAt 创建时间
