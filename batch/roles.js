@@ -11,7 +11,8 @@ class RoleBatch {
 						userId,
 						userName: staff.userName,
 						role,
-						deptIds: [ 1 ]
+						deptIds: [ 1 ],
+						depts: [ { deptId: 1, deptName: '武汉大学校友总会' } ]
 					});
 				}
 			});

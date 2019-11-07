@@ -34,7 +34,7 @@ class DeptStaffService {
 		if (!this.deptMap.has(deptId)) {
 			let dept = await DingDepts.findOne({ where: { deptId } });
 			if (!dept) return { deptId, deptName: '' };
-			this.deptMap.set(deptId, { deptId, deptName: dept.deptName, parentId: dept.parentId });
+			this.deptMap.set(deptId, { deptId, deptName: dept.deptName, parentId: dept.parentId, deptPath: dept.deptPath });
 		}
 		return this.deptMap.get(deptId);
 	}

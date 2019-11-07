@@ -3,6 +3,7 @@ const Roles = require('../models/Roles');
 const rp = require('request-promise');
 const { Op } = require('sequelize');
 const config = require('../config');
+const deptStaffService = require('../services/deptStaffService');
 
 const cron = require('node-cron');
 
@@ -47,11 +48,17 @@ class RoleSchedule {
 			if (!staff) { continue; }
 			userIds.push(user.dingtalkId);
 			console.log(`同步 ${staff.userName} role=${roleType} 角色`);
+			let depts = [];
+			for (let deptId of user.orgs) {
+				let dept = await deptStaffService.getDeptInfo(deptId);
+				depts.push({ deptId, deptName: dept.deptName });
+			}
 			Roles.upsert({
 				userId: user.dingtalkId,
 				userName: staff.userName,
 				role: roleType,
-				deptIds: user.orgs
+				deptIds: user.orgs,
+				depts
 			}, { where: { userId: user.dingtalkId, role: roleType } });
 		}
 		userIds.push('4508346520949170');

@@ -133,6 +133,11 @@ Activities.init({
 		type: DataTypes.STRING,
 		comment: '审核人身份'
 	},
+	published: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+		comment: '活动是否发布 需要审核的活动审核通过或活动发布操作，则为true'
+	},
 	reviewStatus: {
 		type: DataTypes.INTEGER,
 		defaultValue: 10,
