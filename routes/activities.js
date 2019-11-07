@@ -984,7 +984,9 @@ router.get('/', async (ctx, next) => {
 		where.title = { [Op.like]: `%${query.keywords}%` };
 		where.descText = { [Op.like]: `%${query.keywords}%` };
 	}
-	where.type = Number(query.type) || 1;
+	if (query.type) {
+		where.type = Number(query.type) || 1;
+	}
 
 	// 活动状态
 	let status = Number(query.status) || 0;
@@ -1031,27 +1033,10 @@ router.get('/', async (ctx, next) => {
 
 	let deptIds = []; // 个人所管理的部门表
 	for (let role of roles) {
-		if (!where[Op.or]) where[Op.or] = [];
-		if (role.role === 2) { // 分会管理员
-			deptIds = deptIds.concat(role.deptIds);
-		}
+		deptIds = deptIds.concat(role.deptIds);
 	}
-
-	if (deptIds.length) {
-		// 当前管理员所管理分会所有管理员发布的活动都可管理
-		let allroles = await Roles.findAll({ where: { deptIds: { [Op.overlap]: deptIds } } });
-
-		let allUserIds = [];
-		for (let role of allroles) {
-			allUserIds.push(role.userId);
-		}
-		// 此处有漏洞，不过可以通过制定变更
-		if (allUserIds.length) {
-			where.userId = { [Op.in]: allUserIds };
-		}
-	}
-
-	if (where[Op.or] && !where[Op.or].length) delete where[Op.or];
+	// TODO: 获取子部门id表
+	if (!where[Op.or]) where[Op.or] = [ { userId: user.userId }, { deptIds: { [Op.overlap]: deptIds } } ];
 
 	const activities = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
 	const res = { count: activities.count, rows: [] };
