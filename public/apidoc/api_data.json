@@ -1871,6 +1871,13 @@
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.highAuthority",
+            "description": "<p>是否能够审批该活动</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "data.createdAt",

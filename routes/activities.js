@@ -864,6 +864,7 @@ router.get('/lists', async (ctx, next) => {
 * @apiSuccess {Boolean} data.published 活动是否发布
 * @apiSuccess {Number} data.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rejectReason 驳回拒绝原因
+* @apiSuccess {Boolean} data.highAuthority 是否能够审批该活动
 * @apiSuccess {String} data.createdAt 创建时间
 * @apiSuccess {Boolean} data.cancel 是否撤销 true-撤销
 * @apiError {Number} errcode 失败不为0
@@ -877,7 +878,19 @@ router.get('/:id', async (ctx, next) => {
 		ctx.body = ResService.fail('系统无法查询到活动信息');
 		return;
 	}
+
 	activity = activity.toJSON();
+	const roles = await Roles.findAll({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
+
+	let deptIds = []; // 个人所管理的部门表
+	for (let role of roles) {
+		deptIds = deptIds.concat(role.deptIds);
+	}
+	activity.highAuthority = false;
+	if (_.intersection(deptIds, activity.deptIds).length) {
+		activity.highAuthority = true;
+	}
+
 	let currentTime = new Date();
 	let reviewStatus = activity.reviewStatus;
 	let enrollStartTime = activity.enrollStartTime;
