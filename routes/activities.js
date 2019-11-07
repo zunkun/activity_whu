@@ -871,6 +871,8 @@ router.get('/lists', async (ctx, next) => {
 * @apiError {Number} errmsg 错误消息
 */
 router.get('/:id', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+
 	const id = ctx.params.id;
 
 	let activity = await Activities.findOne({ where: { id } });
