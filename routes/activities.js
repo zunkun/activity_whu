@@ -738,7 +738,7 @@ router.get('/lists', async (ctx, next) => {
 	let offset = (page - 1) * limit;
 	let currentTime = new Date();
 
-	const where = { cancel: false, type: Number(query.type) || 1 };
+	const where = { cancel: false, published: true, type: Number(query.type) || 1 };
 
 	// 我所在部门
 	let deptIds = [];
