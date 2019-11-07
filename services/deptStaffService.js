@@ -14,6 +14,14 @@ class DeptStaffService {
 		await this.setAllDeptMaps();
 		await this.setAllStaffMaps();
 	}
+	/**
+	 * 获取所有子部门的deptId列表
+	 * @param {Number} deptId deptId
+	 */
+	async getSubDeptIds (deptId) {
+		let dept = await DingDepts.findOne({ where: { deptId } });
+		return dept.subdeptIds || [ deptId ];
+	}
 
 	/**
    * 设置所有deptMap

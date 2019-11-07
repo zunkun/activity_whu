@@ -13,6 +13,10 @@ Messages.init({
 		type: DataTypes.STRING,
 		comment: '活动发起人userName'
 	},
+	roleDeptIds: {
+		type: DataTypes.ARRAY(DataTypes.INTEGER),
+		comment: '活动发起人deptId列表'
+	},
 	createTime: {
 		type: DataTypes.DATE,
 		comment: '活动发起时间'

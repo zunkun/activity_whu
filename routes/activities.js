@@ -79,7 +79,8 @@ router.post('/', async (ctx, next) => {
 	let isHighRole = false;
 	let managerRole; // 分会管理角色
 	let highRole; // 总会管理角色
-	let allRoleDeptIds = []; // 表示当前人员所管理的所有部门ID
+	let allSubDeptIds = []; // 当前管理员所管理部门的所有子部门ID数组
+	let roleDeptIds = []; // // 表示当前人员所管理的所有部门ID
 	for (let role of roles) {
 		if (role.role === 1) {
 			isHighRole = true;
@@ -89,7 +90,11 @@ router.post('/', async (ctx, next) => {
 			isManagerRole = true;
 			managerRole = role;
 		}
-		allRoleDeptIds = allRoleDeptIds.concat(role.deptIds);
+		for (let deptId of role.deptIds) {
+			let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+			allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+		}
+		roleDeptIds = roleDeptIds.concat(role.deptIds);
 	}
 
 	if (!isManagerRole || !isHighRole) {
@@ -138,6 +143,7 @@ router.post('/', async (ctx, next) => {
 		distance: Number(data.signType) === 2 ? Number(data.distance) : null,
 		userId: user.userId,
 		userName: user.userName,
+		roleDeptIds,
 		mobile: user.mobile,
 		role: user.role,
 		timestamp,
@@ -178,15 +184,16 @@ router.post('/', async (ctx, next) => {
 		activityData.depts = depts;
 
 		for (let deptId of deptIds) {
-			let dept = await deptStaffService.getDeptInfo(deptId);
-			let deptPaths = dept.deptPaths;
-			// 如果当前部门所在父部门id与当前用户所管理部门ID 没有交集，则表示其参与活动范围超出了，需要审核
-			if (!_.intersection(deptPaths, allRoleDeptIds).length) {
+			if (allSubDeptIds.indexOf(deptId) === -1) {
 				activityData.reviewStatus = 10;
 				needReview = true;
 				break;
 			}
 		}
+	}
+	// 如果是总会管理员，则不需要审核
+	if (isHighRole) {
+		needReview = false;
 	}
 	// 如果不需要审核，则状态设置为审核通过
 	if (!needReview) {
@@ -440,7 +447,7 @@ router.post('/sendreview', async (ctx, next) => {
 
 	await Activities.update({ reviewStatus: 20 }, { where: { id: activityId } });
 	// 给审核者发送消息
-	MessageService.sendReviewMsg(activityId, activity);
+	MessageService.sendReviewMsg(activityId);
 	ctx.body = ResService.success({});
 	await next();
 });
@@ -462,12 +469,32 @@ router.post('/sendreview', async (ctx, next) => {
 */
 router.post('/review', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let { reviewStatus, activityId, rejectReason } = ctx.request.body;
 	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
 	if (!role) {
 		ctx.body = ResService.fail('您非总会管理员，无权审批活动');
 		return;
 	}
-	let { reviewStatus, activityId, rejectReason } = ctx.request.body;
+	let allSubDeptIds = [];
+	for (let deptId of role.deptIds) {
+		let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+		allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+	}
+	let activity = await Activities.findOne({ where: { id: activityId } });
+	if (!activity) {
+		ctx.body = ResService.fail('系统中无当前活动');
+		return;
+	}
+	if (activity.status !== 20) {
+		ctx.body = ResService.fail('当前活动不再审核状态，不可审核');
+		return;
+	}
+	// 当前管理员所管理部门子部门ID表与活动发起者所管理部门ID有交集，则该活动发起者发起的活动归当前管理员管理
+	if (!_.intersection(allSubDeptIds, activity.roleDeptIds).length) {
+		ctx.body = ResService.fail('您没有权限审核该活动');
+		return;
+	}
+
 	reviewStatus = Number(reviewStatus);
 	if (!reviewStatus || !activityId) {
 		ctx.body = ResService.fail('参数错误');
@@ -570,10 +597,15 @@ router.get('/messages', async (ctx, next) => {
 
 	const where = { [Op.or]: [ { userId: user.userId, type: 2 } ] };
 	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
+	let allSubDeptIds = []; // 所管理部门所有子部门ID
+	for (let deptId of role.deptIds) {
+		let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+		allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+	}
 	if (role) {
 		where[Op.or] = [
-			{ userId: user.userId, type: 2 },
-			{ type: 1 }
+			{ userId: user.userId, type: 2 }, // 分会管理员收到审核结果信息
+			{ type: 1, roleDeptIds: { [Op.overlap]: allSubDeptIds } } // 总会管理员收到所管理部门的子部门发起的审核信息
 		];
 	}
 
@@ -749,6 +781,7 @@ router.get('/lists', async (ctx, next) => {
 	}
 	deptIds = Array.from(new Set(deptIds));
 	if (!where[Op.or]) where[Op.or] = [];
+	// 当前校友所在部门在活动范围部门子部门中
 	where[Op.or].push({ deptIds: { [Op.overlap]: deptIds } });
 	where[Op.or].push({ specialUserIds: { [Op.contains]: [ user.userId ] } });
 
@@ -882,14 +915,29 @@ router.get('/:id', async (ctx, next) => {
 	}
 
 	activity = activity.toJSON();
-	const roles = await Roles.findAll({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
 
-	let deptIds = []; // 个人所管理的部门表
-	for (let role of roles) {
-		deptIds = deptIds.concat(role.deptIds);
+	let creatorDeptIds = [];
+	let creatorStaffDepts = await DeptStaffs.findAll({ where: { userId: activity.userId } });
+	for (let staffdept of creatorStaffDepts) {
+		creatorDeptIds.push(staffdept.deptId);
 	}
+	const role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
+
+	let highRole = false;
+
+	let allSubDeptIds = []; // 个人作为总会管理员所管理所有子部门列表
+	if (role) {
+		highRole = true;
+		for (let deptId of role.deptIds) {
+			let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+			allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+		}
+	}
+
 	activity.highAuthority = false;
-	if (_.intersection(deptIds, activity.deptIds).length) {
+	// 有审核权限 1. 总会管理员
+	// 2.所管理子部门ID表与当前活动创建人所管理的部门ID有交集
+	if (highRole && _.intersection(allSubDeptIds, activity.roleDeptIds).length) {
 		activity.highAuthority = true;
 	}
 
@@ -1046,12 +1094,19 @@ router.get('/', async (ctx, next) => {
 		return;
 	}
 
-	let deptIds = []; // 个人所管理的部门表
+	let allSubDeptIds = []; // 个人所管理的部门表
 	for (let role of roles) {
-		deptIds = deptIds.concat(role.deptIds);
+		for (let deptId of role.deptIds) {
+			let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+			allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+		}
 	}
-	// TODO: 获取子部门id表
-	if (!where[Op.or]) where[Op.or] = [ { userId: user.userId }, { deptIds: { [Op.overlap]: deptIds } } ];
+	if (!where[Op.or]) {
+		where[Op.or] = [
+			{ userId: user.userId }, // 自己创建的活动
+			{ roleDeptIds: { [Op.overlap]: allSubDeptIds } } // 自己所管理的部门子部门id表与活动创建人所管理的部门ID表有交集，则可管理活动
+		];
+	}
 
 	const activities = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
 	const res = { count: activities.count, rows: [] };

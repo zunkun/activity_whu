@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const ResService = require('../core/ResService');
 const DingStaffs = require('../models/DingStaffs');
+const DeptStaffs = require('../models/DeptStaffs');
 const Roles = require('../models/Roles');
 const dingding = require('../core/dingding');
 const Router = require('koa-router');
@@ -119,6 +120,13 @@ router.get('/login', async (ctx, next) => {
 		if (!roles.length) {
 			user.roles.push({ role: 3 });
 		}
+		let deptIds = [];
+		let deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+		for (let deptStaff of deptStaffs) {
+			deptIds.push(deptStaff.deptId);
+		}
+		user.deptIds = deptIds;
+
 		const token = jwt.sign(user, config.secret);
 		ctx.body = ResService.success({ user, token: 'Bearer ' + token });
 	} catch (error) {

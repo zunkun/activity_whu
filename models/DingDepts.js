@@ -20,6 +20,10 @@ DingDepts.init({
 	deptPaths: {
 		type: DataTypes.ARRAY(DataTypes.INTEGER),
 		comment: '部门路径表'
+	},
+	subdeptIds: {
+		type: DataTypes.ARRAY(DataTypes.INTEGER),
+		comment: '所有子部门deptId 表'
 	}
 }, { sequelize: postgres, modelName: 'dingdepts', timestamps: false, comment: '钉钉组织架构' });
 

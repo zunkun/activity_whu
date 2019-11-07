@@ -109,6 +109,10 @@ Activities.init({
 		type: DataTypes.STRING,
 		comment: '发起人userName'
 	},
+	roleDeptIds: {
+		type: DataTypes.ARRAY(DataTypes.INTEGER),
+		comment: '活动发起人发起活动时所管理的deptId表'
+	},
 	mobile: {
 		type: DataTypes.STRING,
 		comment: '发起人手机'

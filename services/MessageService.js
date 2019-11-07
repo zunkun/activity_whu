@@ -1,20 +1,23 @@
 const Activities = require('../models/Activities');
 const Messages = require('../models/Messages');
+const Roles = require('../models/Roles');
 const util = require('../core/util');
 class MessageService {
 	/**
    * 创建活动成功发给审核
    * @param {Number} activityId 活动ID
-   * @param {Object} activity 活动信息
    */
-	static async sendReviewMsg (activityId, activity) {
-		if (!activity) {
-			activity = await Activities.findOne({ id: activityId });
+	static async sendReviewMsg (activityId) {
+		let activity = await Activities.findOne({ id: activityId });
+		let roles = await Roles.findAll({ where: { userId: activity.userId } });
+		let roleDeptIds = [];
+		for (let role of roles) {
+			roleDeptIds = roleDeptIds.concat(role.deptIds);
 		}
-
 		Messages.create({
 			userId: activity.userId,
 			userName: activity.userName,
+			roleDeptIds,
 			createTime: activity.createdAt,
 			title: activity.title,
 			type: 1,
