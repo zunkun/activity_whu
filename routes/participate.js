@@ -143,7 +143,7 @@ router.post('/enroll', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	const { activityId, formlists } = ctx.request.body;
 	const currentTime = new Date();
-	const activity = Activities.findOne({ where: { id: activityId } });
+	const activity = await Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统没有当前活动');
 		return;
@@ -374,7 +374,7 @@ router.get('/persons', async (ctx, next) => {
 		res.push({
 			userId: staff.userId,
 			userName: staff.userName,
-			mobile: staff.bobile,
+			mobile: staff.mobile,
 			avatar: staff.avatar
 		});
 	}
