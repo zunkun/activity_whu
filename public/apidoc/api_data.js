@@ -996,6 +996,13 @@ define({ "api": [
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.status",
+            "description": "<p>活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "data.rows.rejectReason",

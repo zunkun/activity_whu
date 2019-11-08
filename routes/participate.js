@@ -321,6 +321,7 @@ router.get('/myenroll', async (ctx, next) => {
 * @apiSuccess {String} data.rows.reviewerMobile 审核人手机号
 * @apiSuccess {String} data.rows.reviewerRole 审核人身份
 * @apiSuccess {String} data.rows.reviewStatus 审核状态 0-审核中 1-审核通过 2-拒绝
+* @apiSuccess {Number} data.rows.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
 * @apiSuccess {String} data.rows.createdAt 创建时间
 * @apiError {Number} errcode 失败不为0
@@ -341,8 +342,42 @@ router.get('/myactivities', async (ctx, next) => {
 	}
 
 	where.id = { [Op.in]: activityIds };
+	let currentTime = new Date();
 
-	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
+	const activities = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
+	const res = { count: activities.count, rows: [] };
+	for (let activity of activities.rows) {
+		activity = activity.toJSON();
+		activity.enrollNum = await Enrolls.count({ where: { activityId: activity.id, status: 1 } });
+
+		let reviewStatus = activity.reviewStatus;
+		let enrollStartTime = activity.enrollStartTime;
+		let enrollEndTime = activity.enrollEndTime;
+		let startTime = activity.startTime;
+		let endTime = activity.endTime;
+		let status = reviewStatus;
+		if ([ 10, 20, 40 ].indexOf(reviewStatus) > -1) {
+			status = reviewStatus;
+		} else if (reviewStatus === 30) {
+			if (currentTime < enrollStartTime) {
+				status = 31;
+			}
+			if (currentTime >= enrollStartTime && currentTime <= enrollEndTime) {
+				status = 32;
+			}
+			if (currentTime < startTime) {
+				status = 35;
+			}
+			if (currentTime >= startTime && currentTime <= endTime) {
+				status = 33;
+			}
+			if (currentTime > endTime) {
+				status = 34;
+			}
+		}
+		activity.status = status;
+		res.rows.push(activity);
+	}
 	ctx.body = ResService.success(res);
 });
 
