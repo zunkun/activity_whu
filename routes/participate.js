@@ -340,6 +340,8 @@ router.get('/myactivities', async (ctx, next) => {
 		activityIds.push(enroll.activityId);
 	}
 
+	where.activityId = { [Op.in]: activityIds };
+
 	const res = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
 	ctx.body = ResService.success(res);
 });
