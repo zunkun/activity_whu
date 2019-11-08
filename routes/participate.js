@@ -513,7 +513,7 @@ router.post('/sign', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	const { activityId, latitude, longitude, address } = ctx.request.body;
 	const currentTime = new Date();
-	const activity = await Activities.findOne({ id: activityId });
+	const activity = await Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统没有当前活动');
 		return;
