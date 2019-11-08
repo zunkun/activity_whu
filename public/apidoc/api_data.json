@@ -1857,13 +1857,6 @@
           },
           {
             "group": "Success 200",
-            "type": "Boolean",
-            "optional": false,
-            "field": "data.published",
-            "description": "<p>活动是否发布</p>"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "optional": false,
             "field": "data.status",
@@ -2288,13 +2281,6 @@
             "optional": false,
             "field": "data.rows.rejectReason",
             "description": "<p>驳回拒绝原因</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Boolean",
-            "optional": false,
-            "field": "data.rows.published",
-            "description": "<p>活动是否发布</p>"
           },
           {
             "group": "Success 200",
@@ -3027,13 +3013,6 @@
           },
           {
             "group": "Success 200",
-            "type": "Boolean",
-            "optional": false,
-            "field": "data.rows.published",
-            "description": "<p>活动是否发布</p>"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "optional": false,
             "field": "data.rows.status",
@@ -3052,83 +3031,6 @@
             "optional": false,
             "field": "data.rows.createdAt",
             "description": "<p>创建时间</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>失败不为0</p>"
-          },
-          {
-            "group": "Error 4xx",
-            "type": "Number",
-            "optional": false,
-            "field": "errmsg",
-            "description": "<p>错误消息</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/activities.js",
-    "groupTitle": "活动管理"
-  },
-  {
-    "type": "post",
-    "url": "/api/activities/publish",
-    "title": "活动发布",
-    "name": "activities_publish",
-    "group": "活动管理",
-    "description": "<p>活动发布，发布活动范围未超出，则有此操作</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>登录token</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "activityId",
-            "description": "<p>活动ID</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "errcode",
-            "description": "<p>成功为0</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>{}</p>"
           }
         ]
       }
