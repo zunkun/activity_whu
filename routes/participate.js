@@ -533,7 +533,7 @@ router.post('/sign', async (ctx, next) => {
 	}
 
 	if (activity.signType === 2) {
-		if (!longitude || !latitude || !address) {
+		if (!longitude || !latitude) {
 			ctx.body = ResService.fail('没有经纬度地址信息');
 			return;
 		}
