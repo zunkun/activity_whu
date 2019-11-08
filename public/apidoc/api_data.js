@@ -1096,6 +1096,13 @@ define({ "api": [
             "group": "Success 200",
             "type": "String",
             "optional": false,
+            "field": "data.userName",
+            "description": "<p>姓名</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
             "field": "data.mobile",
             "description": "<p>电话</p>"
           },

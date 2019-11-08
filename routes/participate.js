@@ -354,7 +354,7 @@ router.get('/myactivities', async (ctx, next) => {
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object[]} data 报名人员表
 * @apiSuccess {String} data.userId 钉钉userId
-* @apiSuccess {String} data.userId 姓名
+* @apiSuccess {String} data.userName 姓名
 * @apiSuccess {String} data.mobile 电话
 * @apiSuccess {String} data.avatar 钉钉图像
 * @apiError {Number} errcode 失败不为0
@@ -374,7 +374,7 @@ router.get('/persons', async (ctx, next) => {
 		res.push({
 			userId: staff.userId,
 			userName: staff.userName,
-			mobile: staff.mobike,
+			mobile: staff.bobile,
 			avatar: staff.avatar
 		});
 	}
