@@ -238,6 +238,83 @@
     "groupTitle": "报名表单"
   },
   {
+    "type": "post",
+    "url": "/api/participate/cancelenroll",
+    "title": "取消报名",
+    "name": "participate_enroll_cancelenroll",
+    "group": "活动参与",
+    "description": "<p>取消报名</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "activityId",
+            "description": "<p>活动ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Array[]",
+            "optional": false,
+            "field": "data",
+            "description": "<p>{}</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.attribute",
+            "description": "<p>组件属性</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/participate.js",
+    "groupTitle": "活动参与"
+  },
+  {
     "type": "get",
     "url": "/api/participate/myenroll?activityId=",
     "title": "我的报名信息",
@@ -529,112 +606,112 @@
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.userId",
+            "field": "data.rows.userId",
             "description": "<p>钉钉userId</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.userNmae",
+            "field": "data.rows.userNmae",
             "description": "<p>姓名</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.mobile",
+            "field": "data.rows.mobile",
             "description": "<p>电话</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.idcard",
+            "field": "data.rows.idcard",
             "description": "<p>身份证id</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollTime",
+            "field": "data.rows.enrollTime",
             "description": "<p>报名时间</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.signed",
+            "field": "data.rows.signed",
             "description": "<p>是否签到</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.signTime",
+            "field": "data.rows.signTime",
             "description": "<p>签到时间</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.signType",
+            "field": "data.rows.signType",
             "description": "<p>签到方式 1-扫码 2-位置</p>"
           },
           {
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "data.hasfamilies",
+            "field": "data.rows.hasfamilies",
             "description": "<p>是否有家属</p>"
           },
           {
             "group": "Success 200",
             "type": "Array[]",
             "optional": false,
-            "field": "data.enrollpersons",
+            "field": "data.rows.enrollpersons",
             "description": "<p>报名列表，即家属信息列表，此字段为二维数组</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.enrollpersons.sequence",
+            "field": "data.rows.enrollpersons.sequence",
             "description": "<p>填写项排序</p>"
           },
           {
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.enrollpersons.id",
+            "field": "data.rows.enrollpersons.id",
             "description": "<p>填写项ID</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollpersons.componentName",
+            "field": "data.rows.enrollpersons.componentName",
             "description": "<p>组件名称</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollpersons.componentType",
+            "field": "data.rows.enrollpersons.componentType",
             "description": "<p>组件类型</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollpersons.componentSet",
+            "field": "data.rows.enrollpersons.componentSet",
             "description": "<p>组件属性设置类型</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
-            "field": "data.enrollpersons.attribute",
+            "field": "data.rows.enrollpersons.attribute",
             "description": "<p>组件属性</p>"
           }
         ]

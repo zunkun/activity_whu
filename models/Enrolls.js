@@ -16,11 +16,6 @@ Enrolls.init({
 		type: DataTypes.STRING,
 		comment: '手机'
 	},
-	status: {
-		type: DataTypes.INTEGER,
-		defaultValue: 1,
-		comment: '当前报名状态 1-报名成功 2-取消报名'
-	},
 	activityId: { type: DataTypes.INTEGER, comment: 'activity id' },
 	timestamp: {
 		type: DataTypes.BIGINT,

@@ -165,7 +165,7 @@ router.post('/enroll', async (ctx, next) => {
 	}
 
 	// 报名名额
-	let currentCount = await Enrolls.count({ where: { activityId, status: 1 } });
+	let currentCount = await Enrolls.count({ where: { activityId } });
 	if (activity.personNum && currentCount >= activity.personNum) {
 		ctx.body = ResService.fail('名额已满，不可报名');
 		return;
@@ -194,14 +194,13 @@ router.post('/enroll', async (ctx, next) => {
 
 	let timestamp = Date.now();
 
-	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId, status: 1 } });
+	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
 	if (!enroll) {
 		// 创建报名
 		enroll = await Enrolls.create({
 			userId: user.userId,
 			userName: user.userName,
 			mobile: user.mobile,
-			status: 1,
 			timestamp,
 			activityId
 		});
@@ -238,6 +237,40 @@ router.post('/enroll', async (ctx, next) => {
 
 	ctx.body = ResService.success({});
 	await next();
+});
+
+/**
+* @api {post} /api/participate/cancelenroll 取消报名
+* @apiName participate-enroll-cancelenroll
+* @apiGroup 活动参与
+* @apiDescription 取消报名
+* @apiHeader {String} authorization 登录token
+* @apiParam {Number} activityId 活动ID
+* @apiSuccess {Array[]} data {}
+* @apiSuccess {Object} data.attribute 组件属性
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.post('/cancelenroll', async (ctx, next) => {
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let { activityId } = ctx.request.body;
+
+	let activity = await Activities.findOne({ where: { id: activityId } });
+	if (!activityId || !activity) {
+		ctx.body = ResService.fail('系统中没有当前活动');
+		return;
+	}
+
+	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
+	if (!enroll) {
+		ctx.body = ResService.fail('系统中没有你的报名信息');
+		return;
+	}
+
+	await EnrollPersons.destroy({ where: { enrollId: enroll.id } });
+	await EnrollFields.destroy({ where: { enrollId: enroll.id, activityId } });
+	await Enrolls.destroy({ where: { id: enroll.id } });
+	ctx.body = ResService.success({});
 });
 
 /**
@@ -348,7 +381,7 @@ router.get('/myactivities', async (ctx, next) => {
 	const res = { count: activities.count, rows: [] };
 	for (let activity of activities.rows) {
 		activity = activity.toJSON();
-		activity.enrollNum = await Enrolls.count({ where: { activityId: activity.id, status: 1 } });
+		activity.enrollNum = await Enrolls.count({ where: { activityId: activity.id } });
 
 		let reviewStatus = activity.reviewStatus;
 		let enrollStartTime = activity.enrollStartTime;
@@ -404,7 +437,7 @@ router.get('/persons', async (ctx, next) => {
 		ctx.body = ResService.fail('系统无当前活动');
 		return;
 	}
-	let enrolls = await Enrolls.findAll({ activityId, status: 1 });
+	let enrolls = await Enrolls.findAll({ activityId });
 	const res = [];
 	for (let enroll of enrolls) {
 		let staff = await DingStaffs.findOne({ where: { userId: enroll.userId } });
@@ -430,22 +463,22 @@ router.get('/persons', async (ctx, next) => {
 * @apiSuccess {Object} data 报名人员表
 * @apiSuccess {Number} data.count 总跳数目
 * @apiSuccess {Object[]} data.rows 报名人员表
-* @apiSuccess {String} data.userId 钉钉userId
-* @apiSuccess {String} data.userNmae 姓名
-* @apiSuccess {String} data.mobile 电话
-* @apiSuccess {String} data.idcard 身份证id
-* @apiSuccess {String} data.enrollTime 报名时间
-* @apiSuccess {String} data.signed 是否签到
-* @apiSuccess {String} data.signTime 签到时间
-* @apiSuccess {Number} data.signType 签到方式 1-扫码 2-位置
-* @apiSuccess {Boolean} data.hasfamilies 是否有家属
-* @apiSuccess {Array[]} data.enrollpersons 报名列表，即家属信息列表，此字段为二维数组
-* @apiSuccess {Number} data.enrollpersons.sequence 填写项排序
-* @apiSuccess {Number} data.enrollpersons.id 填写项ID
-* @apiSuccess {String} data.enrollpersons.componentName 组件名称
-* @apiSuccess {String} data.enrollpersons.componentType 组件类型
-* @apiSuccess {String} data.enrollpersons.componentSet 组件属性设置类型
-* @apiSuccess {Object} data.enrollpersons.attribute 组件属性
+* @apiSuccess {String}data.rows.userId 钉钉userId
+* @apiSuccess {String}data.rows.userNmae 姓名
+* @apiSuccess {String}data.rows.mobile 电话
+* @apiSuccess {String}data.rows.idcard 身份证id
+* @apiSuccess {String}data.rows.enrollTime 报名时间
+* @apiSuccess {String}data.rows.signed 是否签到
+* @apiSuccess {String}data.rows.signTime 签到时间
+* @apiSuccess {Number}data.rows.signType 签到方式 1-扫码 2-位置
+* @apiSuccess {Boolean}data.rows.hasfamilies 是否有家属
+* @apiSuccess {Array[]}data.rows.enrollpersons 报名列表，即家属信息列表，此字段为二维数组
+* @apiSuccess {Number}data.rows.enrollpersons.sequence 填写项排序
+* @apiSuccess {Number}data.rows.enrollpersons.id 填写项ID
+* @apiSuccess {String}data.rows.enrollpersons.componentName 组件名称
+* @apiSuccess {String}data.rows.enrollpersons.componentType 组件类型
+* @apiSuccess {String}data.rows.enrollpersons.componentSet 组件属性设置类型
+* @apiSuccess {Object}data.rows.enrollpersons.attribute 组件属性
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -540,12 +573,12 @@ router.post('/sign', async (ctx, next) => {
 	}
 
 	// 报名名额
-	let currentCount = await Enrolls.count({ where: { activityId, status: 1 } });
+	let currentCount = await Enrolls.count({ where: { activityId } });
 	if (currentCount >= activity.personNum) {
 		ctx.body = ResService.fail('名额已满，不可报名');
 		return;
 	}
-	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId, status: 1 } });
+	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
 	if (!enroll) {
 		ctx.body = ResService.fail('没有您的报名信息');
 	}
