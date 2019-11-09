@@ -525,7 +525,7 @@ router.post('/cancel', async (ctx, next) => {
 * @api {get} /api/activities/qrcode?activityId= 活动二维码
 * @apiName activities-qrcode
 * @apiGroup 活动管理
-* @apiDescription 活动二维码，前端  <img src="/api/activities/qrcode?activityId=1234" />
+* @apiDescription 活动二维码，前端  img 标签 src = /activity_api/api/activities/qrcode?activityId=
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
 * @apiSuccess {Number} errcode 成功为0

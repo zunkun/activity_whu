@@ -280,13 +280,16 @@ router.post('/cancelenroll', async (ctx, next) => {
 * @apiDescription 我的报名，查看当前活动中我的报名
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
-* @apiSuccess {Array[]} data 报名列表，即家属信息列表，此字段为二维数组
-* @apiSuccess {Number} data.sequence 填写项排序
-* @apiSuccess {Number} data.id 填写项ID
-* @apiSuccess {String} data.componentName 组件名称
-* @apiSuccess {String} data.componentType 组件类型
-* @apiSuccess {String} data.componentSet 组件属性设置类型
-* @apiSuccess {Object} data.attribute 组件属性
+* @apiSuccess {Object} data 报名列表，即家属信息列表，此字段为二维数组
+* @apiSuccess {Boolean} data.enrolled 是否报名
+* @apiSuccess {Date} data.enrollTime 报名时间
+* @apiSuccess {Boolean} data.hasfamilies 是否有家属
+* @apiSuccess {Array[]} data.enrollpersons 家属信息
+* @apiSuccess {String} data.enrollpersons.sequence 组件填写项排序
+* @apiSuccess {String} data.enrollpersons.componentName 组件名称
+* @apiSuccess {String} data.enrollpersons.componentType 组件类型
+* @apiSuccess {String} data.enrollpersons.componentSet 组件属性设置类型
+* @apiSuccess {Object} data.enrollpersons.attribute 组件属性
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -294,8 +297,23 @@ router.get('/myenroll', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	let { activityId } = ctx.query;
 	try {
-		let persons = await EnrollService.getMyEnrolls(activityId, user.userId);
-		ctx.body = ResService.success(persons);
+		let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
+		if (!enroll) {
+			ctx.body = ResService.success({
+				enrolled: false,
+				enrollTime: null,
+				hasfamilies: false,
+				enrollpersons: []
+			});
+			return;
+		}
+		let enrollpersons = await EnrollService.getMyEnrolls(activityId, user.userId);
+		ctx.body = ResService.success({
+			enrollTime: enroll.createdAt,
+			hasfamilies: enrollpersons.length > 0,
+			enrolled: true,
+			enrollpersons
+		});
 		await next();
 	} catch (error) {
 		ctx.body = ResService.fail(error);
@@ -502,14 +520,13 @@ router.get('/enrollpersons', async (ctx, next) => {
 	const enrollRes = await Enrolls.findAndCountAll({ where, limit, offset });
 	const res = { count: enrollRes.count, rows: [] };
 	for (let enroll of enrollRes.rows) {
-		let staff = await DingStaffs.findOne({ where: { userId: enroll.userId } });
 		let staffsign = await StaffSigns.findOne({ where: { activityId, userId: enroll.userId } });
 		let enrollpersons = await EnrollService.getMyEnrolls(activityId, enroll.userId);
 
 		let enrollstaff = {
 			userId: enroll.userId,
 			userName: enroll.userName,
-			mobile: staff.mobile,
+			mobile: enroll.mobile,
 			enrollTime: enroll.createdAt,
 			signed: false,
 			hasfamilies: enrollpersons.length > 0,

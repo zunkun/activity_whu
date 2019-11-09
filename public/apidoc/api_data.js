@@ -352,51 +352,72 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "Array[]",
+            "type": "Object",
             "optional": false,
             "field": "data",
             "description": "<p>报名列表，即家属信息列表，此字段为二维数组</p>"
           },
           {
             "group": "Success 200",
-            "type": "Number",
+            "type": "Boolean",
             "optional": false,
-            "field": "data.sequence",
-            "description": "<p>填写项排序</p>"
+            "field": "data.enrolled",
+            "description": "<p>是否报名</p>"
           },
           {
             "group": "Success 200",
-            "type": "Number",
+            "type": "Date",
             "optional": false,
-            "field": "data.id",
-            "description": "<p>填写项ID</p>"
+            "field": "data.enrollTime",
+            "description": "<p>报名时间</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.hasfamilies",
+            "description": "<p>是否有家属</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array[]",
+            "optional": false,
+            "field": "data.enrollpersons",
+            "description": "<p>家属信息</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.componentName",
+            "field": "data.enrollpersons.sequence",
+            "description": "<p>组件填写项排序</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.enrollpersons.componentName",
             "description": "<p>组件名称</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.componentType",
+            "field": "data.enrollpersons.componentType",
             "description": "<p>组件类型</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.componentSet",
+            "field": "data.enrollpersons.componentSet",
             "description": "<p>组件属性设置类型</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
-            "field": "data.attribute",
+            "field": "data.enrollpersons.attribute",
             "description": "<p>组件属性</p>"
           }
         ]
@@ -3142,7 +3163,7 @@ define({ "api": [
     "title": "活动二维码",
     "name": "activities_qrcode",
     "group": "活动管理",
-    "description": "<p>活动二维码，前端  <img src=\"/api/activities/qrcode?activityId=1234\" /></p>",
+    "description": "<p>活动二维码，前端  img 标签 src = /activity_api/api/activities/qrcode?activityId=</p>",
     "header": {
       "fields": {
         "Header": [
