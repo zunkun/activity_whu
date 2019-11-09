@@ -494,7 +494,7 @@ router.get('/enrollpersons', async (ctx, next) => {
 		return;
 	}
 	if (query.keywords) {
-		if (where[Op.or]) where[Op.or] = [];
+		if (!where[Op.or]) where[Op.or] = [];
 		where[Op.or].push({ userName: { [Op.like]: `%${query.keywords}%` } });
 		where[Op.or].push({ mobile: { [Op.like]: `%${query.keywords}%` } });
 	}
