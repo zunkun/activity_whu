@@ -627,13 +627,6 @@
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.rows.idcard",
-            "description": "<p>身份证id</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
             "field": "data.rows.enrollTime",
             "description": "<p>报名时间</p>"
           },

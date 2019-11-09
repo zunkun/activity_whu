@@ -466,7 +466,6 @@ router.get('/persons', async (ctx, next) => {
 * @apiSuccess {String}data.rows.userId 钉钉userId
 * @apiSuccess {String}data.rows.userNmae 姓名
 * @apiSuccess {String}data.rows.mobile 电话
-* @apiSuccess {String}data.rows.idcard 身份证id
 * @apiSuccess {String}data.rows.enrollTime 报名时间
 * @apiSuccess {String}data.rows.signed 是否签到
 * @apiSuccess {String}data.rows.signTime 签到时间
@@ -510,7 +509,6 @@ router.get('/enrollpersons', async (ctx, next) => {
 			userId: enroll.userId,
 			userName: enroll.userName,
 			mobile: staff.mobile,
-			idcard: staff.idcard,
 			enrollTime: enroll.createdAt,
 			signed: false,
 			hasfamilies: enrollpersons.length > 0,
