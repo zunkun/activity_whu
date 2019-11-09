@@ -3137,6 +3137,90 @@
     "groupTitle": "活动管理"
   },
   {
+    "type": "get",
+    "url": "/api/activities/qrcode?activityId=",
+    "title": "活动二维码",
+    "name": "activities_qrcode",
+    "group": "活动管理",
+    "description": "<p>活动二维码，前端  <img src=\"/api/activities/qrcode?activityId=1234\" /></p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>登录token</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "activityId",
+            "description": "<p>活动ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>成功为0</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>活动列表</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.rejectReason",
+            "description": "<p>拒绝原因</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errcode",
+            "description": "<p>失败不为0</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Number",
+            "optional": false,
+            "field": "errmsg",
+            "description": "<p>错误消息</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/activities.js",
+    "groupTitle": "活动管理"
+  },
+  {
     "type": "post",
     "url": "/api/activities/review",
     "title": "审核活动",

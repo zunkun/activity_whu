@@ -12,6 +12,7 @@ const config = require('../config');
 const MessageService = require('../services/MessageService');
 const Messages = require('../models/Messages');
 const Enrolls = require('../models/Enrolls');
+const qr = require('qr-image');
 const _ = require('lodash');
 
 router.prefix('/api/activities');
@@ -518,6 +519,33 @@ router.post('/cancel', async (ctx, next) => {
 	Messages.update({ finish: true }, { where: { activityId } });
 	ctx.body = ResService.success({});
 	await next();
+});
+
+/**
+* @api {get} /api/activities/qrcode?activityId= 活动二维码
+* @apiName activities-qrcode
+* @apiGroup 活动管理
+* @apiDescription 活动二维码，前端  <img src="/api/activities/qrcode?activityId=1234" />
+* @apiHeader {String} authorization 登录token
+* @apiParam {Number} activityId 活动ID
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 活动列表
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data 二维码
+* @apiSuccess {String}  data.rows.rejectReason 拒绝原因
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.get('/qrcode', async (ctx, next) => {
+	var activityId = ctx.query.activityId;
+	try {
+		var img = qr.image(activityId, { size: 10 });
+
+		ctx.type = 'image/png';
+		ctx.body = img;
+	} catch (e) {
+		ctx.body = ResService.fail('QRCODE NOT FOUND');
+	}
 });
 
 /**
