@@ -1976,6 +1976,20 @@
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.needReview",
+            "description": "<p>是否需要提交审核</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.cancelAuthority",
+            "description": "<p>是否有撤销权限</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "data.createdAt",

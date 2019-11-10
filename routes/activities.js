@@ -890,6 +890,8 @@ router.get('/lists', async (ctx, next) => {
 * @apiSuccess {Number} data.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rejectReason 驳回拒绝原因
 * @apiSuccess {Boolean} data.highAuthority 是否能够审批该活动
+* @apiSuccess {Boolean} data.needReview 是否需要提交审核
+* @apiSuccess {Boolean} data.cancelAuthority 是否有撤销权限
 * @apiSuccess {String} data.createdAt 创建时间
 * @apiSuccess {Boolean} data.cancel 是否撤销 true-撤销
 * @apiError {Number} errcode 失败不为0
@@ -960,6 +962,21 @@ router.get('/:id', async (ctx, next) => {
 		}
 	}
 	activity.status = status;
+
+	// 是否需要提交审核,表示没法发送审核消息
+	activity.needReview = false;
+	if (activity.status === 10 && activity.userId === user.userId) {
+		let message = await Messages.findOne({ where: { type: 1, activityId: id } });
+		if (!message) {
+			activity.needReview = true;
+		}
+	}
+	// 是否有撤销活动的权限
+	activity.cancelAuthority = false;
+	if (activity.userId === user.userId) {
+		activity.cancelAuthority = true;
+	}
+
 	ctx.body = ResService.success(activity);
 	await next();
 });
@@ -1084,7 +1101,6 @@ router.get('/', async (ctx, next) => {
 		ctx.body = ResService.fail('非管理员不得管理活动');
 		return;
 	}
-
 	let allSubDeptIds = []; // 个人所管理的部门表
 	for (let role of roles) {
 		for (let deptId of role.deptIds) {
@@ -1095,7 +1111,7 @@ router.get('/', async (ctx, next) => {
 	if (!where[Op.or]) {
 		where[Op.or] = [
 			{ userId: user.userId }, // 自己创建的活动
-			{ roleDeptIds: { [Op.overlap]: allSubDeptIds } } // 自己所管理的部门子部门id表与活动创建人所管理的部门ID表有交集，则可管理活动
+			{ userId: { [Op.ne]: user.userId }, roleDeptIds: { [Op.overlap]: allSubDeptIds }, reviewStatus: { [Op.ne]: 10 } } // 自己所管理的部门子部门id表与活动创建人所管理的部门ID表有交集，则可管理活动, 不是自己管理的活动编辑装填就不要看了
 		];
 	}
 
