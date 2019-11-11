@@ -2405,14 +2405,14 @@ define({ "api": [
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "meSigned",
+            "field": "data.meSigned",
             "description": "<p>我在当前活动中是否已签到</p>"
           },
           {
             "group": "Success 200",
             "type": "Date",
             "optional": false,
-            "field": "signTime",
+            "field": "data.signTime",
             "description": "<p>我在当前活动的签到时间</p>"
           },
           {
