@@ -1052,7 +1052,7 @@ router.get('/', async (ctx, next) => {
 	let where = { cancel: false };
 	let currentTime = new Date();
 	if (query.keywords) {
-		if (where[Op.or]) where[Op.or] = [];
+		if (!where[Op.or]) where[Op.or] = [];
 		where[Op.or].push({ title: { [Op.like]: `%${query.keywords}%` } });
 		where[Op.or].push({ descText: { [Op.like]: `%${query.keywords}%` } });
 		where[Op.or].push({ userName: { [Op.like]: `%${query.keywords}%` } });
