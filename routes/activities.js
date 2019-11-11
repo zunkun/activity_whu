@@ -107,7 +107,7 @@ router.post('/', async (ctx, next) => {
 	let valid = true; // 传参是否正确
 
 	[ 'title', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
-		'personNum', 'latitude', 'longitude', 'address', 'contactMobile', 'contactName' ].map(key => {
+		'personNum' ].map(key => {
 		if (!dataKey.has(key) || !data[key]) {
 			valid = false;
 		}
@@ -295,7 +295,7 @@ router.post('/update', async (ctx, next) => {
 	let valid = true; // 传参是否正确
 
 	[ 'title', 'type', 'startTime', 'endTime', 'enrollStartTime', 'enrollEndTime',
-		'personNum', 'latitude', 'longitude', 'address', 'contactMobile', 'contactName' ].map(key => {
+		'personNum' ].map(key => {
 		if (!dataKey.has(key) || !data[key]) {
 			valid = false;
 		}
