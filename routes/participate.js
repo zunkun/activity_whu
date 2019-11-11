@@ -219,7 +219,7 @@ router.post('/enroll', async (ctx, next) => {
 			timestamp
 		});
 		for (let j = 0, len2 = forms.length; j < len2; j++) {
-			let form = forms[i];
+			let form = forms[j];
 			await EnrollFields.create({
 				sequence: j + 1,
 				componentName: form.componentName,
