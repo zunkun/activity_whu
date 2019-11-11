@@ -753,8 +753,8 @@ router.get('/msgnoread', async (ctx, next) => {
 * @apiSuccess {String} data.rows.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
 * @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
 * @apiSuccess {Number} data.rows.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
-* @apiSuccess {Boolean} data.meSigned 我在当前活动中是否已签到
-* @apiSuccess {Date} data.signTime 我在当前活动的签到时间
+* @apiSuccess {Boolean} data.rows.meSigned 我在当前活动中是否已签到
+* @apiSuccess {Date} data.rows.signTime 我在当前活动的签到时间
 * @apiSuccess {String} data.rows.createdAt 创建时间
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
