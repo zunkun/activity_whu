@@ -508,7 +508,7 @@ router.get('/enrollpersons', async (ctx, next) => {
 	let offset = (page - 1) * limit;
 	let activityId = Number(query.activityId);
 	let where = {};
-	const activity = await Activities.findOne({ id: activityId });
+	const activity = await Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统无当前活动');
 		return;
