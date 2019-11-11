@@ -21,7 +21,7 @@ router.prefix('/api/participate');
 * @apiDescription 报名
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
-* @apiParam {Array[]} formlists 表单
+* @apiParam {Array[]} [formlists] 表单
 * @apiParam {String} formlists.componentName 组件名称
 * @apiParam {String} formlists.componentType 组件类型
 * @apiParam {String} formlists.componentSet 组件属性设置类型
@@ -173,18 +173,20 @@ router.post('/enroll', async (ctx, next) => {
 
 	// 验证报名信息是否合法
 	let valid = true;
-	if (!Array.isArray(formlists)) {
-		valid = false;
-	}
-	for (let forms of formlists) {
-		if (!Array.isArray(forms)) {
+	if (formlists) {
+		if (!Array.isArray(formlists)) {
 			valid = false;
-			break;
 		}
-		for (let form of forms) {
-			[ 'componentName', 'componentType', 'componentSet', 'attribute' ].map(key => {
-				if (!form[key]) valid = false;
-			});
+		for (let forms of formlists) {
+			if (!Array.isArray(forms)) {
+				valid = false;
+				break;
+			}
+			for (let form of forms) {
+				[ 'componentName', 'componentType', 'componentSet', 'attribute' ].map(key => {
+					if (!form[key]) valid = false;
+				});
+			}
 		}
 	}
 	if (!valid) {

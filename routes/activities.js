@@ -98,7 +98,7 @@ router.post('/', async (ctx, next) => {
 		roleDeptIds = roleDeptIds.concat(role.deptIds);
 	}
 
-	if (!isManagerRole || !isHighRole) {
+	if (!isManagerRole && !isHighRole) {
 		ctx.body = ResService.fail('您不是管理员，无权创建活动');
 		return;
 	}
@@ -1052,8 +1052,10 @@ router.get('/', async (ctx, next) => {
 	let where = { cancel: false };
 	let currentTime = new Date();
 	if (query.keywords) {
-		where.title = { [Op.like]: `%${query.keywords}%` };
-		where.descText = { [Op.like]: `%${query.keywords}%` };
+		if (where[Op.or]) where[Op.or] = [];
+		where[Op.or].push({ title: { [Op.like]: `%${query.keywords}%` } });
+		where[Op.or].push({ descText: { [Op.like]: `%${query.keywords}%` } });
+		where[Op.or].push({ userName: { [Op.like]: `%${query.keywords}%` } });
 	}
 	if (query.type) {
 		where.type = Number(query.type) || 1;
