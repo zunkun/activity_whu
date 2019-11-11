@@ -457,7 +457,7 @@ router.get('/persons', async (ctx, next) => {
 		ctx.body = ResService.fail('系统无当前活动');
 		return;
 	}
-	let enrolls = await Enrolls.findAll({ activityId });
+	let enrolls = await Enrolls.findAll({ where: { activityId } });
 	const res = [];
 	for (let enroll of enrolls) {
 		let staff = await DingStaffs.findOne({ where: { userId: enroll.userId } });

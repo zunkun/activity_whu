@@ -8,7 +8,7 @@ class MessageService {
    * @param {Number} activityId 活动ID
    */
 	static async sendReviewMsg (activityId) {
-		let activity = await Activities.findOne({ id: activityId });
+		let activity = await Activities.findOne({ where: { id: activityId } });
 		let roles = await Roles.findAll({ where: { userId: activity.userId } });
 		let roleDeptIds = [];
 		for (let role of roles) {
@@ -36,7 +36,7 @@ class MessageService {
 	 * @param {String} rejectReason 拒绝原因
    */
 	static async sendCreatorMsg (reviewStatus, activityId, rejectReason) {
-		let activity = await Activities.findOne({ id: activityId });
+		let activity = await Activities.findOne({ where: { id: activityId } });
 
 		await Messages.create({
 			userId: activity.userId,
