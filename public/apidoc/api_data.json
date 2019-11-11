@@ -480,7 +480,7 @@
           {
             "group": "Parameter",
             "type": "Array[]",
-            "optional": false,
+            "optional": true,
             "field": "formlists",
             "description": "<p>表单</p>"
           },
@@ -2400,6 +2400,20 @@
             "optional": false,
             "field": "data.rows.status",
             "description": "<p>活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "meSigned",
+            "description": "<p>我在当前活动中是否已签到</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "signTime",
+            "description": "<p>我在当前活动的签到时间</p>"
           },
           {
             "group": "Success 200",

@@ -12,6 +12,8 @@ const config = require('../config');
 const MessageService = require('../services/MessageService');
 const Messages = require('../models/Messages');
 const Enrolls = require('../models/Enrolls');
+const StaffSigns = require('../models/StaffSigns');
+
 const qr = require('qr-image');
 const _ = require('lodash');
 
@@ -751,6 +753,8 @@ router.get('/msgnoread', async (ctx, next) => {
 * @apiSuccess {String} data.rows.reviewStatus 审核状态 10-编辑中 20-审核中 30-审核通过 40-拒绝
 * @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
 * @apiSuccess {Number} data.rows.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
+* @apiSuccess {Boolean} meSigned 我在当前活动中是否已签到
+* @apiSuccess {Date} signTime 我在当前活动的签到时间
 * @apiSuccess {String} data.rows.createdAt 创建时间
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
@@ -835,6 +839,15 @@ router.get('/lists', async (ctx, next) => {
 			}
 		}
 		activity.status = status;
+		activity.meSigned = false;
+		activity.signTime = null;
+		let staffsign = await StaffSigns.findOne({ where: { activityId: activity.id, userId: user.userId } });
+		// 当前活动是否已签到
+		if (staffsign) {
+			activity.meSigned = true;
+			activity.signTime = staffsign.createdAt;
+		}
+
 		res.rows.push(activity);
 	}
 
