@@ -452,7 +452,7 @@ router.get('/myactivities', async (ctx, next) => {
 */
 router.get('/persons', async (ctx, next) => {
 	const { activityId } = ctx.query;
-	const activity = await Activities.findOne({ id: activityId });
+	const activity = await Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统无当前活动');
 		return;
