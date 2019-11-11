@@ -53,17 +53,27 @@ class RoleSchedule {
 				let dept = await deptStaffService.getDeptInfo(deptId);
 				depts.push({ deptId, deptName: dept.deptName });
 			}
-			Roles.upsert({
+			let role = await Roles.findOne({ where: { userId: user.dingtalkId, role: roleType } });
+			if (role) {
+				await Roles.update({
+					userId: user.dingtalkId,
+					userName: staff.userName,
+					role: roleType,
+					deptIds: user.orgs,
+					depts
+				}, { where: { id: role.id } });
+				continue;
+			}
+			await Roles.create({
 				userId: user.dingtalkId,
 				userName: staff.userName,
 				role: roleType,
 				deptIds: user.orgs,
 				depts
-			}, { where: { userId: user.dingtalkId, role: roleType } });
+			});
 		}
 		userIds.push('4508346520949170');
 		userIds.push('103612431737659018');
-		userIds.push('0625663244931506');
 		await Roles.destroy({ where: { role: roleType, userId: { [Op.notIn]: userIds } } });
 	}
 }
