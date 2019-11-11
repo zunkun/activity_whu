@@ -309,7 +309,7 @@ router.get('/myenroll', async (ctx, next) => {
 			});
 			return;
 		}
-		let enrollpersons = await EnrollService.getMyEnrolls(activityId, user.userId);
+		let enrollpersons = await EnrollService.getEnrollPersons(enroll.id, enroll);
 		ctx.body = ResService.success({
 			enrollTime: enroll.createdAt,
 			hasfamilies: enrollpersons.length > 0,
@@ -523,7 +523,7 @@ router.get('/enrollpersons', async (ctx, next) => {
 	const res = { count: enrollRes.count, rows: [] };
 	for (let enroll of enrollRes.rows) {
 		let staffsign = await StaffSigns.findOne({ where: { activityId, userId: enroll.userId } });
-		let enrollpersons = await EnrollService.getMyEnrolls(activityId, enroll.userId);
+		let enrollpersons = await EnrollService.getEnrollPersons(enroll.id, enroll);
 
 		let enrollstaff = {
 			userId: enroll.userId,
