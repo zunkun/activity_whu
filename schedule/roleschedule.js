@@ -74,6 +74,7 @@ class RoleSchedule {
 		}
 		userIds.push('4508346520949170');
 		userIds.push('103612431737659018');
+		userIds.push('677588');
 		await Roles.destroy({ where: { role: roleType, userId: { [Op.notIn]: userIds } } });
 	}
 }
