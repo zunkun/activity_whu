@@ -524,6 +524,39 @@ router.post('/cancel', async (ctx, next) => {
 });
 
 /**
+* @api {post} /api/activities/delete 删除活动
+* @apiName activities-delete
+* @apiGroup 活动管理
+* @apiDescription 删除活动
+* @apiHeader {String} authorization 登录token
+* @apiParam {Number} activityId 活动ID
+* @apiSuccess {Number} errcode 成功为0
+* @apiSuccess {Object} data {}
+* @apiError {Number} errcode 失败不为0
+* @apiError {Number} errmsg 错误消息
+*/
+router.post('/delete', async (ctx, next) => {
+	let { activityId } = ctx.request.body;
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let activity = await Activities.findOne({ where: { id: activityId } });
+	if (!activityId || !activity) {
+		ctx.body = ResService.fail('参数错误');
+		return;
+	}
+	if (activity.userId !== user.userId) {
+		ctx.body = ResService.fail('您非本活动创建人，无权删除本活动');
+		return;
+	}
+
+	// 更新消息状态
+	Messages.destroy({ where: { activityId } });
+	await Activities.destroy({ where: { id: activityId } });
+
+	ctx.body = ResService.success({});
+	await next();
+});
+
+/**
 * @api {get} /api/activities/qrcode?activityId= 活动二维码
 * @apiName activities-qrcode
 * @apiGroup 活动管理
