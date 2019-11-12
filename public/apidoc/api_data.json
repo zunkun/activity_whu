@@ -1101,6 +1101,27 @@
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.signAuth",
+            "description": "<p>当前时间是否可以签到</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.meSigned",
+            "description": "<p>我在当前活动中是否已签到</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "data.rows.signTime",
+            "description": "<p>我在当前活动的签到时间</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "data.rows.createdAt",
