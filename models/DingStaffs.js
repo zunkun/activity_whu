@@ -24,6 +24,11 @@ DingStaffs.init({
 	mobile: {
 		type: DataTypes.STRING,
 		comment: '手机'
+	},
+	activity: {
+		type: DataTypes.BOOLEAN,
+		comment: '是否有活动权限',
+		defaultValue: false
 	}
 }, { sequelize: postgres, modelName: 'dingstaffs', timestamps: false, comment: '钉钉用户' });
 

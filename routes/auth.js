@@ -113,7 +113,8 @@ router.get('/login', async (ctx, next) => {
 			return;
 		}
 		try {
-			let res = await rp.get(`http://alumnihome1893-1.whu.edu.cn/renzheng/whu/alumniResource/getActivityRights?dingtalkId=${user.userId}`);			res = JSON.parse(res);
+			let res = await rp.get(`http://alumnihome1893-1.whu.edu.cn/renzheng/whu/alumniResource/getActivityRights?dingtalkId=${user.userId}`);
+			res = JSON.parse(res);
 
 			if (res && res.success) {
 				user.access = res.content ? res.content.access : false;
