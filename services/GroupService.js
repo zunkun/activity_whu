@@ -37,14 +37,15 @@ class GroupService {
 		if (activityGroup) {
 			return activityGroup;
 		}
-		let dept = await DingDepts.findOne({ where: { pareintId: config.groupDeptId, deptName } });
+		let dept = await DingDepts.findOne({ where: { parentId: config.groupDeptId, deptName } });
 		if (!dept) {
 			let res = await dingding.createDept({
 				name: deptName,
-				parentid: 1,
+				parentid: config.groupDeptId,
 				createDeptGroup: true,
 				sourceIdentifier: activityId
 			});
+
 			if (res.errcode !== 0) {
 				await ActivityGroups.create({
 					parentid: null,
@@ -81,15 +82,15 @@ class GroupService {
    * @param {String} userId userId
    */
 	static async addUser2Depts (deptId, userId) {
-		let user = await DingStaffs.findOne({ userId });
+		let user = await DingStaffs.findOne({ where: { userId } });
 		let deptStaff = await DeptStaffs.findOne({ where: { deptId, userId } });
 		if (deptStaff) {
 			return Promise.resolve();
 		}
 		let deptIds = [];
-		let dingdepts = await DingDepts.findAll({ userId });
-		for (let dingdept of dingdepts) {
-			deptIds.push(dingdept.deptId);
+		let deptstaffs = await DeptStaffs.findAll({ where: { userId } });
+		for (let staff of deptstaffs) {
+			deptIds.push(staff.deptId);
 		}
 		deptIds.push(deptId);
 
@@ -104,14 +105,10 @@ class GroupService {
 	}
 
 	static async deleteUserFromDept (deptId, userId) {
-		let deptStaff = await DeptStaffs.findOne({ where: { deptId, userId } });
-		if (!deptStaff) {
-			return Promise.resolve();
-		}
 		let deptIds = [];
-		let dingdepts = await DingDepts.findAll({ userId, deptId: { [Op.ne]: deptId } });
-		for (let dingdept of dingdepts) {
-			deptIds.push(dingdept.deptId);
+		let deptstaffs = await DeptStaffs.findAll({ where: { userId, deptId: { [Op.ne]: deptId } } });
+		for (let staff of deptstaffs) {
+			deptIds.push(staff.deptId);
 		}
 		await dingding.updateUserDept(userId, deptIds);
 		// 删除部门中当前人的数据
@@ -173,6 +170,12 @@ class GroupService {
 			return Promise.resolve();
 		}
 
+		let userLists = await dingding.getDeptUsers(activityGroup.deptId);
+
+		for (let user of userLists) {
+			await this.deleteUserFromDept(activityGroup.deptId, user.userid);
+		}
+
 		let res = await dingding.deleteDept(activityGroup.deptId);
 		if (res.errcode === 0) {
 			await ActivityGroups.destroy({ where: { activityId } });
@@ -180,11 +183,6 @@ class GroupService {
 			await DeptStaffs.destroy({ where: { deptId: activityGroup.deptId } });
 			await DingDepts.destroy({ where: { deptId: activityGroup.deptId } });
 		}
-	}
-
-	static test () {
-		let str = ' asD_,f,-SDAFXXX3234d- sdf';
-		console.log(this.parseName(str));
 	}
 }
 

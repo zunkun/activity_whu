@@ -219,7 +219,7 @@ router.post('/', async (ctx, next) => {
 
 	const activity = await Activities.create(activityData);
 	if (activity.reviewStatus === 30) {
-		GroupService.setUserAndDept(user.userId, activity.id);
+		GroupService.setUserAndDept(user.userId, activity.id, activity);
 	}
 
 	ctx.body = ResService.success({ id: activity.id, title: activity.title, needReview });

@@ -231,7 +231,7 @@ class Dingding {
 		if (json.errcode === 0) {
 			return json;
 		} else {
-			console.error('发送失败', json.errmsg);
+			console.error('创建部门失败', json.errmsg);
 			throw json.errmsg;
 		}
 	}
@@ -251,7 +251,7 @@ class Dingding {
 		if (json.errcode === 0) {
 			return json;
 		} else {
-			console.error('发送失败', json.errmsg);
+			console.error('删除部门失败', json.errmsg);
 			throw json.errmsg;
 		}
 	}
@@ -277,7 +277,7 @@ class Dingding {
 		if (json.errcode === 0) {
 			return json;
 		} else {
-			console.error('发送失败', json.errmsg);
+			console.error('更新员工部门数据失败', json.errmsg);
 			throw json.errmsg;
 		}
 	}
