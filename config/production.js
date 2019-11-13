@@ -8,6 +8,7 @@ module.exports = {
 		password: 'abcd1234'
 	},
 	secret: 'whu',
+	groupDeptId: 144262740, // 活动创建基准deptId
 	baseDeptId: 1,
 	dingBaseUri: 'https://oapi.dingtalk.com',
 	corpId: 'ding2f9d4c2c3863312935c2f4657eb6378f',

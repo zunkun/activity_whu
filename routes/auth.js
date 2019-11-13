@@ -163,7 +163,8 @@ router.get('/login2', async (ctx, next) => {
 		isBoss: false,
 		position: '流程管理平台研发中心高级工程师',
 		email: '',
-		role: 3
+		role: 3,
+		access: true
 	};
 
 	let roles = await Roles.findAll({ where: { userId: user.userId } });
