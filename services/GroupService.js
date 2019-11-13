@@ -186,6 +186,4 @@ class GroupService {
 	}
 }
 
-GroupService.test();
-
 module.exports = GroupService;
