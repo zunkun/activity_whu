@@ -380,7 +380,7 @@ router.get('/myenroll', async (ctx, next) => {
 * @apiSuccess {String} data.rows.reviewerUserName 审核人userName
 * @apiSuccess {String} data.rows.reviewerMobile 审核人手机号
 * @apiSuccess {String} data.rows.reviewerRole 审核人身份
-* @apiSuccess {String} data.rows.reviewStatus 审核状态 0-审核中 1-审核通过 2-拒绝
+* @apiSuccess {String} data.rows.reviewStatus 审核状态 20-审核中 30-审核通过 40-拒绝
 * @apiSuccess {Number} data.rows.status 活动状态 10-编辑中 20-审核中 30-审核通过 31-预热中 32-报名中 35-未开始 33-进行中 34-已结束 40-活动拒绝
 * @apiSuccess {String} data.rows.rejectReason 驳回拒绝原因
 * @apiSuccess {Boolean} data.rows.signAuth 当前时间是否可以签到
