@@ -11,6 +11,7 @@ const DingStaffs = require('../models/DingStaffs');
 const StaffSigns = require('../models/StaffSigns');
 const EnrollService = require('../services/EnrollService');
 const util = require('../core/util');
+const GroupService = require('../services/GroupService');
 
 router.prefix('/api/participate');
 
@@ -237,6 +238,9 @@ router.post('/enroll', async (ctx, next) => {
 	await EnrollPersons.destroy({ where: { enrollId: enroll.id, timestamp: { [Op.ne]: timestamp } } });
 	await EnrollFields.destroy({ where: { enrollId: enroll.id, activityId, timestamp: { [Op.ne]: timestamp } } });
 
+	// 将用户加入群
+	GroupService.addUser2Group(user.userId, activityId);
+
 	ctx.body = ResService.success({});
 	await next();
 });
@@ -272,6 +276,9 @@ router.post('/cancelenroll', async (ctx, next) => {
 	await EnrollPersons.destroy({ where: { enrollId: enroll.id } });
 	await EnrollFields.destroy({ where: { enrollId: enroll.id, activityId } });
 	await Enrolls.destroy({ where: { id: enroll.id } });
+	// 将用户移出群
+	GroupService.deleteUserFromGroup(user.userId, activityId);
+
 	ctx.body = ResService.success({});
 });
 

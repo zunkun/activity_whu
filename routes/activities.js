@@ -13,6 +13,7 @@ const MessageService = require('../services/MessageService');
 const Messages = require('../models/Messages');
 const Enrolls = require('../models/Enrolls');
 const StaffSigns = require('../models/StaffSigns');
+const GroupService = require('../services/GroupService');
 
 const qr = require('qr-image');
 const _ = require('lodash');
@@ -485,6 +486,11 @@ router.post('/review', async (ctx, next) => {
 
 	// 给活动创建者发消息
 	MessageService.sendCreatorMsg(reviewStatus, activityId, rejectReason);
+
+	// 创建群
+	if (reviewStatus === 30) {
+		GroupService.setUserAndDept(activity.userId, activityId, activity);
+	}
 	ctx.body = ResService.success({});
 	await next();
 });
@@ -516,9 +522,9 @@ router.post('/cancel', async (ctx, next) => {
 	}
 
 	await Activities.update({ reviewStatus: 10, cancel: true }, { where: { id: activityId } });
-
 	// 更新消息状态
 	Messages.update({ finish: true }, { where: { activityId } });
+	GroupService.deleteDept(activityId);
 	ctx.body = ResService.success({});
 	await next();
 });
@@ -551,7 +557,8 @@ router.post('/delete', async (ctx, next) => {
 	// 更新消息状态
 	Messages.destroy({ where: { activityId } });
 	await Activities.destroy({ where: { id: activityId } });
-
+	// 删除校友活动部门
+	GroupService.deleteDept(activityId);
 	ctx.body = ResService.success({});
 	await next();
 });

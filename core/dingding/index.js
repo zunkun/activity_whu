@@ -80,6 +80,26 @@ class Dingding {
 	}
 
 	/**
+	 * 获取父上级路径
+	 * @param {Number} deptId deptId
+	 */
+	async getDeptPaths (deptId) {
+		let uri = `${config.dingBaseUri}/department/list_parent_depts_by_dept`;
+		let data = await rp.get(uri, {
+			qs: {
+				id: deptId,
+				access_token: await this.getAccessToken()
+			},
+			json: true
+		});
+		if (data.errcode === 0) {
+			return data.parentIds;
+		} else {
+			return [ deptId ];
+		}
+	}
+
+	/**
 	 * 获取子部门列表
 	 * @param {Number} id 根部门id
 	 * @param {Boolean} fetch_child 是否遍历所有子部门
@@ -102,6 +122,10 @@ class Dingding {
 		}
 	}
 
+	/**
+	 * 获取部门详情
+	 * @param {Number} deptId deptId
+	 */
 	async getDeptInfo (deptId) {
 		let uri = `${config.dingBaseUri}/department/get`;
 		let data = await rp.get(uri, {
@@ -153,6 +177,10 @@ class Dingding {
 		}
 	}
 
+	/**
+	 * 获取用户详情
+	 * @param {String} userId userId
+	 */
 	async getUser (userId) {
 		// https://oapi.dingtalk.com/user/get?access_token=ACCESS_TOKEN&userid=zhangsan
 		let accessToken = await this.getAccessToken();
@@ -168,11 +196,83 @@ class Dingding {
 		return data;
 	}
 
+	/**
+	 * 发送oa消息
+	 * @param {Object} OA OA消息
+	 */
 	async sendMsg (OA) {
 		// https://oapi.dingtalk.com/message/send?access_token=ACCESS_TOKEN
 		let accessToken = await this.getAccessToken();
 		let json = await rp.post(`https://oapi.dingtalk.com/message/send?access_token=${accessToken}`, {
 			body: OA, json: true
+		});
+		if (json.errcode === 0) {
+			return json;
+		} else {
+			console.error('发送失败', json.errmsg);
+			throw json.errmsg;
+		}
+	}
+
+	/**
+	 * 创建部门
+	 * @param {Object} deptInfo 部门信息
+	 */
+	async createDept (deptInfo) {
+		// https://oapi.dingtalk.com/department/create?access_token=ACCESS_TOKEN
+		let accessToken = await this.getAccessToken();
+		if (!deptInfo.name || !deptInfo.parentid || !deptInfo) {
+			return Promise.reject('参数不正确');
+		}
+		let json = await rp.post(`https://oapi.dingtalk.com/department/create?access_token=${accessToken}`, {
+			body: deptInfo,
+			json: true
+		});
+		if (json.errcode === 0) {
+			return json;
+		} else {
+			console.error('发送失败', json.errmsg);
+			throw json.errmsg;
+		}
+	}
+	/**
+	 * 删除部门
+	 * @param {Object} deptId 部门ID
+	 */
+	async deleteDept (deptId) {
+		// https://oapi.dingtalk.com/department/delete?access_token=ACCESS_TOKEN&id=ID
+		let accessToken = await this.getAccessToken();
+		if (!deptId) {
+			return Promise.reject('参数不正确');
+		}
+		let json = await rp.get(`https://oapi.dingtalk.com/department/delete?access_token=${accessToken}&id=${deptId}`, {
+			json: true
+		});
+		if (json.errcode === 0) {
+			return json;
+		} else {
+			console.error('发送失败', json.errmsg);
+			throw json.errmsg;
+		}
+	}
+
+	/**
+	 * 更新员工部门表
+	 * @param {String} userid 员工id，不可修改，长度为1~64个字符
+	 * @param {List} department 成员所属部门id列表
+	 */
+	async updateUserDept (userid, department) {
+		// https://oapi.dingtalk.com/user/update?access_token=ACCESS_TOKEN
+		if (!userid || !department || !department.length) {
+			return Promise.resolve('参数不正确');
+		}		let accessToken = await this.getAccessToken();
+
+		let json = await rp.post(`https://oapi.dingtalk.com/user/update?access_token=${accessToken}`, {
+			body: {
+				userid,
+				department
+			},
+			json: true
 		});
 		if (json.errcode === 0) {
 			return json;
