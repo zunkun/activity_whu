@@ -947,6 +947,9 @@ router.get('/lists', async (ctx, next) => {
 * @apiSuccess {Boolean} data.highAuthority 是否能够审批该活动
 * @apiSuccess {Boolean} data.needReview 是否需要提交审核
 * @apiSuccess {Boolean} data.cancelAuthority 是否有撤销权限
+* @apiSuccess {Boolean} data.signAuth 当前时间是否可以签到
+* @apiSuccess {Boolean} data.meSigned 我在当前活动中是否已签到
+* @apiSuccess {Date} data.signTime 我在当前活动的签到时间
 * @apiSuccess {String} data.createdAt 创建时间
 * @apiSuccess {Boolean} data.cancel 是否撤销 true-撤销
 * @apiError {Number} errcode 失败不为0
@@ -1030,6 +1033,23 @@ router.get('/:id', async (ctx, next) => {
 	activity.cancelAuthority = false;
 	if (activity.userId === user.userId) {
 		activity.cancelAuthority = true;
+	}
+
+	activity.meSigned = false;
+	activity.signTime = null;
+	activity.signAuth = false; // 当前时间是否可以签到
+	let staffsign = await StaffSigns.findOne({ where: { activityId: activity.id, userId: user.userId } });
+	// 当前活动是否已签到
+	if (activity.signed) {
+		if (staffsign) {
+			activity.meSigned = true;
+			activity.signTime = staffsign.createdAt;
+			activity.signAuth = false;
+		} else {
+			if (currentTime >= startTime && currentTime <= endTime) {
+				activity.signAuth = true;
+			}
+		}
 	}
 
 	ctx.body = ResService.success(activity);
