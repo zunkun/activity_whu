@@ -7,6 +7,7 @@ const dingding = require('../core/dingding');
 const Router = require('koa-router');
 const router = new Router();
 const config = require('../config');
+const rp = require('request-promise');
 
 router.prefix('/api/auth');
 
@@ -75,6 +76,7 @@ router.get('/signature', async (ctx, next) => {
 * @apiSuccess {String} data.user.jobnumber 工号
 * @apiSuccess {String} data.user.avatar 图像
 * @apiSuccess {String} data.user.mobile 手机
+* @apiSuccess {Boolean} data.user.access 当前用户有进入活动管理页面的权限，即是否是管理员，当前 access = true 时，roles 才有效
 * @apiSuccess {Object[]} data.user.roles 用户角色表
 * @apiSuccess {Number} data.user.roles.role 角色 1-总会管理员 2-分会管理员 3-普通校友
 * @apiSuccess {Number} data.user.roles.deptId 当前角色所管理的部门ID
@@ -100,14 +102,26 @@ router.get('/login', async (ctx, next) => {
 			if (userRes.errcode !== 0) {
 				ctx.body = ResService.fail(user.errmsg, user.errcode);
 			}
-			user = { userId: user.userid, userName: user.name, jobnumber: user.jobnumber, mobile: user.mobile };
+
+			user = { userId: user.userid, userName: user.name, jobnumber: user.jobnumber, mobile: user.mobile, access: false };
 		} else {
 			user = user.toJSON();
+			user.access = !!user.activity;
 		}
 		if (!user) {
 			ctx.body = ResService.fail('获取用户信息失败', 404);
 			return;
 		}
+		try {
+			let res = await rp.get(`http://alumnihome1893-1.whu.edu.cn/renzheng/whu/alumniResource/getActivityRights?dingtalkId=${user.userId}`);			res = JSON.parse(res);
+
+			if (res && res.success) {
+				user.access = res.content ? res.content.access : false;
+			}
+		} catch (error) {
+			user.access = false;
+		}
+
 		let roles = await Roles.findAll({ where: { userId: user.userId } });
 		user.roles = [];
 		for (let role of roles) {

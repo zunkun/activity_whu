@@ -4192,6 +4192,13 @@ define({ "api": [
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.user.access",
+            "description": "<p>当前用户有进入活动管理页面的权限，即是否是管理员，当前 access = true 时，roles 才有效</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "Object[]",
             "optional": false,
             "field": "data.user.roles",
