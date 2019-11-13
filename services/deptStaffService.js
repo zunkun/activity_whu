@@ -3,7 +3,7 @@ const DingStaffs = require('../models/DingStaffs');
 const DeptStaffs = require('../models/DeptStaffs');
 const config = require('../config');
 const dingding = require('../core/dingding');
-const { Op } = require('sequeize');
+const { Op } = require('sequelize');
 class DeptStaffService {
 	/**
    * @constructor
