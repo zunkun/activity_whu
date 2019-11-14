@@ -648,6 +648,13 @@ define({ "api": [
             "group": "Success 200",
             "type": "String",
             "optional": false,
+            "field": "data.rows.certNo",
+            "description": "<p>证件号码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
             "field": "data.rows.enrollTime",
             "description": "<p>报名时间</p>"
           },
@@ -1083,7 +1090,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "data.rows.reviewStatus",
-            "description": "<p>审核状态 0-审核中 1-审核通过 2-拒绝</p>"
+            "description": "<p>审核状态 20-审核中 30-审核通过 40-拒绝</p>"
           },
           {
             "group": "Success 200",

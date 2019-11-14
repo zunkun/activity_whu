@@ -16,6 +16,10 @@ Enrolls.init({
 		type: DataTypes.STRING,
 		comment: '手机'
 	},
+	certNo: {
+		type: DataTypes.STRING,
+		comment: '证件号码'
+	},
 	activityId: { type: DataTypes.INTEGER, comment: 'activity id' },
 	timestamp: {
 		type: DataTypes.BIGINT,

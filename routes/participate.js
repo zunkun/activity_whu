@@ -12,6 +12,7 @@ const StaffSigns = require('../models/StaffSigns');
 const EnrollService = require('../services/EnrollService');
 const util = require('../core/util');
 const GroupService = require('../services/GroupService');
+const rp = require('request-promise');
 
 router.prefix('/api/participate');
 
@@ -204,6 +205,7 @@ router.post('/enroll', async (ctx, next) => {
 			userId: user.userId,
 			userName: user.userName,
 			mobile: user.mobile,
+			certNo: user.certNo,
 			timestamp,
 			activityId
 		});
@@ -513,6 +515,7 @@ router.get('/persons', async (ctx, next) => {
 * @apiSuccess {String}data.rows.userId 钉钉userId
 * @apiSuccess {String}data.rows.userNmae 姓名
 * @apiSuccess {String}data.rows.mobile 电话
+* @apiSuccess {String}data.rows.certNo 证件号码
 * @apiSuccess {String}data.rows.enrollTime 报名时间
 * @apiSuccess {String}data.rows.signed 是否签到
 * @apiSuccess {String}data.rows.signTime 签到时间
@@ -556,11 +559,25 @@ router.get('/enrollpersons', async (ctx, next) => {
 			userId: enroll.userId,
 			userName: enroll.userName,
 			mobile: enroll.mobile,
+			certNo: enroll.certNo || '',
 			enrollTime: enroll.createdAt,
 			signed: false,
 			hasfamilies: enrollpersons.length > 0,
 			enrollpersons
 		};
+		if (!enroll.certNo) {
+			let staff = await DingStaffs.findOne({ where: { userId: enroll.userId } });
+			if (staff && staff.certNo) {
+				enrollstaff.certNo = staff.certNo;
+			} else {
+				let res = await rp.get(`http://alumnihome1893-1.whu.edu.cn/renzheng/whu/alumniResource/getCertNo?dingtalkId=${staff.userId}`);
+				res = JSON.parse(res);
+				if (res.success && res.content && res.content.certNo) {
+					await DingStaffs.update({ certNo: res.content.certNo }, { where: { userId: staff.userId } });
+					enrollstaff.certNo = res.content.certNo;
+				}
+			}
+		}
 		if (staffsign) {
 			enrollstaff.signed = true;
 			enrollstaff.signTime = staffsign.createdAt;
