@@ -43,6 +43,7 @@ class GroupService {
 				name: deptName,
 				parentid: config.groupDeptId,
 				createDeptGroup: true,
+				deptHiding: true,
 				sourceIdentifier: activityId
 			});
 
