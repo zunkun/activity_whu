@@ -29,6 +29,10 @@ DingStaffs.init({
 		type: DataTypes.BOOLEAN,
 		comment: '是否有活动权限',
 		defaultValue: false
+	},
+	certNo: {
+		type: DataTypes.STRING,
+		comment: '认证号码'
 	}
 }, { sequelize: postgres, modelName: 'dingstaffs', timestamps: false, comment: '钉钉用户' });
 
