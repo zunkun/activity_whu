@@ -431,7 +431,13 @@ router.get('/myactivities', async (ctx, next) => {
 				status = 32;
 			}
 			if (currentTime < startTime) {
-				status = 35;
+				if (currentTime < enrollStartTime) {
+					status = 31;
+				} else if (currentTime >= enrollStartTime && currentTime <= enrollEndTime) {
+					status = 32;
+				} else {
+					status = 35;
+				}
 			}
 			if (currentTime >= startTime && currentTime <= endTime) {
 				status = 33;
