@@ -17,5 +17,5 @@ module.exports = {
 	appkey: 'dingeqmpgxeavkrr5dyc',
 	appsecret: 'dpK569l_-z5eKjNXc49dEu2Zyszlrqo7s6a1ceWvk0uloDRZNvC7DaRUNiMHJfSF',
 	nonceStr: 'afasdzwe',
-	roleCron: '0 */10 0 * * *' // 每隔10分钟同步角色列表
+	roleCron: '0 */2 0 * * *' // 每隔10分钟同步角色列表
 };
