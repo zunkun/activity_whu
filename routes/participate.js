@@ -13,6 +13,7 @@ const EnrollService = require('../services/EnrollService');
 const util = require('../core/util');
 const GroupService = require('../services/GroupService');
 const rp = require('request-promise');
+const Forms = require('../models/Forms');
 
 router.prefix('/api/participate');
 
@@ -23,18 +24,41 @@ router.prefix('/api/participate');
 * @apiDescription 报名
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} activityId 活动ID
-* @apiParam {Array[]} [formlists] 表单
-* @apiParam {String} formlists.componentName 组件名称
-* @apiParam {String} formlists.componentType 组件类型
-* @apiParam {String} formlists.componentSet 组件属性设置类型
-* @apiParam {Object} formlists.attribute 组件属性
+* @apiParam {Object[]} [me] 个人报名表单数据
+* @apiParam {String} me.componentName 组件名称
+* @apiParam {String} me.componentType 组件类型
+* @apiParam {String} me.componentSet 组件属性设置类型
+* @apiParam {Object} me.attribute 组件属性
+* @apiParam {Array[]} [familylists] 家属表单数据
+* @apiParam {String} familylists.componentName 组件名称
+* @apiParam {String} familylists.componentType 组件类型
+* @apiParam {String} familylists.componentSet 组件属性设置类型
+* @apiParam {Object} familylists.attribute 组件属性
 * @apiSuccess {Object} data {}
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 * @apiParamExample {json} 请求body示例
 {
-  activityId: 1000, // 活动ID
-	formlists: [
+	activityId: 1000, // 活动ID
+	me: [
+			{
+				componentName: '单行输入框', //组件名称
+				componentType: 'signleLineText', //组件类型
+				componentSet: 'textType', //组件属性设置类型
+				attribute: {
+					//   组件属性
+					fieldValue: '', //字段填写的值
+					fieldCode: '', //字段编码
+					title: '单行输入框', //标题
+					placeholder: '请输入', //提示
+					maxLength: 666, //输入的最大值
+					required: true, //是否必填
+				},
+			},
+			...
+			...
+	],
+	familylists: [
 		[ // 第一组，表示第一个人
 			{
 				componentName: '单行输入框', //组件名称
@@ -143,7 +167,7 @@ router.prefix('/api/participate');
 
 router.post('/enroll', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
-	const { activityId, formlists } = ctx.request.body;
+	let { activityId, familylists, me } = ctx.request.body;
 	const currentTime = new Date();
 	const activity = await Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
@@ -165,7 +189,13 @@ router.post('/enroll', async (ctx, next) => {
 	if (activity.endTime < currentTime) {
 		ctx.body = ResService.fail('当前活动已经结束');
 	}
+	if (!me || !Array.isArray(me)) {
+		me = [];
+	}
 
+	if (!familylists || !Array.isArray(familylists)) {
+		familylists = [];
+	}
 	// 报名名额
 	let currentCount = await Enrolls.count({ where: { activityId } });
 	if (activity.personNum && currentCount >= activity.personNum) {
@@ -173,13 +203,25 @@ router.post('/enroll', async (ctx, next) => {
 		return;
 	}
 
+	let meform = await Forms.findOne({ where: { activityId, type: 1 } });
+	let familyform = await Forms.findOne({ where: { activityId, type: 2 } });
+
 	// 验证报名信息是否合法
 	let valid = true;
-	if (formlists) {
-		if (!Array.isArray(formlists)) {
-			valid = false;
+
+	if (meform) {
+		for (let form of me) {
+			[ 'componentName', 'componentType', 'componentSet', 'attribute' ].map(key => {
+				if (!form[key]) valid = false;
+			});
 		}
-		for (let forms of formlists) {
+	}
+
+	if (familyform) {
+		if (familylists.length > familyform.personNum) {
+			ctx.body = ResService.fail(`携带家属不得多于${familyform.personNum}人`);
+		}
+		for (let forms of familylists) {
 			if (!Array.isArray(forms)) {
 				valid = false;
 				break;
@@ -192,7 +234,7 @@ router.post('/enroll', async (ctx, next) => {
 		}
 	}
 	if (!valid) {
-		ctx.body = ResService.fail('报名表单参数不正确');
+		ctx.body = ResService.fail('报名表单填写不正确');
 		return;
 	}
 
@@ -213,12 +255,40 @@ router.post('/enroll', async (ctx, next) => {
 		await Enrolls.update({ timestamp }, { where: { id: enroll.id } });
 	}
 
-	for (let i = 0, len = formlists.length; i < len; i++) {
-		let forms = formlists[i];
+	// 报名人表单信息
+	if (meform) {
+		let meperson = await EnrollPersons.create({
+			activityId,
+			enrollId: enroll.id,
+			sequence: 1,
+			type: 1,
+			timestamp
+		});
+
+		for (let j = 0, len2 = me.length; j < len2; j++) {
+			let form = me[j];
+			await EnrollFields.create({
+				sequence: j + 1,
+				componentName: form.componentName,
+				componentType: form.componentType,
+				componentSet: form.componentSet,
+				attribute: form.attribute,
+				activityId,
+				enrollId: enroll.id,
+				enrollpersonId: meperson.id,
+				type: 1,
+				timestamp
+			});
+		}
+	}
+
+	for (let i = 0, len = familylists.length; i < len; i++) {
+		let forms = familylists[i];
 		let enrollperson = await EnrollPersons.create({
 			activityId,
 			enrollId: enroll.id,
 			sequence: i + 1,
+			type: 2,
 			timestamp
 		});
 		for (let j = 0, len2 = forms.length; j < len2; j++) {
@@ -232,6 +302,7 @@ router.post('/enroll', async (ctx, next) => {
 				activityId,
 				enrollId: enroll.id,
 				enrollpersonId: enrollperson.id,
+				type: 2,
 				timestamp
 			});
 		}
@@ -294,13 +365,21 @@ router.post('/cancelenroll', async (ctx, next) => {
 * @apiSuccess {Object} data 报名列表，即家属信息列表，此字段为二维数组
 * @apiSuccess {Boolean} data.enrolled 是否报名
 * @apiSuccess {Date} data.enrollTime 报名时间
+* @apiSuccess {Object[]} data.me 报名人自己填写的表单信息
+* @apiSuccess {String} data.me.sequence 组件填写项排序
+* @apiSuccess {String} data.me.componentName 组件名称
+* @apiSuccess {String} data.me.componentType 组件类型
+* @apiSuccess {String} data.me.componentSet 组件属性设置类型
+* @apiSuccess {Object} data.me.attribute 组件属性
 * @apiSuccess {Boolean} data.hasfamilies 是否有家属
-* @apiSuccess {Array[]} data.enrollpersons 家属信息
-* @apiSuccess {String} data.enrollpersons.sequence 组件填写项排序
-* @apiSuccess {String} data.enrollpersons.componentName 组件名称
-* @apiSuccess {String} data.enrollpersons.componentType 组件类型
-* @apiSuccess {String} data.enrollpersons.componentSet 组件属性设置类型
-* @apiSuccess {Object} data.enrollpersons.attribute 组件属性
+* @apiSuccess {Number} data.familyNum 携带家属最大人数
+* @apiSuccess {Number} data.currentNum 当前携带家属人数
+* @apiSuccess {Array[]} data.familylists 家属信息
+* @apiSuccess {String} data.familylists.sequence 组件填写项排序
+* @apiSuccess {String} data.familylists.componentName 组件名称
+* @apiSuccess {String} data.familylists.componentType 组件类型
+* @apiSuccess {String} data.familylists.componentSet 组件属性设置类型
+* @apiSuccess {Object} data.familylists.attribute 组件属性
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -313,17 +392,26 @@ router.get('/myenroll', async (ctx, next) => {
 			ctx.body = ResService.success({
 				enrolled: false,
 				enrollTime: null,
+				me: [],
 				hasfamilies: false,
-				enrollpersons: []
+				familylists: []
 			});
 			return;
 		}
-		let enrollpersons = await EnrollService.getEnrollPersons(enroll.id, enroll);
+		let { me, familylists } = await EnrollService.getMyEnrolls(user.userId, activityId);
+		let familyNum = 0;
+		let familyform = await Forms.findOne({ where: { type: 2, activityId } });
+		if (familyform) {
+			familyNum = familyform.personNum;
+		}
 		ctx.body = ResService.success({
 			enrollTime: enroll.createdAt,
-			hasfamilies: enrollpersons.length > 0,
 			enrolled: true,
-			enrollpersons
+			me,
+			familyNum,
+			currentNum: familylists.length,
+			hasfamilies: familylists.length > 0,
+			familylists
 		});
 		await next();
 	} catch (error) {
@@ -526,14 +614,21 @@ router.get('/persons', async (ctx, next) => {
 * @apiSuccess {String}data.rows.signed 是否签到
 * @apiSuccess {String}data.rows.signTime 签到时间
 * @apiSuccess {Number}data.rows.signType 签到方式 1-扫码 2-位置
-* @apiSuccess {Boolean}data.rows.hasfamilies 是否有家属
-* @apiSuccess {Array[]}data.rows.enrollpersons 报名列表，即家属信息列表，此字段为二维数组
-* @apiSuccess {Number}data.rows.enrollpersons.sequence 填写项排序
-* @apiSuccess {Number}data.rows.enrollpersons.id 填写项ID
-* @apiSuccess {String}data.rows.enrollpersons.componentName 组件名称
-* @apiSuccess {String}data.rows.enrollpersons.componentType 组件类型
-* @apiSuccess {String}data.rows.enrollpersons.componentSet 组件属性设置类型
-* @apiSuccess {Object}data.rows.enrollpersons.attribute 组件属性
+* @apiSuccess {Object[]} data.rows.me 报名人自己填写的表单信息
+* @apiSuccess {String} data.rows.me.sequence 组件填写项排序
+* @apiSuccess {String} data.rows.me.componentName 组件名称
+* @apiSuccess {String} data.rows.me.componentType 组件类型
+* @apiSuccess {String} data.rows.me.componentSet 组件属性设置类型
+* @apiSuccess {Object} data.rows.me.attribute 组件属性
+* @apiSuccess {Boolean} data.rows.hasfamilies 是否有家属
+* @apiSuccess {Number} data.rows.familyNum 携带家属最大人数
+* @apiSuccess {Number} data.rows.currentNum 当前携带家属人数
+* @apiSuccess {Array[]} data.rows.familylists 家属信息
+* @apiSuccess {String} data.rows.familylists.sequence 组件填写项排序
+* @apiSuccess {String} data.rows.familylists.componentName 组件名称
+* @apiSuccess {String} data.rows.familylists.componentType 组件类型
+* @apiSuccess {String} data.rows.familylists.componentSet 组件属性设置类型
+* @apiSuccess {Object} data.rows.familylists.attribute 组件属性
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -559,7 +654,13 @@ router.get('/enrollpersons', async (ctx, next) => {
 	const res = { count: enrollRes.count, rows: [] };
 	for (let enroll of enrollRes.rows) {
 		let staffsign = await StaffSigns.findOne({ where: { activityId, userId: enroll.userId } });
-		let enrollpersons = await EnrollService.getEnrollPersons(enroll.id, enroll);
+
+		let { me, familylists } = await EnrollService.getMyEnrolls(enroll.userId, activityId, activity);
+		let familyNum = 0;
+		let familyform = await Forms.findOne({ where: { type: 2, activityId } });
+		if (familyform) {
+			familyNum = familyform.personNum;
+		}
 
 		let enrollstaff = {
 			userId: enroll.userId,
@@ -568,8 +669,11 @@ router.get('/enrollpersons', async (ctx, next) => {
 			certNo: enroll.certNo || '',
 			enrollTime: enroll.createdAt,
 			signed: false,
-			hasfamilies: enrollpersons.length > 0,
-			enrollpersons
+			me,
+			familylists,
+			hasfamilies: familylists.length > 0,
+			familyNum,
+			currentNum: familylists.length
 		};
 		if (!enroll.certNo) {
 			let staff = await DingStaffs.findOne({ where: { userId: enroll.userId } });

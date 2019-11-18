@@ -33,35 +33,77 @@
             "group": "Parameter",
             "type": "Object[]",
             "optional": false,
-            "field": "forms",
-            "description": "<p>表单</p>"
+            "field": "meforms",
+            "description": "<p>报名人自己的表单组件表</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "forms.componentName",
+            "field": "meforms.componentName",
             "description": "<p>组件名称</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "forms.componentType",
+            "field": "meforms.componentType",
             "description": "<p>组件类型</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "forms.componentSet",
+            "field": "meforms.componentSet",
             "description": "<p>组件属性设置类型</p>"
           },
           {
             "group": "Parameter",
             "type": "Object",
             "optional": false,
-            "field": "forms.attribute",
+            "field": "meforms.attribute",
+            "description": "<p>组件属性</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "falimyNum",
+            "description": "<p>家属最多人数，默认1</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object[]",
+            "optional": false,
+            "field": "familyforms",
+            "description": "<p>家属表单</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "familyforms.componentName",
+            "description": "<p>组件名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "familyforms.componentType",
+            "description": "<p>组件类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "familyforms.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "familyforms.attribute",
             "description": "<p>组件属性</p>"
           }
         ]
@@ -143,10 +185,31 @@
           },
           {
             "group": "Parameter",
-            "type": "Object[]",
+            "type": "Object",
             "optional": false,
             "field": "data",
             "description": "<p>表单数据</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.meforms",
+            "description": "<p>报名人自己的表单组件表</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "data.familyNum",
+            "description": "<p>家属最多人数</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.familyforms",
+            "description": "<p>家属表单组件表</p>"
           }
         ]
       }
@@ -165,49 +228,98 @@
             "group": "Success 200",
             "type": "Number",
             "optional": false,
-            "field": "data.activityId",
+            "field": "data.meforms.activityId",
             "description": "<p>活动ID</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.sequence",
+            "field": "data.meforms.sequence",
             "description": "<p>组件排序</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.id",
+            "field": "data.meforms.id",
             "description": "<p>组件ID</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.componentName",
+            "field": "data.meforms.componentName",
             "description": "<p>组件名称</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.componentType",
+            "field": "data.meforms.componentType",
             "description": "<p>组件类型</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.componentSet",
+            "field": "data.meforms.componentSet",
             "description": "<p>组件属性设置类型</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
-            "field": "data.attribute",
+            "field": "data.meforms.attribute",
+            "description": "<p>组件属性</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.familyforms.activityId",
+            "description": "<p>活动ID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.familyforms.sequence",
+            "description": "<p>组件排序</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.familyforms.id",
+            "description": "<p>组件ID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.familyforms.componentName",
+            "description": "<p>组件名称</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.familyforms.componentType",
+            "description": "<p>组件类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.familyforms.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.familyforms.attribute",
             "description": "<p>组件属性</p>"
           }
         ]
@@ -373,6 +485,48 @@
           },
           {
             "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.me",
+            "description": "<p>报名人自己填写的表单信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.me.sequence",
+            "description": "<p>组件填写项排序</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.me.componentName",
+            "description": "<p>组件名称</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.me.componentType",
+            "description": "<p>组件类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.me.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.me.attribute",
+            "description": "<p>组件属性</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "Boolean",
             "optional": false,
             "field": "data.hasfamilies",
@@ -380,44 +534,58 @@
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.familyNum",
+            "description": "<p>携带家属最大人数</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.currentNum",
+            "description": "<p>当前携带家属人数</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "Array[]",
             "optional": false,
-            "field": "data.enrollpersons",
+            "field": "data.familylists",
             "description": "<p>家属信息</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollpersons.sequence",
+            "field": "data.familylists.sequence",
             "description": "<p>组件填写项排序</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollpersons.componentName",
+            "field": "data.familylists.componentName",
             "description": "<p>组件名称</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollpersons.componentType",
+            "field": "data.familylists.componentType",
             "description": "<p>组件类型</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.enrollpersons.componentSet",
+            "field": "data.familylists.componentSet",
             "description": "<p>组件属性设置类型</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
-            "field": "data.enrollpersons.attribute",
+            "field": "data.familylists.attribute",
             "description": "<p>组件属性</p>"
           }
         ]
@@ -479,37 +647,72 @@
           },
           {
             "group": "Parameter",
-            "type": "Array[]",
+            "type": "Object[]",
             "optional": true,
-            "field": "formlists",
-            "description": "<p>表单</p>"
+            "field": "me",
+            "description": "<p>个人报名表单数据</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "formlists.componentName",
+            "field": "me.componentName",
             "description": "<p>组件名称</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "formlists.componentType",
+            "field": "me.componentType",
             "description": "<p>组件类型</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "formlists.componentSet",
+            "field": "me.componentSet",
             "description": "<p>组件属性设置类型</p>"
           },
           {
             "group": "Parameter",
             "type": "Object",
             "optional": false,
-            "field": "formlists.attribute",
+            "field": "me.attribute",
+            "description": "<p>组件属性</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Array[]",
+            "optional": true,
+            "field": "familylists",
+            "description": "<p>家属表单数据</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "familylists.componentName",
+            "description": "<p>组件名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "familylists.componentType",
+            "description": "<p>组件类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "familylists.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "familylists.attribute",
             "description": "<p>组件属性</p>"
           }
         ]
@@ -517,7 +720,7 @@
       "examples": [
         {
           "title": "请求body示例",
-          "content": "{\n  activityId: 1000, // 活动ID\n\tformlists: [\n\t\t[ // 第一组，表示第一个人\n\t\t\t{\n\t\t\t\tcomponentName: '单行输入框', //组件名称\n\t\t\t\tcomponentType: 'signleLineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '单行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多行输入框', //组件名称\n\t\t\t\tcomponentType: 'multilineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '数字输入框', //组件名称\n\t\t\t\tcomponentType: 'numericType', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '数字输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '日期', //组件名称\n\t\t\t\tcomponentType: 'datePicker', //组件类型\n\t\t\t\tcomponentSet: 'datePickerType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '日期', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t}, {\n\t\t\t\tcomponentName: '日期区间', //组件名称\n\t\t\t\tcomponentType: 'datePickerSection', //组件类型\n\t\t\t\tcomponentSet: 'datePickerSectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValueStart: '', //字段填写的值\n\t\t\t\t\tfieldCodeStart: '', //字段编码\n\t\t\t\t\ttitleStart: '开始日期', //标题\n\t\t\t\t\tplaceholderStart: '请选择', //提示\n\t\t\t\t\tfieldValueEnd: '', //字段填写的值\n\t\t\t\t\tfieldCodeEnd: '', //字段编码\n\t\t\t\t\ttitleEnd: '结束日期', //标题\n\t\t\t\t\tplaceholderEnd: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多选框', //组件名称\n\t\t\t\tcomponentType: 'multipleSelection', //组件类型\n\t\t\t\tcomponentSet: 'multipleSelectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: \"\", //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多选框', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tmaxLength: 2,\n\t\t\t\t\toptions: [{\n\t\t\t\t\t\tlabel: '选项1',\n\t\t\t\t\t\tvalue: '选项1',\n\t\t\t\t\t\tisSelect: false,\n\t\t\t\t\t}, {\n\t\t\t\t\t\tlabel: '选项2',\n\t\t\t\t\t\tvalue: '选项2',\n\t\t\t\t\t\tisSelect: false\n\t\t\t\t\t}],\n\t\t\t\t}\n\t\t\t}\n\t\t],\n\t\t[ // 第二组，表示第二个人\n\t\t\t{...},\n\t\t\t{...}\n\t\t]\n\t]\n}",
+          "content": "{\n\tactivityId: 1000, // 活动ID\n\tme: [\n\t\t\t{\n\t\t\t\tcomponentName: '单行输入框', //组件名称\n\t\t\t\tcomponentType: 'signleLineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '单行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t...\n\t\t\t...\n\t],\n\tfamilylists: [\n\t\t[ // 第一组，表示第一个人\n\t\t\t{\n\t\t\t\tcomponentName: '单行输入框', //组件名称\n\t\t\t\tcomponentType: 'signleLineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '单行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多行输入框', //组件名称\n\t\t\t\tcomponentType: 'multilineText', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多行输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '数字输入框', //组件名称\n\t\t\t\tcomponentType: 'numericType', //组件类型\n\t\t\t\tcomponentSet: 'textType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '数字输入框', //标题\n\t\t\t\t\tplaceholder: '请输入', //提示\n\t\t\t\t\tmaxLength: 666, //输入的最大值\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t},\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '日期', //组件名称\n\t\t\t\tcomponentType: 'datePicker', //组件类型\n\t\t\t\tcomponentSet: 'datePickerType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: '', //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '日期', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t}, {\n\t\t\t\tcomponentName: '日期区间', //组件名称\n\t\t\t\tcomponentType: 'datePickerSection', //组件类型\n\t\t\t\tcomponentSet: 'datePickerSectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValueStart: '', //字段填写的值\n\t\t\t\t\tfieldCodeStart: '', //字段编码\n\t\t\t\t\ttitleStart: '开始日期', //标题\n\t\t\t\t\tplaceholderStart: '请选择', //提示\n\t\t\t\t\tfieldValueEnd: '', //字段填写的值\n\t\t\t\t\tfieldCodeEnd: '', //字段编码\n\t\t\t\t\ttitleEnd: '结束日期', //标题\n\t\t\t\t\tplaceholderEnd: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tdateType: \"YYYY-MM-DD\", //日期类型 YYYY-MM-DD HH:mm\n\t\t\t\t}\n\t\t\t},\n\t\t\t{\n\t\t\t\tcomponentName: '多选框', //组件名称\n\t\t\t\tcomponentType: 'multipleSelection', //组件类型\n\t\t\t\tcomponentSet: 'multipleSelectionType', //组件属性设置类型\n\t\t\t\tattribute: {\n\t\t\t\t\t//   组件属性\n\t\t\t\t\tfieldValue: \"\", //字段填写的值\n\t\t\t\t\tfieldCode: '', //字段编码\n\t\t\t\t\ttitle: '多选框', //标题\n\t\t\t\t\tplaceholder: '请选择', //提示\n\t\t\t\t\trequired: true, //是否必填\n\t\t\t\t\tmaxLength: 2,\n\t\t\t\t\toptions: [{\n\t\t\t\t\t\tlabel: '选项1',\n\t\t\t\t\t\tvalue: '选项1',\n\t\t\t\t\t\tisSelect: false,\n\t\t\t\t\t}, {\n\t\t\t\t\t\tlabel: '选项2',\n\t\t\t\t\t\tvalue: '选项2',\n\t\t\t\t\t\tisSelect: false\n\t\t\t\t\t}],\n\t\t\t\t}\n\t\t\t}\n\t\t],\n\t\t[ // 第二组，表示第二个人\n\t\t\t{...},\n\t\t\t{...}\n\t\t]\n\t]\n}",
           "type": "json"
         }
       ]
@@ -681,6 +884,48 @@
           },
           {
             "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.rows.me",
+            "description": "<p>报名人自己填写的表单信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.me.sequence",
+            "description": "<p>组件填写项排序</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.me.componentName",
+            "description": "<p>组件名称</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.me.componentType",
+            "description": "<p>组件类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.me.componentSet",
+            "description": "<p>组件属性设置类型</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.rows.me.attribute",
+            "description": "<p>组件属性</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "Boolean",
             "optional": false,
             "field": "data.rows.hasfamilies",
@@ -688,51 +933,58 @@
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.familyNum",
+            "description": "<p>携带家属最大人数</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.currentNum",
+            "description": "<p>当前携带家属人数</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "Array[]",
             "optional": false,
-            "field": "data.rows.enrollpersons",
-            "description": "<p>报名列表，即家属信息列表，此字段为二维数组</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.enrollpersons.sequence",
-            "description": "<p>填写项排序</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "optional": false,
-            "field": "data.rows.enrollpersons.id",
-            "description": "<p>填写项ID</p>"
+            "field": "data.rows.familylists",
+            "description": "<p>家属信息</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.rows.enrollpersons.componentName",
+            "field": "data.rows.familylists.sequence",
+            "description": "<p>组件填写项排序</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.familylists.componentName",
             "description": "<p>组件名称</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.rows.enrollpersons.componentType",
+            "field": "data.rows.familylists.componentType",
             "description": "<p>组件类型</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "data.rows.enrollpersons.componentSet",
+            "field": "data.rows.familylists.componentSet",
             "description": "<p>组件属性设置类型</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
-            "field": "data.rows.enrollpersons.attribute",
+            "field": "data.rows.familylists.attribute",
             "description": "<p>组件属性</p>"
           }
         ]

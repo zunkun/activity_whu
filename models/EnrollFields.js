@@ -28,6 +28,10 @@ EnrollFields.init({
 		type: DataTypes.INTEGER,
 		comment: '组件ID'
 	},
+	type: {
+		type: DataTypes.INTEGER,
+		comment: '表单类型 1-报名人自己的表单信息 2-家属表单信息'
+	},
 	activityId: { type: DataTypes.INTEGER, comment: 'activity id' },
 	enrollId: { type: DataTypes.INTEGER, comment: 'enroll id' },
 	enrollpersonId: { type: DataTypes.INTEGER, comment: 'enrollperson id' },

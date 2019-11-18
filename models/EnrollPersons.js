@@ -13,6 +13,10 @@ Enrolls.init({
 		comment: '活动ID'
 	},
 	enrollId: { type: DataTypes.INTEGER, comment: 'enroll id' },
+	type: {
+		type: DataTypes.INTEGER,
+		comment: '表单类型 1-报名人自己的表单信息 2-家属表单信息'
+	},
 	timestamp: {
 		type: DataTypes.BIGINT,
 		comment: '数据流水'
