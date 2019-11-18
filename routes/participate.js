@@ -14,6 +14,9 @@ const util = require('../core/util');
 const GroupService = require('../services/GroupService');
 const rp = require('request-promise');
 const Forms = require('../models/Forms');
+const DeptStaffs = require('../models/DeptStaffs');
+const DingDepts = require('../models/DingDepts');
+const _ = require('lodash');
 
 router.prefix('/api/participate');
 
@@ -189,6 +192,21 @@ router.post('/enroll', async (ctx, next) => {
 	if (activity.endTime < currentTime) {
 		ctx.body = ResService.fail('当前活动已经结束');
 	}
+
+	// 我所在部门
+	let deptIds = [];
+	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+	for (let deptStaff of deptStaffs) {
+		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
+		deptIds = deptIds.concat(dept.deptPaths);
+	}
+	deptIds = Array.from(new Set(deptIds));
+
+	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
+		ctx.body = ResService.fail('您没有权限参加当前活动');
+		return;
+	}
+
 	if (!me || !Array.isArray(me)) {
 		me = [];
 	}
@@ -719,6 +737,21 @@ router.post('/sign', async (ctx, next) => {
 	const { activityId, latitude, longitude, address } = ctx.request.body;
 	const currentTime = new Date();
 	const activity = await Activities.findOne({ where: { id: activityId } });
+
+	// 我所在部门
+	let deptIds = [];
+	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+	for (let deptStaff of deptStaffs) {
+		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
+		deptIds = deptIds.concat(dept.deptPaths);
+	}
+	deptIds = Array.from(new Set(deptIds));
+
+	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
+		ctx.body = ResService.fail('您没有权限参加当前活动');
+		return;
+	}
+
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统没有当前活动');
 		return;
