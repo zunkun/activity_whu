@@ -987,6 +987,20 @@ router.get('/:id', async (ctx, next) => {
 		return;
 	}
 
+	// 我所在部门
+	let deptIds = [];
+	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+	for (let deptStaff of deptStaffs) {
+		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
+		deptIds = deptIds.concat(dept.deptPaths);
+	}
+	deptIds = Array.from(new Set(deptIds));
+
+	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
+		ctx.body = ResService.fail('您没有权限查看当前活动');
+		return;
+	}
+
 	activity = activity.toJSON();
 
 	let creatorDeptIds = [];

@@ -404,6 +404,20 @@ router.post('/cancelenroll', async (ctx, next) => {
 router.get('/myenroll', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
 	let { activityId } = ctx.query;
+	let activity = await Activities.findOne({ where: { id: activityId } });
+	// 我所在部门
+	let deptIds = [];
+	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+	for (let deptStaff of deptStaffs) {
+		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
+		deptIds = deptIds.concat(dept.deptPaths);
+	}
+	deptIds = Array.from(new Set(deptIds));
+
+	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
+		ctx.body = ResService.fail('您没有权限参加当前活动');
+		return;
+	}
 	try {
 		let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
 		if (!enroll) {
