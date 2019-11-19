@@ -68,7 +68,7 @@
             "group": "Parameter",
             "type": "Number",
             "optional": false,
-            "field": "falimyNum",
+            "field": "familyNum",
             "description": "<p>家属最多人数，默认1</p>"
           },
           {
