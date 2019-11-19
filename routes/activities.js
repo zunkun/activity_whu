@@ -995,9 +995,15 @@ router.get('/:id', async (ctx, next) => {
 		deptIds = deptIds.concat(dept.deptPaths);
 	}
 	deptIds = Array.from(new Set(deptIds));
-
-	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
-		ctx.body = ResService.fail('您没有权限查看当前活动');
+	let auth = false;
+	if (activity.specialUserIds && activity.specialUserIds.indexOf(user.userId) > -1) {
+		auth = true;
+	}
+	if (activity.deptIds && _.intersection(activity.deptIds, deptIds).length) {
+		auth = true;
+	}
+	if (!auth) {
+		ctx.body = ResService.fail('您没有权限访问当前活动');
 		return;
 	}
 

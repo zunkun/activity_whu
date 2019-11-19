@@ -202,8 +202,15 @@ router.post('/enroll', async (ctx, next) => {
 	}
 	deptIds = Array.from(new Set(deptIds));
 
-	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
-		ctx.body = ResService.fail('您没有权限参加当前活动');
+	let auth = false;
+	if (activity.specialUserIds && activity.specialUserIds.indexOf(user.userId) > -1) {
+		auth = true;
+	}
+	if (activity.deptIds && _.intersection(activity.deptIds, deptIds).length) {
+		auth = true;
+	}
+	if (!auth) {
+		ctx.body = ResService.fail('您没有权限访问当前活动');
 		return;
 	}
 
@@ -414,8 +421,15 @@ router.get('/myenroll', async (ctx, next) => {
 	}
 	deptIds = Array.from(new Set(deptIds));
 
-	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
-		ctx.body = ResService.fail('您没有权限参加当前活动');
+	let auth = false;
+	if (activity.specialUserIds && activity.specialUserIds.indexOf(user.userId) > -1) {
+		auth = true;
+	}
+	if (activity.deptIds && _.intersection(activity.deptIds, deptIds).length) {
+		auth = true;
+	}
+	if (!auth) {
+		ctx.body = ResService.fail('您没有权限访问当前活动');
 		return;
 	}
 	try {
@@ -761,8 +775,15 @@ router.post('/sign', async (ctx, next) => {
 	}
 	deptIds = Array.from(new Set(deptIds));
 
-	if (activity.specialUserIds.indexOf(user.userId) === -1 && !_.intersection(activity.deptIds, deptIds).length) {
-		ctx.body = ResService.fail('您没有权限参加当前活动');
+	let auth = false;
+	if (activity.specialUserIds && activity.specialUserIds.indexOf(user.userId) > -1) {
+		auth = true;
+	}
+	if (activity.deptIds && _.intersection(activity.deptIds, deptIds).length) {
+		auth = true;
+	}
+	if (!auth) {
+		ctx.body = ResService.fail('您没有权限访问当前活动');
 		return;
 	}
 
