@@ -27,7 +27,7 @@ Messages.init({
 	},
 	type: {
 		type: DataTypes.INTEGER,
-		comment: '消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者'
+		comment: '消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者 3-发起审核时提醒消息-给发起者'
 	},
 	text: {
 		type: DataTypes.STRING,
@@ -49,6 +49,10 @@ Messages.init({
 	rejectReason: {
 		type: DataTypes.STRING,
 		comment: '审核被拒绝后的拒绝原因'
+	},
+	reviewUsers: {
+		type: DataTypes.ARRAY(DataTypes.JSON),
+		comment: '审核活动的管理员列表'
 	}
 }, { sequelize: postgres, modelName: 'messages', paranoid: true, comment: '消息' });
 

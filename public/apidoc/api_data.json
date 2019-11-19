@@ -2952,7 +2952,7 @@
             "type": "Number",
             "optional": false,
             "field": "data.rows.type",
-            "description": "<p>消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者</p>"
+            "description": "<p>消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者 3-活动发起式提示消息-给发起者</p>"
           },
           {
             "group": "Success 200",
@@ -2981,6 +2981,34 @@
             "optional": false,
             "field": "data.rows.rejectReason",
             "description": "<p>拒绝原因</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "data.rows.reviewUsers",
+            "description": "<p>审核活动的管理员列表</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewUsers.userId",
+            "description": "<p>审核者userId</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewUsers.userName",
+            "description": "<p>审核者userName</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.reviewUsers.mobile",
+            "description": "<p>手机</p>"
           }
         ]
       }

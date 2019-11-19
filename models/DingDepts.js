@@ -24,6 +24,14 @@ DingDepts.init({
 	subdeptIds: {
 		type: DataTypes.ARRAY(DataTypes.INTEGER),
 		comment: '所有子部门deptId 表'
+	},
+	typeId: {
+		type: DataTypes.INTEGER,
+		comment: '部门分类ID'
+	},
+	typeName: {
+		type: DataTypes.INTEGER,
+		comment: '部门分类名称'
 	}
 }, { sequelize: postgres, modelName: 'dingdepts', timestamps: false, comment: '钉钉组织架构' });
 

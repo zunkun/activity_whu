@@ -420,7 +420,8 @@ router.post('/sendreview', async (ctx, next) => {
 
 	await Activities.update({ reviewStatus: 20 }, { where: { id: activityId } });
 	// 给审核者发送消息
-	MessageService.sendReviewMsg(activityId);
+	MessageService.start2Reviewer(activityId, activity);
+	MessageService.start2Creator(activityId, activity);
 	ctx.body = ResService.success({});
 	await next();
 });
@@ -488,7 +489,7 @@ router.post('/review', async (ctx, next) => {
 	await Activities.update(updateData, { where: { id: activityId, cancel: false } });
 
 	// 给活动创建者发消息
-	MessageService.sendCreatorMsg(reviewStatus, activityId, rejectReason);
+	MessageService.finish2Creator(reviewStatus, activityId, rejectReason);
 
 	// 创建群
 	if (reviewStatus === 30) {
@@ -613,11 +614,15 @@ router.get('/qrcode', async (ctx, next) => {
 * @apiSuccess {String}  data.rows.userName 活动创建人
 * @apiSuccess {String}  data.rows.title 活动标题
 * @apiSuccess {Date}  data.rows.createTime 活动发起时间
-* @apiSuccess {Number}  data.rows.type 消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者
+* @apiSuccess {Number}  data.rows.type 消息类型 1-审核提示消-息给管理者  2-审核结束消息-给发起者 3-活动发起式提示消息-给发起者
 * @apiSuccess {String}  data.rows.text 消息内容
 * @apiSuccess {Boolean}  data.rows.finish 审批否处理完毕，如果审核操作结束或者撤销活动，则当前字段为true
 * @apiSuccess {Number}  data.rows.reviewStatus 活动审核状态 20-审核中 30-审核通过 40-拒绝
 * @apiSuccess {String}  data.rows.rejectReason 拒绝原因
+* @apiSuccess {Object[]} data.rows.reviewUsers 审核活动的管理员列表
+* @apiSuccess {String} data.rows.reviewUsers.userId 审核者userId
+* @apiSuccess {String} data.rows.reviewUsers.userName 审核者userName
+* @apiSuccess {String} data.rows.reviewUsers.mobile 手机
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -634,7 +639,7 @@ router.get('/messages', async (ctx, next) => {
 		return;
 	}
 
-	const where = { [Op.or]: [ { userId: user.userId, type: 2 } ] };
+	const where = { [Op.or]: [ { userId: user.userId, type: { [Op.in]: [ 2, 3 ] } } ] };
 	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
 	let allSubDeptIds = []; // 所管理部门所有子部门ID
 	for (let deptId of role.deptIds) {
@@ -643,7 +648,7 @@ router.get('/messages', async (ctx, next) => {
 	}
 	if (role) {
 		where[Op.or] = [
-			{ userId: user.userId, type: 2 }, // 分会管理员收到审核结果信息
+			{ userId: user.userId, type: { [Op.in]: [ 2, 3 ] } }, // 分会管理员收到审核结果信息
 			{ type: 1, roleDeptIds: { [Op.overlap]: allSubDeptIds } } // 总会管理员收到所管理部门的子部门发起的审核信息
 		];
 	}
@@ -724,11 +729,11 @@ router.get('/msgnoread', async (ctx, next) => {
 		return;
 	}
 
-	let allWhere = { [Op.or]: [ { userId: user.userId, type: 2 } ] };
+	let allWhere = { [Op.or]: [ { userId: user.userId, type: { [Op.in]: [ 2, 3 ] } } ] };
 	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
 	if (role) {
 		allWhere[Op.or] = [
-			{ userId: user.userId, type: 2 },
+			{ userId: user.userId, type: { [Op.in]: [ 2, 3 ] } },
 			{ type: 1 }
 		];
 	}

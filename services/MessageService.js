@@ -2,13 +2,59 @@ const Activities = require('../models/Activities');
 const Messages = require('../models/Messages');
 const Roles = require('../models/Roles');
 const util = require('../core/util');
+const DingDepts = require('../models/DingDepts');
+const DeptStaffs = require('../models/DeptStaffs');
+const DingStaffs = require('../models/DingStaffs');
+const { Op } = require('sequelize');
 class MessageService {
 	/**
+	 * 给活动发起者发审核开始消息
+	 * @param {Number} activityId activity id
+	 * @param {Object} activity activity
+	 */
+	async start2Creator (activityId, activity) {
+		if (!activity) {
+			activity = await Activities.findOne({ where: { id: activityId } });
+		}
+		let reviewUsers = [];
+		// 1. 活动创建者地方校友会下的部门deptId
+		// 2. 该部门的父部门列表与总会管理员所管理的部门相交，对应找出总会管理员
+		let deptstaff = await DeptStaffs.findOne({ where: { userId: activity.userId, typeId: 121373230 } });
+		let dept = await DingDepts.findOne({ where: { deptId: deptstaff.deptId } });
+		let roles = await Roles.findAll({ where: { type: 1, deptIds: { [Op.overlap]: dept.deptPaths } } });
+		if (roles) {
+			for (let role of roles) {
+				let dingstaff = await DingStaffs.findOne({ where: { userId: role.userId } });
+				reviewUsers.push({
+					userId: role.userId,
+					userName: role.userName,
+					mobile: dingstaff.mobile
+				});
+			}
+		}
+		Messages.create({
+			userId: activity.userId,
+			userName: activity.userName,
+			createTime: activity.createdAt,
+			title: activity.title,
+			type: 3,
+			text: '',
+			finish: false,
+			reviewStatus: 20,
+			readUserIds: [],
+			activityId,
+			reviewUsers
+		});
+	}
+	/**
    * 创建活动成功发给审核
-   * @param {Number} activityId 活动ID
+	 * @param {Number} activityId activity id
+	 * @param {Object} activity activity
    */
-	static async sendReviewMsg (activityId) {
-		let activity = await Activities.findOne({ where: { id: activityId } });
+	static async start2Reviewer (activityId, activity) {
+		if (!activity) {
+			activity = await Activities.findOne({ where: { id: activityId } });
+		}
 		let roles = await Roles.findAll({ where: { userId: activity.userId } });
 		let roleDeptIds = [];
 		for (let role of roles) {
@@ -35,7 +81,7 @@ class MessageService {
    * @param {Object} activity 活动信息
 	 * @param {String} rejectReason 拒绝原因
    */
-	static async sendCreatorMsg (reviewStatus, activityId, rejectReason) {
+	static async finish2Creator (reviewStatus, activityId, rejectReason) {
 		let activity = await Activities.findOne({ where: { id: activityId } });
 
 		await Messages.create({
@@ -52,7 +98,7 @@ class MessageService {
 			activityId
 		});
 
-		await Messages.update({ finish: true, reviewStatus }, { where: { activityId, type: 1 } });
+		await Messages.update({ finish: true, reviewStatus }, { where: { activityId, type: { [Op.in]: [ 1, 3 ] } } });
 	}
 }
 
