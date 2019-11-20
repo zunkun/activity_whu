@@ -979,7 +979,7 @@ router.get('/lists', async (ctx, next) => {
 */
 router.get('/:id', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
-	let type = ctx.query.type || 1;
+	let type = Number(ctx.query.type) || 1;
 
 	const id = ctx.params.id;
 
