@@ -2003,7 +2003,7 @@
   },
   {
     "type": "get",
-    "url": "/api/activities/:id",
+    "url": "/api/activities/:id?type=",
     "title": "活动详情",
     "name": "activities_detail",
     "group": "活动管理",
@@ -2030,6 +2030,13 @@
             "optional": false,
             "field": "id",
             "description": "<p>活动ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "type",
+            "description": "<p>活动详情权限 1-移动端参与活动 2--管理员管理活动 默认为1</p>"
           }
         ]
       }

@@ -918,12 +918,13 @@ router.get('/lists', async (ctx, next) => {
 });
 
 /**
-* @api {get} /api/activities/:id 活动详情
+* @api {get} /api/activities/:id?type= 活动详情
 * @apiName activities-detail
 * @apiGroup 活动管理
 * @apiDescription 获取活动详情
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} id 活动ID
+* @apiParam {Number} type 活动详情权限 1-移动端参与活动 2--管理员管理活动 默认为1
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object} data 活动信息
 * @apiSuccess {Number} data.id 活动ID
@@ -978,6 +979,7 @@ router.get('/lists', async (ctx, next) => {
 */
 router.get('/:id', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let type = ctx.query.type || 1;
 
 	const id = ctx.params.id;
 
@@ -1001,6 +1003,20 @@ router.get('/:id', async (ctx, next) => {
 	}
 	if (activity.deptIds && _.intersection(activity.deptIds, deptIds).length) {
 		auth = true;
+	}
+	if (!auth && type === 2) { // 管理活动访问活动详情权限
+		let roles = await Roles.findAll({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
+
+		let allSubDeptIds = []; // 个人所管理的部门表
+		for (let role of roles) {
+			for (let deptId of role.deptIds) {
+				let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+				allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+			}
+		}
+		if (allSubDeptIds.length && _.intersection(activity.roleDeptIds, allSubDeptIds).length) {
+			auth = true;
+		}
 	}
 	if (!auth) {
 		ctx.body = ResService.fail('您没有权限访问当前活动');
