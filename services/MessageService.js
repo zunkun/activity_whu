@@ -12,7 +12,7 @@ class MessageService {
 	 * @param {Number} activityId activity id
 	 * @param {Object} activity activity
 	 */
-	async start2Creator (activityId, activity) {
+	static async start2Creator (activityId, activity) {
 		if (!activity) {
 			activity = await Activities.findOne({ where: { id: activityId } });
 		}
