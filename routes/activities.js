@@ -527,7 +527,7 @@ router.post('/review', async (ctx, next) => {
 		updateData.rejectReason = rejectReason;
 	}
 
-	await Activities.update(updateData, { where: { id: activityId, cancel: false } });
+	await Activities.update(updateData, { where: { id: activityId } });
 
 	// 给活动创建者发消息
 	MessageService.finish2Creator(reviewStatus, activityId, rejectReason);
@@ -566,9 +566,16 @@ router.post('/cancel', async (ctx, next) => {
 		return;
 	}
 
+	if (activity.status !== 20) {
+		ctx.body = ResService.fail('当前申请审核无法撤销');
+		return;
+	}
+
 	await Activities.update({ reviewStatus: 10, cancel: true }, { where: { id: activityId } });
-	// 更新消息状态
-	Messages.update({ finish: true }, { where: { activityId } });
+
+	// 删除审批消息
+	Messages.destroy({ where: { activityId } });
+
 	GroupService.deleteDept(activityId);
 	ctx.body = ResService.success({});
 	await next();
@@ -775,7 +782,7 @@ router.get('/msgnoread', async (ctx, next) => {
 	if (role) {
 		allWhere[Op.or] = [
 			{ userId: user.userId, type: { [Op.in]: [ 2, 3 ] } },
-			{ type: 1, roleDeptIds: {[Op.overlap]: role.deptIds} }
+			{ type: 1, roleDeptIds: { [Op.overlap]: role.deptIds } }
 		];
 	}
 	let readWhere = { readUserIds: { [Op.overlap]: [ user.userId ] } };
@@ -858,7 +865,7 @@ router.get('/lists', async (ctx, next) => {
 	let offset = (page - 1) * limit;
 	let currentTime = new Date();
 
-	const where = { cancel: false, type: Number(query.type) || 1 };
+	const where = { type: Number(query.type) || 1 };
 
 	// 我所在部门
 	let deptIds = [];
@@ -1015,7 +1022,7 @@ router.get('/lists', async (ctx, next) => {
 * @apiSuccess {Boolean} data.meSigned 我在当前活动中是否已签到
 * @apiSuccess {Date} data.signTime 我在当前活动的签到时间
 * @apiSuccess {String} data.createdAt 创建时间
-* @apiSuccess {Boolean} data.cancel 是否撤销 true-撤销
+* @apiSuccess {Boolean} data.cancel 曾有审批是否撤销 true-撤销
 * @apiError {Number} errcode 失败不为0
 * @apiError {Number} errmsg 错误消息
 */
@@ -1094,7 +1101,7 @@ router.get('/:id', async (ctx, next) => {
 		activity.highAuthority = true;
 	}
 
-	if (activity.cancel || activity.reviewStatus !== 20) {
+	if (activity.reviewStatus !== 20) {
 		activity.highAuthority = false;
 	}
 
@@ -1140,7 +1147,7 @@ router.get('/:id', async (ctx, next) => {
 			activity.needReview = true;
 		}
 	}
-	if (activity.cancel || activity.reviewStatus !== 20) {
+	if (activity.reviewStatus !== 20) {
 		activity.highAuthority = false;
 	}
 	// 是否有撤销活动的权限
@@ -1238,7 +1245,7 @@ router.get('/', async (ctx, next) => {
 	let page = Number(query.page) || 1;
 	let limit = Number(query.limit) || 10;
 	let offset = (page - 1) * limit;
-	let where = { cancel: false };
+	let where = { };
 	let currentTime = new Date();
 	if (query.keywords) {
 		if (!where[Op.or]) where[Op.or] = [];

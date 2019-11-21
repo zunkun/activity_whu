@@ -180,10 +180,6 @@ router.post('/enroll', async (ctx, next) => {
 		ctx.body = ResService.fail('系统没有当前活动');
 		return;
 	}
-	if (activity.cancel) {
-		ctx.body = ResService.fail('当前活动已经取消');
-		return;
-	}
 	if (activity.reviewStatus !== 30) {
 		ctx.body = ResService.fail('当前活动未审核通过');
 		return;
@@ -194,6 +190,7 @@ router.post('/enroll', async (ctx, next) => {
 	}
 	if (activity.endTime < currentTime) {
 		ctx.body = ResService.fail('当前活动已经结束');
+		return;
 	}
 
 	// 我所在部门
@@ -367,6 +364,34 @@ router.post('/cancelenroll', async (ctx, next) => {
 		ctx.body = ResService.fail('系统中没有当前活动');
 		return;
 	}
+	// 我所在部门
+	let deptIds = [];
+	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+	for (let deptStaff of deptStaffs) {
+		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
+		deptIds = deptIds.concat(dept.deptPaths);
+	}
+	deptIds = Array.from(new Set(deptIds));
+	let auth = false;
+	if (activity.specialUserIds && activity.specialUserIds.indexOf(user.userId) > -1) {
+		auth = true;
+	}
+	if (activity.deptIds && _.intersection(activity.deptIds, deptIds).length) {
+		auth = true;
+	}
+	if (!auth) {
+		ctx.body = ResService.fail('您没有访问活动的权限');
+		return;
+	}
+	let currentTime = new Date();
+	if (activity.enrollStartTime > currentTime || activity.enrollEndTime < currentTime) {
+		ctx.body = ResService.fail('无法取消报名，当前时间不在活动报名时间内');
+		return;
+	}
+	if (currentTime > activity.endTime) {
+		ctx.body = ResService.fail('无法取消报名，当前活动已结束');
+		return;
+	}
 
 	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
 	if (!enroll) {
@@ -536,7 +561,7 @@ router.get('/myactivities', async (ctx, next) => {
 	let limit = Number(query.limit) || 10;
 	let offset = (page - 1) * limit;
 
-	const where = { cancel: false, type: Number(query.type) || 1, reviewStatus: 30 };
+	const where = { type: Number(query.type) || 1, reviewStatus: 30 };
 	const activityIds = [];
 	const enrolls = await Enrolls.findAll({ where: { userId: user.userId } });
 	for (let enroll of enrolls) {
@@ -835,10 +860,6 @@ router.post('/sign', async (ctx, next) => {
 		return;
 	}
 
-	if (activity.cancel) {
-		ctx.body = ResService.fail('当前活动已经取消');
-		return;
-	}
 	if (activity.reviewStatus !== 30) {
 		ctx.body = ResService.fail('当前活动未审核通过');
 		return;
