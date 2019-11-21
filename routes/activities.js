@@ -285,9 +285,31 @@ router.post('/', async (ctx, next) => {
 */
 router.post('/update', async (ctx, next) => {
 	let user = jwt.decode(ctx.header.authorization.substr(7));
-	let role = await Roles.findOne({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
-	if (!role) {
-		ctx.body = ResService.fail('您不是管理员，无权管理活动');
+	let roles = await Roles.findAll({ where: { userId: user.userId } });
+	let isManagerRole = false;
+	let isHighRole = false;
+	let managerRole; // 分会管理角色
+	let highRole; // 总会管理角色
+	let allSubDeptIds = []; // 当前管理员所管理部门的所有子部门ID数组
+	let roleDeptIds = []; // // 表示当前人员所管理的所有部门ID
+	for (let role of roles) {
+		if (role.role === 1) {
+			isHighRole = true;
+			highRole = role;
+		}
+		if (role.role === 2) {
+			isManagerRole = true;
+			managerRole = role;
+		}
+		for (let deptId of role.deptIds) {
+			let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+			allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+		}
+		roleDeptIds = roleDeptIds.concat(role.deptIds);
+	}
+
+	if (!isManagerRole && !isHighRole) {
+		ctx.body = ResService.fail('您不是管理员，无权创建活动');
 		return;
 	}
 	const data = ctx.request.body;
@@ -346,16 +368,6 @@ router.post('/update', async (ctx, next) => {
 		delete activityData.enrollEndTime;
 	}
 
-	const deptIds = [];
-	const depts = [];
-	if (data.deptIds && data.deptIds.length) {
-		for (let deptId of data.deptIds) {
-			const dept = await deptStaffService.getDeptInfo(deptId);
-			depts.push({ deptId, deptName: dept.deptName });
-			deptIds.push(deptId);
-		}
-	}
-
 	const specialUserIds = [];
 	const specialUsers = [];
 	if (data.specialUserIds && data.specialUserIds.length) {
@@ -365,10 +377,39 @@ router.post('/update', async (ctx, next) => {
 			specialUserIds.push(userId);
 		}
 	}
-	activityData.deptIds = deptIds.length ? deptIds : [ 1 ];
-	activityData.depts = depts || [ { deptId: 1, deptName: config.corpName } ];
-	activityData.specialUserIds = specialUserIds;
-	activityData.specialUsers = specialUsers;
+
+	// 如果指定人员，则为指定人员,人员不决定是否需要审核
+	if (specialUserIds.length) {
+		activityData.specialUserIds = specialUserIds;
+		activityData.specialUsers = specialUsers;
+	}
+
+	const deptIds = [];
+	const depts = [];
+	if (data.deptIds && data.deptIds.length) {
+		for (let deptId of data.deptIds) {
+			const dept = await deptStaffService.getDeptInfo(deptId);
+			depts.push({ deptId, deptName: dept.deptName });
+			deptIds.push(deptId);
+		}
+	}
+	if (deptIds.length) {
+		activityData.deptIds = deptIds;
+		activityData.depts = depts;
+	}
+
+	// 如果没有指定人员范围则默认为当前管理员所在的分会或总会部门，不需要审核
+	if (!deptIds.length && !specialUserIds.length) {
+		if (managerRole) {
+			activityData.deptIds = managerRole.deptIds;
+			activityData.depts = managerRole.depts;
+		}
+		if (highRole) {
+			activityData.deptIds = highRole.deptIds;
+			activityData.depts = highRole.depts;
+		}
+	}
+
 	await Activities.update(activityData, { where: { id: data.id } });
 
 	ctx.body = ResService.success({ });
@@ -421,6 +462,7 @@ router.post('/sendreview', async (ctx, next) => {
 	await Activities.update({ reviewStatus: 20 }, { where: { id: activityId } });
 	// 给审核者发送消息
 	MessageService.start2Reviewer(activityId, activity);
+
 	MessageService.start2Creator(activityId, activity);
 	ctx.body = ResService.success({});
 	await next();

@@ -816,6 +816,7 @@ router.post('/sign', async (ctx, next) => {
 	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
 	if (!enroll) {
 		ctx.body = ResService.fail('没有您的报名信息');
+		return;
 	}
 
 	let staffsign = await StaffSigns.findOne({ where: { activityId, userId: user.userId } });
@@ -835,7 +836,8 @@ router.post('/sign', async (ctx, next) => {
 	if (activity.signType === 2) {
 		let distance = util.getDistance(activity.latitude, activity.longitude, latitude, longitude);
 		if (distance > activity.distance) {
-			ctx.body = ResService.fail('签到无效，当前不签签到区域内');
+			ctx.body = ResService.fail(`签到有效距离${activity.distance}米，您所在位置已超出签到范围${distance - activity.distance}米`);
+			return;
 		}
 		signData.latitude = latitude;
 		signData.longitude = longitude;
