@@ -813,11 +813,6 @@ router.post('/sign', async (ctx, next) => {
 	}
 
 	// 报名名额
-	let currentCount = await Enrolls.count({ where: { activityId } });
-	if (currentCount >= activity.personNum) {
-		ctx.body = ResService.fail('名额已满，不可报名');
-		return;
-	}
 	let enroll = await Enrolls.findOne({ where: { activityId, userId: user.userId } });
 	if (!enroll) {
 		ctx.body = ResService.fail('没有您的报名信息');
