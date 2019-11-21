@@ -682,12 +682,12 @@ router.get('/messages', async (ctx, next) => {
 
 	const where = { [Op.or]: [ { userId: user.userId, type: { [Op.in]: [ 2, 3 ] } } ] };
 	let role = await Roles.findOne({ where: { userId: user.userId, role: 1 } });
-	let allSubDeptIds = []; // 所管理部门所有子部门ID
-	for (let deptId of role.deptIds) {
-		let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
-		allSubDeptIds = allSubDeptIds.concat(subdeptIds);
-	}
 	if (role) {
+		let allSubDeptIds = []; // 所管理部门所有子部门ID
+		for (let deptId of role.deptIds) {
+			let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+			allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+		}
 		where[Op.or] = [
 			{ userId: user.userId, type: { [Op.in]: [ 2, 3 ] } }, // 分会管理员收到审核结果信息
 			{ type: 1, roleDeptIds: { [Op.overlap]: allSubDeptIds } } // 总会管理员收到所管理部门的子部门发起的审核信息
@@ -1093,6 +1093,10 @@ router.get('/:id', async (ctx, next) => {
 		activity.highAuthority = true;
 	}
 
+	if (activity.cancel || activity.reviewStatus !== 20) {
+		activity.highAuthority = false;
+	}
+
 	let currentTime = new Date();
 	let reviewStatus = activity.reviewStatus;
 	let enrollStartTime = activity.enrollStartTime;
@@ -1135,9 +1139,12 @@ router.get('/:id', async (ctx, next) => {
 			activity.needReview = true;
 		}
 	}
+	if (activity.cancel || activity.reviewStatus !== 20) {
+		activity.highAuthority = false;
+	}
 	// 是否有撤销活动的权限
 	activity.cancelAuthority = false;
-	if (activity.userId === user.userId) {
+	if (activity.userId === user.userId && !activity.cancel && activity.reviewStatus === 20) {
 		activity.cancelAuthority = true;
 	}
 

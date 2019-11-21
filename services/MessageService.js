@@ -20,6 +20,10 @@ class MessageService {
 		// 1. 活动创建者地方校友会下的部门deptId
 		// 2. 该部门的父部门列表与总会管理员所管理的部门相交，对应找出总会管理员
 		let deptstaff = await DeptStaffs.findOne({ where: { userId: activity.userId, typeId: 121373230 } });
+		if (!deptstaff) {
+			console.log('当前员工不在地方校友会中');
+			return;
+		}
 		let dept = await DingDepts.findOne({ where: { deptId: deptstaff.deptId } });
 		let roles = await Roles.findAll({ where: { type: 1, deptIds: { [Op.overlap]: dept.deptPaths } } });
 		if (roles) {
