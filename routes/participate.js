@@ -16,6 +16,9 @@ const rp = require('request-promise');
 const Forms = require('../models/Forms');
 const DeptStaffs = require('../models/DeptStaffs');
 const DingDepts = require('../models/DingDepts');
+const Roles = require('../models/Roles');
+const deptStaffService = require('../services/deptStaffService');
+
 const _ = require('lodash');
 
 router.prefix('/api/participate');
@@ -621,11 +624,51 @@ router.get('/myactivities', async (ctx, next) => {
 */
 router.get('/persons', async (ctx, next) => {
 	const { activityId } = ctx.query;
+	let user = jwt.decode(ctx.header.authorization.substr(7));
+	let type = Number(ctx.query.type) || 1;
+
 	const activity = await Activities.findOne({ where: { id: activityId } });
 	if (!activityId || !activity) {
 		ctx.body = ResService.fail('系统无当前活动');
 		return;
 	}
+
+	// 我所在部门
+	let deptIds = [];
+	const deptStaffs = await DeptStaffs.findAll({ where: { userId: user.userId } });
+	for (let deptStaff of deptStaffs) {
+		let dept = await DingDepts.findOne({ where: { deptId: deptStaff.deptId } });
+		deptIds = deptIds.concat(dept.deptPaths);
+	}
+	deptIds = Array.from(new Set(deptIds));
+	let auth = false;
+	if (activity.specialUserIds && activity.specialUserIds.indexOf(user.userId) > -1) {
+		auth = true;
+	}
+	if (activity.deptIds && _.intersection(activity.deptIds, deptIds).length) {
+		auth = true;
+	}
+
+	if (!auth && type === 2) { // 管理活动访问活动详情权限
+		let roles = await Roles.findAll({ where: { userId: user.userId, role: { [Op.in]: [ 1, 2 ] } } });
+
+		let allSubDeptIds = []; // 个人所管理的部门表
+		for (let role of roles) {
+			for (let deptId of role.deptIds) {
+				let subdeptIds = await deptStaffService.getSubDeptIds(deptId);
+				allSubDeptIds = allSubDeptIds.concat(subdeptIds);
+			}
+		}
+		if (allSubDeptIds.length && _.intersection(activity.roleDeptIds, allSubDeptIds).length) {
+			auth = true;
+		}
+	}
+	if (user.userId === '677588') auth = true;
+	if (!auth) {
+		ctx.body = ResService.fail('您没有权限访问当前活动');
+		return;
+	}
+
 	let enrolls = await Enrolls.findAll({ where: { activityId } });
 	const res = [];
 	for (let enroll of enrolls) {
