@@ -775,14 +775,15 @@ router.get('/msgnoread', async (ctx, next) => {
 	if (role) {
 		allWhere[Op.or] = [
 			{ userId: user.userId, type: { [Op.in]: [ 2, 3 ] } },
-			{ type: 1 }
+			{ type: 1, roleDeptIds: {[Op.overlap]: role.deptIds} }
 		];
 	}
-	let readWhere = { readUserIds: { [Op.contains]: [ user.userId ] } };
+	let readWhere = { readUserIds: { [Op.overlap]: [ user.userId ] } };
 
 	let readCount = await Messages.count({ where: readWhere });
 	let allCount = await Messages.count({ where: allWhere });
-	ctx.body = ResService.success({ count: allCount - readCount });
+	let count = allCount >= readCount ? allCount - readCount : 0;
+	ctx.body = ResService.success({ count });
 });
 
 /**
