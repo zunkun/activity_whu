@@ -571,7 +571,7 @@ router.post('/cancel', async (ctx, next) => {
 		return;
 	}
 
-	await Activities.update({ reviewStatus: 10}, { where: { id: activityId } });
+	await Activities.update({ reviewStatus: 10 }, { where: { id: activityId } });
 
 	// 删除审批消息
 	Messages.destroy({ where: { activityId } });

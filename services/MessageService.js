@@ -46,12 +46,9 @@ class MessageService {
 					mobile: staff.mobile
 				});
 			}
-			if (!reviewUsers.length) {
-				reviewUsers.push({ userId: '677588', userName: '系统管理员', mobile: '13554324776' });
-			}
 		} else {
 			let dept = await DingDepts.findOne({ where: { deptId: deptstaff.deptId } });
-			let roles = await Roles.findAll({ where: { type: 1, deptIds: { [Op.overlap]: dept.deptPaths } } });
+			let roles = await Roles.findAll({ where: { role: 1, deptIds: { [Op.overlap]: dept.deptPaths } } });
 			if (roles) {
 				for (let role of roles) {
 					let dingstaff = await DingStaffs.findOne({ where: { userId: role.userId } });
@@ -62,6 +59,10 @@ class MessageService {
 					});
 				}
 			}
+		}
+
+		if (!reviewUsers.length) {
+			reviewUsers.push({ userId: '677588', userName: '系统管理员', mobile: '13554324776' });
 		}
 		Messages.create({
 			userId: activity.userId,
