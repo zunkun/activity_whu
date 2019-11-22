@@ -156,14 +156,21 @@ router.get('/login', async (ctx, next) => {
 });
 
 router.get('/login2', async (ctx, next) => {
-	let { userId } = ctx.query;
-	if (!userId) {
+	let { userId, userName } = ctx.query;
+	if (!userId || userName) {
 		ctx.body = ResService.fail('参数错误');
 		return;
 	}
-	let user = await DingStaffs.findOne({ where: { userId } });
+	let where = {};
+	if (userId) {
+		where.userId = userId;
+	} else {
+		where.userName = userName;
+	}
+
+	let user = await DingStaffs.findOne({ where });
 	user = user.toJSON();
-	let roles = await Roles.findAll({ where: { userId } });
+	let roles = await Roles.findAll({ where: { userId: user.userId } });
 	user.roles = [];
 	for (let role of roles) {
 		user.roles.push({
