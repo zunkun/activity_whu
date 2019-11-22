@@ -157,7 +157,7 @@ router.get('/login', async (ctx, next) => {
 
 router.get('/login2', async (ctx, next) => {
 	let { userId, userName } = ctx.query;
-	if (!userId || userName) {
+	if (!userId || !userName) {
 		ctx.body = ResService.fail('参数错误');
 		return;
 	}
@@ -169,6 +169,10 @@ router.get('/login2', async (ctx, next) => {
 	}
 
 	let user = await DingStaffs.findOne({ where });
+	if (!user) {
+		ctx.body = ResService.fail('参数错误');
+		return;
+	}
 	user = user.toJSON();
 	let roles = await Roles.findAll({ where: { userId: user.userId } });
 	user.roles = [];
