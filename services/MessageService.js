@@ -22,18 +22,45 @@ class MessageService {
 		let deptstaff = await DeptStaffs.findOne({ where: { userId: activity.userId, typeId: 121373230 } });
 		if (!deptstaff) {
 			console.log('当前员工不在地方校友会中');
-			return;
-		}
-		let dept = await DingDepts.findOne({ where: { deptId: deptstaff.deptId } });
-		let roles = await Roles.findAll({ where: { type: 1, deptIds: { [Op.overlap]: dept.deptPaths } } });
-		if (roles) {
+			let roles = await Roles.findAll({ where: { userId: activity.userId } });
+			let allDeptIds = [];
 			for (let role of roles) {
-				let dingstaff = await DingStaffs.findOne({ where: { userId: role.userId } });
+				allDeptIds = allDeptIds.concat(role.deptIds);
+			}
+			allDeptIds = Array.from(new Set(allDeptIds));
+
+			let userIds = [];
+
+			for (let deptId of allDeptIds) {
+				let dept = await DingDepts.findOne({ where: { deptId } });
+				if (!dept) continue;
+				let role = await Roles.findOne({ where: { userId: { [Op.ne]: activity.userId }, role: 1, deptIds: { [Op.overlap]: dept.deptPaths } } });
+				if (!role) continue;
+				if (userIds.indexOf(role.userId) > -1) continue;
+				let staff = await DingStaffs.findOne({ where: { userId: role.userId } });
+				if (!staff) continue;
+				userIds.push(role.userId);
 				reviewUsers.push({
 					userId: role.userId,
-					userName: role.userName,
-					mobile: dingstaff.mobile
+					userName: staff.userName,
+					mobile: staff.mobile
 				});
+			}
+			if (!reviewUsers.length) {
+				reviewUsers.push({ userId: '677588', userName: '系统管理员', mobile: '13554324776' });
+			}
+		} else {
+			let dept = await DingDepts.findOne({ where: { deptId: deptstaff.deptId } });
+			let roles = await Roles.findAll({ where: { type: 1, deptIds: { [Op.overlap]: dept.deptPaths } } });
+			if (roles) {
+				for (let role of roles) {
+					let dingstaff = await DingStaffs.findOne({ where: { userId: role.userId } });
+					reviewUsers.push({
+						userId: role.userId,
+						userName: role.userName,
+						mobile: dingstaff.mobile
+					});
+				}
 			}
 		}
 		Messages.create({
