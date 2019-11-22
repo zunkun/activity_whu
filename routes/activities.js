@@ -566,7 +566,7 @@ router.post('/cancel', async (ctx, next) => {
 		return;
 	}
 
-	if (activity.status !== 20) {
+	if (activity.reviewStatus !== 20) {
 		ctx.body = ResService.fail('当前申请审核无法撤销');
 		return;
 	}
