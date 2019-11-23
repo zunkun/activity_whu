@@ -502,6 +502,7 @@ router.get('/myenroll', async (ctx, next) => {
 * @apiHeader {String} authorization 登录token
 * @apiParam {Number} [limit] 分页条数，默认10
 * @apiParam {Number} [page] 第几页，默认1
+* @apiParam {Number} [status] 活动状态， 31-预热中 32-报名中 33-进行中 34-已结束 默认为0 表示查询全部状态
 * @apiParam {String} [type] 活动类型 1-常规活动 2-专项活动，默认为1
 * @apiSuccess {Number} errcode 成功为0
 * @apiSuccess {Object} data 活动列表
@@ -563,7 +564,7 @@ router.get('/myactivities', async (ctx, next) => {
 
 	const where = { type: Number(query.type) || 1, reviewStatus: 30 };
 	let status = Number(query.status) || 0;
-	let currentTime = new Date()
+	let currentTime = new Date();
 
 	switch (status) {
 	case 31: // 预热中
@@ -596,7 +597,6 @@ router.get('/myactivities', async (ctx, next) => {
 	}
 
 	where.id = { [Op.in]: activityIds };
-	let currentTime = new Date();
 
 	const activities = await Activities.findAndCountAll({ where, limit, offset, order: [ [ 'top', 'DESC' ], [ 'createdAt', 'DESC' ] ] });
 	const res = { count: activities.count, rows: [] };
