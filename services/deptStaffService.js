@@ -24,6 +24,7 @@ class DeptStaffService {
 	async getSubDeptIds (deptId) {
 		deptId = Number(deptId);
 		let dept = await DingDepts.findOne({ where: { deptId } });
+		if (!dept) return [ deptId ];
 		return dept.subdeptIds || [ deptId ];
 	}
 

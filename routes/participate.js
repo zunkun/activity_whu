@@ -562,6 +562,33 @@ router.get('/myactivities', async (ctx, next) => {
 	let offset = (page - 1) * limit;
 
 	const where = { type: Number(query.type) || 1, reviewStatus: 30 };
+	let status = Number(query.status) || 0;
+	let currentTime = new Date()
+
+	switch (status) {
+	case 31: // 预热中
+		where.reviewStatus = 30;
+		where.enrollStartTime = { [Op.gt]: currentTime };
+		break;
+	case 32: // 报名中
+		where.reviewStatus = 30;
+		where.enrollStartTime = { [Op.lte]: currentTime };
+		where.enrollEndTime = { [Op.gte]: currentTime };
+		break;
+	case 33: // 进行中
+		where.reviewStatus = 30;
+		where.startTime = { [Op.lte]: currentTime };
+		where.endTime = { [Op.gte]: currentTime };
+		break;
+	case 34: // 已结束
+		where.reviewStatus = 30;
+		where.endTime = { [Op.lt]: currentTime };
+		break;
+	default:
+		where.reviewStatus = 30;
+		break;
+	}
+
 	const activityIds = [];
 	const enrolls = await Enrolls.findAll({ where: { userId: user.userId } });
 	for (let enroll of enrolls) {
