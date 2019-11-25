@@ -3,6 +3,7 @@ const ResService = require('../core/ResService');
 const Router = require('koa-router');
 const router = new Router();
 const Activities = require('../models/Activities');
+// const DingStaffs = require('../models/DingStaffs');
 const deptStaffService = require('../services/deptStaffService');
 const { Op } = require('sequelize');
 const DingDepts = require('../models/DingDepts');
@@ -561,9 +562,29 @@ router.post('/cancel', async (ctx, next) => {
 		ctx.body = ResService.fail('参数错误');
 		return;
 	}
-	if (activity.userId !== user.userId) {
-		ctx.body = ResService.fail('您非本活动创建人，无权撤销本活动');
-		return;
+	if (activity.userId !== user.userId && user.userId !== '677588') {
+		let userRole = await Roles.findOne({ where: { type: 1, userId: user.userId } });
+		if (!userRole) {
+			ctx.body = ResService.fail('您没有权删除本活动');
+			return;
+		}
+
+		let staffroles = await Roles.findAll({ where: { userId: activity.userId } });
+		let staffdeptIds = [];
+		for (let role of staffroles) {
+			staffdeptIds = staffdeptIds.concat(role.deptIds);
+		}
+		staffdeptIds = Array.from(new Set(staffdeptIds));
+		let deptPaths = [];
+		for (let deptId of staffdeptIds) {
+			let dept = await deptStaffService.getDeptInfo(deptId);
+			deptPaths = deptPaths.concat(dept.deptPaths);
+		}
+
+		if (!_.intersection(userRole.deptIds, deptPaths).length) {
+			ctx.body = ResService.fail('您没有权删除本活动');
+			return;
+		}
 	}
 
 	if (activity.reviewStatus !== 20) {
@@ -601,9 +622,30 @@ router.post('/delete', async (ctx, next) => {
 		ctx.body = ResService.fail('参数错误');
 		return;
 	}
-	if (activity.userId !== user.userId) {
-		ctx.body = ResService.fail('您非本活动创建人，无权删除本活动');
-		return;
+
+	if (activity.userId !== user.userId && user.userId !== '677588') {
+		let userRole = await Roles.findOne({ where: { type: 1, userId: user.userId } });
+		if (!userRole) {
+			ctx.body = ResService.fail('您没有权删除本活动');
+			return;
+		}
+
+		let staffroles = await Roles.findAll({ where: { userId: activity.userId } });
+		let staffdeptIds = [];
+		for (let role of staffroles) {
+			staffdeptIds = staffdeptIds.concat(role.deptIds);
+		}
+		staffdeptIds = Array.from(new Set(staffdeptIds));
+		let deptPaths = [];
+		for (let deptId of staffdeptIds) {
+			let dept = await deptStaffService.getDeptInfo(deptId);
+			deptPaths = deptPaths.concat(dept.deptPaths);
+		}
+
+		if (!_.intersection(userRole.deptIds, deptPaths).length) {
+			ctx.body = ResService.fail('您没有权删除本活动');
+			return;
+		}
 	}
 
 	// 更新消息状态
